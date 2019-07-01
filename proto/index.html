@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>초고교급 암기머신(가칭) 프로토타입</title>
+</head>
+<body>
+	<style>
+		textarea {
+			resize: none;
+		}
+	</style>
+	<!-- 주제 입력 -->
+	<h2>주제</h2>
+	<b>주제 이름</b><br>
+	<input type='textbox' id='group_name' size=62><br><br>
+	<b>상위 주제</b><br>
+	<textarea id='group_parents' rows='4' cols='64'></textarea><br><br>
+	<input id='submit_group' type='button' value='등록'><br><br>
+	<p id='group_tree'></p>
+
+	<!-- 지식 입력 -->
+	<h2>지식</h2>
+	<b>지식 이름</b><br>
+	<textarea id='info_names' rows='4' cols='64'></textarea><br><br>
+	<b>지식 속성</b><br>
+	<textarea id='info_attrs' rows='8' cols='64'></textarea><br><br>
+	<b>소속 주제</b><br>
+	<textarea id='info_group' rows='4' cols='64'></textarea><br><br> 
+	<input id='submit_info' type='button' value='등록'><br><br>
+
+	<!-- 문제 생성 -->
+	<b>문제</b><br>
+	주제: <input type='text' id='quest_group' size=32>
+	<input type='button' value='생성' id='quest_make'><br>
+	<p id='quest_facts' rows='4' cols='64'></p>
+	<input type='radio' name='quest_choice' id='quest_choice0' value='0'><a name='quest_choice_label'></a><br>
+	<input type='radio' name='quest_choice' id='quest_choice1' value='1'><a name='quest_choice_label'></a><br>
+	<input type='radio' name='quest_choice' id='quest_choice2' value='2'><a name='quest_choice_label'></a><br>
+	<input type='radio' name='quest_choice' id='quest_choice3' value='3'><a name='quest_choice_label'></a><br>
+	
+	<!-- 스크립트 불러오기 -->
+	<script src='./lib/localforage.min.js'></script>
+	<script src='./src/util.js'></script>
+	<script src='./src/infograph.js'></script>
+	<script src='./src/quest.js'></script>
+	<script src='./src/dom.js'></script>
+	<script src='./src/main.js'></script>
+</body>
+</html>
