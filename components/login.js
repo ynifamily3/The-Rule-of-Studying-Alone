@@ -2,7 +2,19 @@ import "../css/login.css";
 import CustomButton from "./custombutton";
 import Textbox from "./textbox";
 import ThirdPartyButton from "./thirdpartybutton";
-
+/*
+const { Observable, interval } = require("rxjs");
+const observable = interval(1000);
+const subscription = observable.subscribe(
+  function next(item) {
+    console.log(`아이템 : ${item}`);
+  },
+  function error(e) {},
+  function complete() {
+    console.log(`컴플리트`);
+  }
+); ==> 작업 콘솔에 계속해서 뜸. 아마 이벤트를 홀드하고 있는 듯
+*/
 export default ({ children }) => (
   <div className="center-wrapper">
     <h1 className="logo">로그인</h1>
