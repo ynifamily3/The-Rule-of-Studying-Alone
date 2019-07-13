@@ -41,7 +41,10 @@ export default () => (
         <Button color="grey">로그인</Button>
       </Link>
       <Link href="/problem">
-        <Button color="black">문제 샘플 보기</Button>
+        <Button color="blue">문제 샘플 보기</Button>
+      </Link>
+      <Link href="/dashboard">
+        <Button color="red">대쉬보드로 가기</Button>
       </Link>
     </div>
   </Page>

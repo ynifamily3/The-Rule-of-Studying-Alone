@@ -1,3 +1,5 @@
+// 설계가 잘못된 페이지이다. 여기에는 레이아웃만 들어가고, 컴포넌트를 include해야 됨
+// css 임포트는 컴포넌트에서 해야 한다. 변경 요망
 import "../css/gnb.css";
 import Link from "next/link";
 export default () => (

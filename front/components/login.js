@@ -15,7 +15,7 @@ class LoginComponent extends React.Component {
   }
   componentDidMount() {
     const button = document.querySelector("#login");
-    console.log(button);
+    // console.log(button);
     const clicks$ = fromEvent(button, "click");
     this.subscription = clicks$.subscribe(e => {
       alert("로그인함!");
@@ -23,6 +23,7 @@ class LoginComponent extends React.Component {
   }
   componentWillUnmount() {
     console.log("바이바이");
+    this.subscription.unsubscribe();
   }
   render() {
     console.log("렌더시작");
