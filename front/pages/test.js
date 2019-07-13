@@ -2,38 +2,28 @@ import Page from "../layouts/main";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
-import { increment } from "../reducers";
+
 class Test extends Component {
-  incrementClick = () => {
-    // const { incrementCount } = this.props
-    alert("증가");
-    increment();
-  };
-
-  decrementClick = () => {};
-
+  increment() {
+    this.props.store.dispatch(increase(1));
+  }
   render() {
-    //const { members } = this.props;
-    const { incrementClick, decrementClick } = this;
+    const { counter } = this.props;
     return (
       <Page>
         <h1>리덕스 테스트 (카운터)</h1>
-        <h2>{this.props.number}</h2>
-        <Button onClick={incrementClick}>+</Button>
-        <Button onClick={decrementClick}>-</Button>
+        <h2>{counter.number}</h2>
+        <Button onClick={this.increment}>+</Button>
+        <Button>-</Button>
       </Page>
     );
   }
 }
+
 function mapStateToProps(state) {
   return {
-    number: state.number
+    counter: state.counter
   };
 }
-const mapDispatchToProps = dispatch => ({
-  handleClick: () => dispatch(increment())
-});
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Test);
+
+export default connect(mapStateToProps)(Test);

@@ -1,25 +1,6 @@
-const Increment = "Increment";
-
-// Action 생성 함수
-export const increment = () => ({
-  type: Increment
+import { combineReducers } from "redux";
+import counter from "./counter";
+/* 여러 Reducer를 묶는다. 현재 예제는 하나이지만 추후에 여러 개 Reducer를 생성 예정이라면 아래와 같이 사용하면 된다. */
+export default combineReducers({
+  counter
 });
-
-// default state definition
-const initialState = {
-  number: 765
-};
-
-// make reducer
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case Increment:
-      return {
-        number: state.number + 1
-      }; // 변경된 부분만 리턴
-    default:
-      return state; // 해당 state를 그대로 리턴
-  }
-};
-
-export default reducer;
