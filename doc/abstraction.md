@@ -122,12 +122,12 @@ define Info:
 
 문서를 수프로 만들기 위해, 다음과 같이 몇 가지 토큰을 정의한다.
 
-* `<문장>`은 정규표현식 `\(문서시작|개행)(공백)*[^개행]*(개행)\`을 만족하는 문자열에서 모든 개행 문자, 맨 앞에 연속으로 나오는 공백문자들을 제거한 것이다.
-* `<제목n식별자>`는 정규표현식 `\#{n} (.)*\`을 만족하는 `<문장>`이다.
-* `<속성식별자>`는 정규표현식 `\\* (.)*\`을 만족하는 `<문장>`이다.
+* `<문장>`은 정규표현식 `/(문서시작|개행)(공백)*[^개행]*(개행)/`을 만족하는 문자열에서 모든 개행 문자, 맨 앞에 연속으로 나오는 공백문자들을 제거한 것이다.
+* `<제목n식별자>`는 정규표현식 `/#{n} (.)*/`을 만족하는 `<문장>`이다.
+* `<속성식별자>`는 정규표현식 `/\* (.)*/`을 만족하는 `<문장>`이다.
 
-* `<제목n>`은 `<제목n식별자>`에서 `\#{n} \`을 제거한 것이다.
-* `<속성>`은 `<속성식별자>`에서 `\\* \`을 제거한 것이다.
+* `<제목n>`은 `<제목n식별자>`에서 `/#{n} /`을 제거한 것이다.
+* `<속성>`은 `<속성식별자>`에서 `/\* /`을 제거한 것이다.
 * `<소주석>`은 `<제목n식별자>`도 `<속성n식별자>`도 아닌 `<문장>`이다.
 * `<주석>`은 2개의 `<소주석>` 또는 `<주석>`을 개행문자 1개로 연결한 것이다.
 
@@ -185,7 +185,7 @@ define Info:
 
 ### 추상화
 
-이렇게 1차 가공을 마친 문자열은 다음 과정을 거쳐 수프로 만든다.
+전처리를 마친 문서는 다음 과정을 거쳐 수프로 만든다.
 
 * 현재 토큰이 `<제목n>`이면 그것을 `name`으로 갖는 *주제* G를 만든다.
 * `<제목n>` 아래에 `<속성>`이 하나라도 있으면, 같은 이름을 갖는 *지식* I를 만들고 G에 붙인다.
@@ -196,8 +196,12 @@ define Info:
 자세한 의사코드는 다음과 같다. 음.... 당신이 이거 담당자가 아니라면 안읽는걸 추천한다.
 
 ```pseudocode
-function make_abstract(tokens):
-	return assemble(tokens, 0, tokens.length)
+function cook(tokens):
+	let out := [] be the forest of soup
+	suppose i[0], i[1] ... be decreasing sequence of depth of <제목n> tokens
+	foreach j := 0, 1, ...:
+		out += assemble(tokens, i[j], i[j + 1]) if its result is not NULL
+	return out
 
 // tokens[spos] must be title-n
 function assemble(tokens, spos, epos):
@@ -217,12 +221,11 @@ function assemble(tokens, spos, epos):
 		// 현재 토큰이 <제목n>인 경우, 다른 <제목n>을 찾아서 그 직전까지 자른다.
             do:
                 suppose tokens[spos] is <title-n>
-                find idx s.t. spos < idx < epos and tokens[idx] is title-n
+                let idx be the integer s.t. 
+                	spos < idx < epos and depth of tokens[idx] <= depth of token
                 if such idx not exists:
                 	idx := epos
-                let temp := assemble(tokens, spos, idx)
-                if temp is not NULL:
-                    out.childs += temp
+                out.childgroups += assemble(tokens, spos, idx) if its result is not NULL
                 spos := idx
             while spos < epos:
 	end while:
@@ -231,7 +234,7 @@ function assemble(tokens, spos, epos):
 	// 속성이 하나라도 있으면 그 주제와 같은 이름의 지식을 만든다.
 		out.infos += new Info(names=[out.name], attrs=attrs)
 		return out
-	else if childs.length > 0:
+	else if out.childgroups.length > 0:
 	// 자식주제가 하나라도 있으면 그냥 중간 주제로서 반환한다.
 		return out
 	else:
