@@ -1,0 +1,10 @@
+#problem-page {
+    width: 100%;
+    height: 100%;
+    padding-left: 3rem;
+    padding-top: 3rem;
+}
+
+.problem-title {
+    margin: 1.5rem auto;
+}
