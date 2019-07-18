@@ -1,15 +1,31 @@
 {
-  "name": "hello-next",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "super-great-memorize-assistant",
+  "version": "0.1.0",
+  "description": "교양 시험을 필기하고, 자동 문제 생성을 통해 여러분의 암기 시험을 도와드립니다.",
+  "main": "server.js",
   "scripts": {
     "dev": "next ./next",
     "build": "next build ./next",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Phryxia",
+    "email": "put-your@email.com",
+    "url": "https://put-your-url.com"
+  },
+  "contributors": [
+    {
+      "name": "Jongkeun Choi",
+      "email": "ynifamily3@gmail.com",
+      "url": "https://miel.dev"
+    },
+    {
+      "name": "put-your-name",
+      "email": "put-your@email.com",
+      "url": "https://put-your-url.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
