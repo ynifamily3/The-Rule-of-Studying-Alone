@@ -1,15 +1,11 @@
 /*
 	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
 */
-function parse_doc(docstr) {
-	// pre-process
-	let sentences = extract_sentences(docstr);
-	let tokens = reorganize(tokenize(sentences));
-	let soup = cook(tokens);
-
+function debug_parse_doc(docstr) {
 	// for debug purpose
 	let dom = document.querySelector('#tree');
 	dom.value = '';
+	let soup = parse_doc(docstr);
 	soup.forEach(g => {
 		debug(g, dom, '');
 	});
@@ -30,6 +26,15 @@ function parse_doc(docstr) {
 		for(let i = 0; i < info.attrs.length; ++i)
 			dom.value += `${tab + '  '}* ${info.attrs[i]}\n`;
 	}
+}
+
+function parse_doc(docstr) {
+	// pre-process
+	let sentences = extract_sentences(docstr);
+	let tokens = reorganize(tokenize(sentences));
+	let soup = cook(tokens);
+
+	return soup;
 }
 
 // 선두 공백문자(leading space)의 끝지점을 찾아 반환한다.
@@ -217,5 +222,5 @@ function assemble(tokens, spos, epos) {
 }
 
 document.getElementById('docs').onchange = function(evt) {
-	parse_doc(evt.target.value);
+	debug_parse_doc(evt.target.value);
 };
