@@ -1,7 +1,7 @@
 .dashboardAside {
   width: 100%;
+  display: flex;
   height: calc(100vh - 64px);
-  padding: 8px;
   flex: 0 0 256px;
-  background-color: beige;
+  flex-direction: column;
 }
