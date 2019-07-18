@@ -5,14 +5,15 @@ export default ({ children }) => (
   <header className="dashboardGnb">
     <div className="logo">문제은행</div>
     <div className="searchBox">
-      <form>
+      <form style={{ height: "100%" }}>
         <Input
           type="search"
           placeholder="검색..."
           className="searchForm"
           icon={{ name: "search", circular: false, link: true }}
           style={{
-            width: "720px"
+            width: "720px",
+            height: "100%"
           }}
         />
       </form>

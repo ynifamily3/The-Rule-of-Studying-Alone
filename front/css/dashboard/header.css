@@ -8,7 +8,7 @@
 }
 
 .dashboardGnb > .logo {
-  width: 238px;
+  min-width: 238px;
   padding-right: 30px;
   height: 48px;
   box-sizing: border-box;
@@ -22,9 +22,11 @@
 }
 
 .dashboardGnb > .rightButtons {
+  min-width: 160px;
   height: 48px;
   padding-left: 10px;
   padding-right: 30px;
+  margin-left: auto;
 }
 
 .dashboardGnb > .searchBox > .searchForm {
