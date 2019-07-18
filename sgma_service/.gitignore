@@ -89,3 +89,4 @@ typings/
 
 # next build exports
 out/
+next/.next/

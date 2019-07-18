@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "export": "next export"
+    "dev": "next ./next",
+    "build": "next build ./next",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,11 +16,7 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "next": "^8.1.0",
-<<<<<<< HEAD
     "next-progressbar": "^1.0.0",
-=======
-    "path": "^0.12.7",
->>>>>>> 11eebae0a7484732ebe70e248225b4d3352ff178
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

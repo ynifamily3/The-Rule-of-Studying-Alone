@@ -10,7 +10,7 @@ const ExpressApp = express();
 const NextApp = next({
   dev,
   quiet: dev,
-  dir: ".",
+  dir: "./next",
   conf: {
     // next.config.js 에서 사용하는 객체 값
     webpack: {}
@@ -23,7 +23,7 @@ const NextRouter = express.Router();
 
 NextRouter.get("/api/*", (req, res) => {
   console.log("server-side Action requested", res);
-  res.sendFile(path.join(__dirname, "api", "userInfo.json"));
+  //res.sendFile(path.join(__dirname, "api", "userInfo.json"));
   // NextApp.render(req, res, "/test", Object.assign({}, req.query, req.param));
 });
 
