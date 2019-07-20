@@ -66,9 +66,14 @@
   background-color: #e5e5e5 !important;
 }
 
+.contents .workingArea {
+  overflow-y: scroll;
+}
+
 .contents .items {
   display: flex;
   padding-left: 10px;
+  flex-wrap: wrap;
 }
 
 .contents .items > li {
