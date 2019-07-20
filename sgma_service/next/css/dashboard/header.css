@@ -12,6 +12,11 @@
   padding-right: 30px;
   height: 48px;
   box-sizing: border-box;
+  display: flex;
+}
+
+.dashboardGnb > .logo > .logoElement {
+  align-items: center;
 }
 
 .dashboardGnb > .searchBox {

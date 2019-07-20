@@ -25,6 +25,13 @@ export default ({ children }) => (
             공유 문제함
           </div>
         </li>
+        <li>
+          <div>
+            <Icon name="star" size="large" />
+            <i className="padlr" />
+            중요 문제함
+          </div>
+        </li>
         <hr />
         <li>
           <div>

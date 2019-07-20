@@ -3,7 +3,9 @@ import { Icon, Input } from "semantic-ui-react";
 
 export default ({ children }) => (
   <header className="dashboardGnb">
-    <div className="logo">문제은행</div>
+    <div className="logo">
+      <div className="logoElement">{"{{logo}}"}</div>
+    </div>
     <div className="searchBox">
       <form style={{ height: "100%" }}>
         <Input
