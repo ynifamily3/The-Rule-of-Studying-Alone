@@ -2,17 +2,23 @@
 
 ```pseudocode
 define Quest:
-	String		type		// 1, {"binary", "selection", "short"} 중 하나
+	String		type		// 1, 유형 {"binary", "selection", "short"} 중 1개
 	String		statement	// 1, 지문
 	String[]	choices		// +, 선택지
 	String[]	answers		// +, 정답
 ```
 
-문제(`Quest`)는 1개의 **유형**(`type`), 1개의 **지문**(`statement`), 1개 이상의 **선택지**(`choices`), 1개 이상의 **정답**(`answers`)로 이루어진 단위 구조이다.
+**문제**(`Quest`)는 사용자가 풀어야 할 문제를 모델링한 것이다.
+
+**문제**의 지문은 사용자가 문제를 풀기 위해 필요한 정보를 서술한 문자열이다.
+
+**문제**의 **선택지**는 사용자가 문제를 풀기 위해 할 수 있는 행동의 집합이다. **문제**의 유형별로 다음과 같이 정의한다.
 
 * **참/거짓**(`"binary"`): `choices`는 불리언의 집합 {true, false}이 된다.
 * **n지선다**(`"selection"`): `choices`는 $\mathcal{P}(\{1, 2, 3, \cdots, n\})$이다. 악랄한 문제의 경우, 주어진 어떤 선택지도 답이 아닐 수 있다. 이 경우 `answers`는 공집합이 되며 `[]`로 표현한다.
 * **단답형**(`"short"`): 선택지는 문자열의 집합 전체다. 이렇게 무한한 선택지를 갖는 경우, `choices`는 `[]`로 정의한다.
+
+**문제**의 **정답**은 사용자의 입력을 검증하는데 필요한 정보의 집합이다.
 
 수학적으로 `choices`와 `answers`는 집합이지만, 실제 구현 시에는 처리를 용이하게 하기 위해 문자열 리스트로 인코딩한다. 예를 들어 **참/거짓** 유형의 선택지는 `["T"] 또는 ["F"]`로 표현할 수 있으며, **n지선다** 유형의 정답을 `["1", "4"]`로 표현할 수 있다.
 
@@ -20,14 +26,14 @@ define Quest:
 
 # 하위지식 가져오기
 
-평범한 DFS를 쓰면 된다. 전위탐색을 사용할 경우 주어진 주제로부터 가까운 지식이 리스트의 앞으로 오게 된다. 아래의 의사코드는 전위탐색으로 `g`의 하위지식을 `I`에 저장한다.
+어떤 **주제(들)**의 하위지식을 반환한다. 평범한 DFS를 쓰면 된다. 전위탐색을 사용할 경우 주어진 주제로부터 가까운 지식이 리스트의 앞으로 오게 된다. 아래의 의사코드는 전위탐색으로 `g`의 하위지식을 `I`에 저장한다.
 
 ```pseudocode
-Let I := Φ be the set of subinfos
+Let I := [] be the set of subinfos
 function fetch_subinfos(Group g):
 	foreach i in infos of g:
 		if i is not visted:
-			I := I ∪ {i}
+			I += i
 	foreach cg in childgroups of g:
 		if cg is not visted:
 			fetch_subinfos(cg)
@@ -67,21 +73,22 @@ function fetch_subinfos(Group g):
 ```pseudocode
 Let ans be the unique answer of this quest
 Let fact be the proposition of this binary quest
-function generate_binary_quest(Info i):
-	// 50%의 확률로 참인 명제를 고른다 
+function generate_binary_quest(Group g):
+	Select material ~ fetch_subinfos(g)
 	Select r ~ [0, 1]
+	// 50%의 확률로 답이 T 또는 F이다.
 	if r > 0.5:
 		ans := true
-		fact := select_positive_attr(i)
+		fact := select_positive_attr(material)
 	else:
 		ans := false
 		// 50%의 확률로 다른 지식의 속성을 가져오며
 		// 나머지 50%의 확률로 기존의 속성을 변조한다
 		r ~ [0, 1]
 		if r > 0.5:
-			fact := select_negative_attr(i)
+			fact := select_negative_attr(material)
 		else:
-			fact := mutate_attr(select_positive(i))
+			fact := mutate_attr(select_positive(material))
 	return {
 		statement: "다음 문장의 참 거짓을 판별하시오.\n{fact}",
 		type: "binary",
@@ -90,14 +97,14 @@ function generate_binary_quest(Info i):
 	}
 	
 // 지식 i에서 올바른 속성을 선택한다.
-function select_positive_attr(Info i):
-	Select attr ~ i.attrs
+function select_positive_attr(Info material):
+	Select attr ~ material.attrs
 	return attr
 
 // 지식 i의 소속주제에서 다른 지식에서 무관형을 선택한다.
-function select_negative_attr(Info i):
-	Let H := {h ∈ S.infos : S ∈ i.homegroups}
-	Let F := {h ∈ H : ∀a∈i.attrs ￢(h ≡ a)}
+function select_negative_attr(Info material):
+	Let H := {h ∈ S.infos : S ∈ material.homegroups}
+	Let F := {h ∈ H : ∀a∈material.attrs ￢(h ≡ a)}
 	Select attr ~ F
 	return attr
 ```
@@ -176,5 +183,95 @@ function generate_selection_quest(Group g, Number n, Number a, Boolean inv):
 		choices: choices,
 		answers: answers
 	}
+```
+
+
+
+## 단답형
+
+`short` 타입의 `Quest`는 지문에 있는 **속성**을 보고 원래 **지식**의 이름을 맞추는 유형이다.
+
+지문으로 주어지는 **속성**의 수가 지나치게 적을 경우, 같은 **속성**을 공유하는 서로 다른 **지식** 조합이 있을 수 있다. 엄밀하게 출제하려면 특정 주제 내에서 속성 중복 여부를 검사해야하지만, **속성** 수를 충분하게(n >= 3?) 준다면 걱정하지 않아도 된다.
+
+단답형은 참/거짓이나 n지선다와는 다른 채점방식을 사용한다. 참/거짓은 `answers`가 항상 1개의 원소만 가지고 있고, n지선다에선 `answers`에 있는 모든 원소를 다 골라야 정답으로 처리한다. 반면 단답형은 `answers`에 있는 원소 중 하나만 일치해도 정답으로 처리할 수 있다.
+
+띄어쓰기가 포함돼 있는 문제의 경우, 주제나 상황에 따라 다르게 처리한다. 만약 띄어쓰기가 중요시되는 상황에선 엄격히 채점을 하면 되고, 띄어쓰기가 중요하지 않은 상황에는 공백을 모두 삭제한 뒤 채점하면 된다.
+
+```pseudocode
+// g: 문제를 출제할 주제
+// n: 지문에 보여줄 속성의 수
+function generate_short_quest(Group g, Number n):
+	Select material ~ fetch_subinfos(g)
+	Let attrs := []
+	for p := 1, 2, ..., n:
+		attrs += select_positive_attr(material)
+	return {
+		statement: "다음이 설명하는 것을 적으시오.\n{attrs[1], attrs[2], ...}",
+		type: "short",
+		choices: null,
+		answers: material.names
+	}
+```
+
+
+
+# 채점
+
+**채점**(Evaluation)은 (문제, 사용자입력)의 쌍을 입력으로 받아서 [0, 1]의 실수를 출력하는 서브 프로그램이다. 이때 출력은 문제를 얼마나 완전히 풀었는지를 나타내며, 필요에 따라 정수만 사용할 수 있다. (가령 교수가 부분점수를 인정하는 경우와 그렇지 않은 경우...)
+
+**채점**은 문제의 **유형**에 맞게 구현되어야 한다. 다양한 디자인 패턴으로 짤 수 있는데, 여기서는 스트래터지 패턴을 사용한다.
+
+```pseudocode
+// quest: 사용자가 풀려고 하는 문제
+// response: 사용자의 응답을
+function evaluate(Quest quest, String[] response):
+	return Evaluator.get_evaluator(quest.type).evaluate(quest, response)
+```
+
+
+
+## 참/거짓 채점
+
+응답은 반드시 하나밖에 없으므로 같은 문자열을 가지는지만 확인하면 된다.
+
+```pseudocode
+function BinaryEvaluator::evaluate(Quest quest, String[] response):
+	if length(response) ≠ 1:
+		return false
+	else:
+		return quest.answers[1] = response[1]
+```
+
+
+
+## n지선다 채점
+
+문제에서 요구하는 모든 선택지가 포함돼 있어야 한다.
+
+```pseudocode
+function SelectionEvaluator::evaluate(Quest quest, String[] response):
+	if length(quest.answers) ≠ length(response):
+		return false
+	sort quest.answers, response in lexiographical order
+	for i := 1, 2, ..., length(quest.answers):
+		if quest.answers[i] ≠ response[i]:
+			return false
+	return true
+```
+
+
+
+## 단답형 채점
+
+문제에서 요구하는 선택지 중 하나만 만족해도 좋다. 일반적으로는 응답을 하나로만 제한하지만 향후 필요에 따라 수정할 여지는 있다.
+
+```pseudocode
+function ShortEvaluator::evaluate(Quest quest, String[] response):
+	if length(response) ≠ 1:
+		return false
+	for i := 1, 2, ..., length(quest.answers):
+		if quest.answers[i] = repsonse[1]:
+			return true
+	return false
 ```
 
