@@ -89,23 +89,6 @@ class Soup {
 		return true;
 	}
 
-	// 주제 g로부터 도달할 수 있는 모든 지식을 반환한다.
-	fetch_subinfos(g) {
-		function __getSubInfos(node, out, dup) {
-			node.infos.forEach(info => {
-				if(!dup[info.id]) {
-					out.push(info);
-					dup[info.id] = true;
-				}
-			});
-			node.childgroups.forEach(child => {
-				__getSubInfos(child, out, dup);
-			});
-			return out;
-		}
-		return __getSubInfos(g, [], {});
-	}
-
 	/*
 		이 Group의 상태를 보여줄 수 있는 트리를 텍스트로 그린다.
 		이 함수의 외부에서 사용 시 인자는 없다.
@@ -132,3 +115,64 @@ class Soup {
 		return _getTreeText(this.groups[0], '', '');
 	}
 }
+
+// 주제 g로부터 도달할 수 있는 모든 지식을 반환한다.
+Soup.fetch_subinfos = function(g) {
+	function __fetch_subinfos(node, out, dup) {
+		console.assert(node instanceof Group);
+		node.infos.forEach(info => {
+			if(!dup[info.id]) {
+				out.push(info);
+				dup[info.id] = true;
+			}
+		});
+		node.childgroups.forEach(child => {
+			__fetch_subinfos(child, out, dup);
+		});
+		return out;
+	}
+	return __fetch_subinfos(g, [], {});
+};
+
+// 지식 material에서 임의의 속성을 선택한다.
+Soup.select_positive_attr = function(material) {
+	return get_randomly(material.attrs);
+};
+
+// 지식 material에서 겹치지않는 n개의 임의의 속성들을 선택한다
+Soup.select_positive_attrs = function(material, n) {
+	return get_randomly_multi(material.attrs, n);
+};
+
+// 지식들 subinfos에서 지식 material과 충돌하지 않는 속성을 선택한다.
+// 원래 문서에는 매번 subinfos를 구하지만 이는 비효율적이므로, 외부에서
+// 사전에 구하도록 한다. 
+//
+// 현재는 material에 대하여 명제가 충돌하는지 검사할 방법이 없으므로
+// 그냥 아무거나 잡는다.
+Soup.select_negative_attr = function(material, subinfos) {
+	return get_randomly(subinfos.reduce((accm, info) => {
+		if(info == material)
+			return accm;
+		else
+			return accm.concat(info.attrs);
+		// else if(is_subject_to(info, material))
+		// 	return accm.concat(info.attrs);
+		// else
+		// 	return accm;
+	}, []));
+};
+
+// select_negative_attr의 복수버전
+Soup.select_negative_attrs = function(material, subinfos, n) {
+	return get_randomly_multi(subinfos.reduce((accm, info) => {
+		if(info == material)
+			return accm;
+		else
+			return accm.concat(info.attrs);
+		// else if(is_subject_to(info, material))
+		// 	return accm.concat(info.attrs);
+		// else
+		// 	return accm;
+	}, []), n);
+};

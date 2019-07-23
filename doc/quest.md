@@ -89,8 +89,9 @@ function generate_binary_quest(Group g):
 			fact := select_negative_attr(material)
 		else:
 			fact := mutate_attr(select_positive(material))
+	Select name ~ material.names
 	return {
-		statement: "다음 문장의 참 거짓을 판별하시오.\n{fact}",
+		statement: "다음 문장의 참 거짓을 판별하시오.\n{name}은(는) {fact}",
 		type: "binary",
 		choices: [true, false],
 		answers: [ans]
@@ -101,9 +102,9 @@ function select_positive_attr(Info material):
 	Select attr ~ material.attrs
 	return attr
 
-// 지식 i의 소속주제에서 다른 지식에서 무관형을 선택한다.
-function select_negative_attr(Info material):
-	Let H := {h ∈ S.infos : S ∈ material.homegroups}
+// 주제 g에 있는 지식 중 지식 i와 충돌하지 않는 속성을 선택한다.
+function select_negative_attr(Group g, Info material):
+	Let H := fetch_subinfos(g) - {material}
 	Let F := {h ∈ H : ∀a∈material.attrs ￢(h ≡ a)}
 	Select attr ~ F
 	return attr
@@ -138,7 +139,7 @@ function select_negative_attr(Info material):
 // inv: 옳은/옳지않은 트리거
 function generate_selection_quest(Group g, Number n, Number a, Boolean inv):
 	Let p be the number of required attributes of material
-	if inv is true:
+	if inv is false:
 		p := a
 	else:
 		p := n - a
@@ -164,14 +165,14 @@ function generate_selection_quest(Group g, Number n, Number a, Boolean inv):
 	Let choices := pos + neg
 	Shuffle choices
 	Let answers := NULL
-	if inv is true:
+	if inv is false:
 		answers := indices of elements of pos in choices
 	else:
 		answers := indices of elements of neg in choices
 	
 	// 표현
 	Let logic_label be the string indicating inv
-	if inv is true:
+	if inv is false:
 		logic_label := "옳은 것"
 	else:
 		logic_label := "옳지 않은 것"

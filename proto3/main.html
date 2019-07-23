@@ -6,9 +6,36 @@
 </head>
 <body>
 	<textarea id='docs' rows='16' cols='128'></textarea><br>
-	<textarea id='tree' rows='16' cols='128' readonly></textarea>
+	<textarea id='tree' rows='16' cols='128' readonly></textarea><br>
+	<!-- 참/거짓 -->
+	<hr>
+	<div>
+		<input id='quest-0-bt' type='button' value='참/거짓 문제 생성'>
+		<p id='quest-0-stmt'>test</p>
+		<input id='quest-0-choice-t' type='radio' value='T'>T<br>
+		<input id='quest-0-choice-f' type='radio' value='F'>F
+	</div>
+	<!-- n지선다 -->
+	<hr>
+	<div>
+		<input id='quest-1-bt' type='button' value='n지선다 문제 생성' />
+		N = <input id='quest-1-n' type='number' size='4' min='2' step='1' value='4' style='width: 2.5em'/>
+		A = <input id='quest-1-a' type='number' size='4' min='1' step='1' value='1' style='width: 2.5em'/>
+		오답 고르기 <input id='quest-1-inv' type='checkbox' />
+		<p id='quest-1-stmt'>test</p>
+		<div id='quest-1-sel'></div>
+	</div>
+	<!-- 단답형 -->
+	<hr>
+	<div>
+		<input id='quest-2-bt' type='button' value='단답형 문제 생성'>
+		<p id='quest-2-stmt'>test</p>
+		<input id='quest-2-input' type='textarea' />
+	</div>
+	<script src='./src/util.js'></script>
 	<script src='./src/soup.js'></script>
 	<script src='./src/parser.js'></script>
 	<script src='./src/quest.js'></script>
+	<script src='./src/main.js'></script>
 </body>
 </html>

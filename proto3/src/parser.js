@@ -1,40 +1,11 @@
-let soup = new Soup();
-
 /*
 	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
 */
-function debug_parse_doc(docstr) {
-	// for debug purpose
-	let dom = document.querySelector('#tree');
-	dom.value = '';
-	let root = parse_doc(docstr);
-
-	// 주제를 뒤지면서 내부 구조를 DOM으로 출력한다.
-	/*
-	function debug(g, dom, tab) {
-		dom.value += `${tab}<${g.name}>\n`;
-		if(g.comment != '')
-			dom.value += `${tab + '  '}// ${g.comment}\n`;
-		for(let i = 0; i < g.infos.length; ++i)
-			debug_info(g.infos[i], dom, tab + '  ');
-		for(let i = 0; i < g.childgroups.length; ++i)
-			debug(g.childgroups[i], dom, tab + '  ');
-	}
-
-	function debug_info(info, dom, tab) {
-		dom.value += `${tab}${info.names[0]}\n`
-		for(let i = 0; i < info.attrs.length; ++i)
-			dom.value += `${tab + '  '}* ${info.attrs[i]}\n`;
-	}*/
-	dom.value = soup.get_tree();
-}
-
 function parse_doc(docstr) {
 	// pre-process
 	let sentences = extract_sentences(docstr);
 	let tokens = reorganize(tokenize(sentences));
 	let soup = cook(tokens);
-
 	return soup;
 }
 
@@ -202,7 +173,6 @@ function assemble(tokens, spos, epos) {
 				let temp = assemble(tokens, spos, idx);
 				if(temp)
 					soup.append(out, temp);
-					//out.childgroups.push(temp);
 				spos = idx;
 			}
 			while(spos < epos);
@@ -211,7 +181,6 @@ function assemble(tokens, spos, epos) {
 
 	if(attrs.length > 0) {
 	// 속성이 있으면 그 주제와 같은 이름의 지식을 만들어서 추가
-		//out.infos.push(new Info([out.name], attrs));
 		soup.append(out, soup.create_info([out.name], attrs));
 		return out;
 	}
