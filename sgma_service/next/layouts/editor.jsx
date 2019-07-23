@@ -1,6 +1,10 @@
 import React, { Component } from "react";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
 import { Button, Icon, Input } from "semantic-ui-react";
+// First, import `draftToMarkdown`
+import { draftToMarkdown } from "../libs/markdown-draft-js";
+
+// var markdownString = draftToMarkdown(rawObject);
 
 class EditorPage extends Component {
   constructor(props) {
@@ -9,7 +13,18 @@ class EditorPage extends Component {
       editor: false,
       editorState: EditorState.createEmpty()
     };
-    this.onChange = editorState => this.setState({ editorState });
+    this.onChange = editorState => {
+      this.setState({ editorState }, () => {
+        console.log(editorState);
+
+        var markdownString = draftToMarkdown(
+          convertToRaw(editorState.getCurrentContent())
+        );
+        console.log(markdownString);
+        console.log(`즐거운 코딩ㅇ`);
+      });
+      // console.log(draftToMarkdown(editorState));
+    };
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
   }
 
