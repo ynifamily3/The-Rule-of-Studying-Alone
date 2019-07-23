@@ -90,3 +90,7 @@ typings/
 # next build exports
 out/
 next/.next/
+
+#passport secret
+back/passport/real_secret.js
+

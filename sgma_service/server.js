@@ -6,6 +6,11 @@ const path = require("path");
 const dev = process.env.NODE_ENV === "development";
 const PORT = process.env.PORT || 80;
 
+const dbConnect = require('./back/models');
+const passportConfig = require('./back/passport');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+
 const ExpressApp = express();
 const NextApp = next({
   dev,
@@ -21,11 +26,6 @@ const NextHandler = NextApp.getRequestHandler();
 // const CustomRouter = require("./routes");
 const NextRouter = express.Router();
 
-NextRouter.get("/api/*", (req, res) => {
-  console.log("server-side Action requested", res);
-  //res.sendFile(path.join(__dirname, "api", "userInfo.json"));
-  // NextApp.render(req, res, "/test", Object.assign({}, req.query, req.param));
-});
 
 /*
 NextRouter.get("/route-b", (req, res) => {
@@ -43,14 +43,19 @@ NextRouter.get("/route-b", (req, res) => {
 });
 */
 
+NextRouter.use('/api',require('./back/routes'));
 NextRouter.get("*", (req, res) => NextHandler(req, res));
 
 NextApp.prepare().then(() => {
   /*ExpressApp.use( SOME MIDDLEWARE 1 );
   ExpressApp.use( SOME MIDDLEWARE 2 );*/
-  // ExpressApp.use("/api", CustomRouter);
+	// ExpressApp.use("/api", CustomRouter);
+	dbConnect();
+	ExpressApp.use(bodyParser.json());
+	ExpressApp.use(bodyParser.urlencoded({extended:true}));
+	passportConfig(ExpressApp,passport);
 
-  ExpressApp.use("/", NextRouter);
+	ExpressApp.use("/",NextRouter);
 
   ExpressApp.listen(PORT, err => {
     if (err) throw err;
