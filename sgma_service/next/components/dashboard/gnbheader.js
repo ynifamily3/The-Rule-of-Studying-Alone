@@ -7,7 +7,7 @@ export default ({ children }) => (
       <div className="logoElement">{"{{logo}}"}</div>
     </div>
     <div className="searchBox">
-      <form style={{ height: "100%" }}>
+      <form style={{ height: "100%" }} onSubmit={e => e.preventDefault()}>
         <Input
           type="search"
           placeholder="검색..."

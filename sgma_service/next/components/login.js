@@ -3,7 +3,6 @@ import "../css/login.css";
 import CustomButton from "./custombutton";
 import Textbox from "./textbox";
 import ThirdPartyButton from "./thirdpartybutton";
-import { fromEvent } from "rxjs";
 
 class LoginComponent extends React.Component {
   constructor(props) {
@@ -15,15 +14,9 @@ class LoginComponent extends React.Component {
   }
   componentDidMount() {
     const button = document.querySelector("#login");
-    // console.log(button);
-    const clicks$ = fromEvent(button, "click");
-    this.subscription = clicks$.subscribe(e => {
-      alert("로그인함!");
-    });
   }
   componentWillUnmount() {
     console.log("바이바이");
-    this.subscription.unsubscribe();
   }
   render() {
     console.log("렌더시작");
