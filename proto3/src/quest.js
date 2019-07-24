@@ -25,7 +25,8 @@
 	문자열의 집합이어야 한다.
 
 	5. 단답형 문제
-	// 작업중
+	Quest Quest.generate_short_quest(Group g, int n);
+		n: 주어지는 정보 수
 
 	이 이외의 함수는 건드렸을 때 책임 안짐
 */
@@ -61,7 +62,7 @@ Quest.generate_binary_quest = function(g) {
 	if(Math.random() > 0.5) {
 		ans = 'T';
 		fact = Soup.select_positive_attr(material);
-	} 
+	}
 	else {
 		ans = 'F';
 		//if(Math.random() > 0.5)
@@ -70,6 +71,7 @@ Quest.generate_binary_quest = function(g) {
 		// 	fact = Soup.mutate_attr(Soup.select_positive_attr(material));
 		fact = Soup.select_negative_attr(material, subinfos);
 	}
+	let name = get_randomly(material.names);
 	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.<br>`
 		+`${material.names[0]}은(는) ${fact}`
 		,['T', 'F'], [ans]);
@@ -137,6 +139,17 @@ Quest.evaluator['selection'] = function(quest, response) {
 };
 
 // 단답식 유형 문제 생성
+Quest.generate_short_quest = function(g, n) {
+	let material = get_randomly(Soup.fetch_subinfos(g));
+	if(material.attrs.length < n)
+		n = material.attrs.length;
+	let attrs = Soup.select_positive_attrs(material, n);
+	let stmt = '다음이 설명하는 것을 적으시오.<br>';
+	attrs.forEach(attr => {
+		stmt += ' * ' + attr + '<br>';
+	});
+	return new Quest('short', stmt, [], material.names);
+};
 
 // 단답식 채점기
 // 답 중 하나만 맞추면 됨

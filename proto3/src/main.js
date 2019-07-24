@@ -54,3 +54,17 @@ document.getElementById('quest-1-bt').onclick = function() {
 		document.getElementById(`quest-1-sel-${quest.answers[i]}`).checked = true;
 	}
 };
+
+document.getElementById('quest-2-bt').onclick = function() {
+	if(!root)
+		return;
+
+	// 설정 값 읽기
+	let n = parseInt(document.getElementById('quest-2-n').value);
+
+	// 문제 만들기
+	let quest = Quest.generate_short_quest(root, n);
+
+	document.getElementById('quest-2-stmt').innerHTML = quest.statement;
+	document.getElementById('quest-2-input').value = quest.answers.toString();
+};
