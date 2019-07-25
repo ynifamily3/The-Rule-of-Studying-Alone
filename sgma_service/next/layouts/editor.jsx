@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
-import { Button, Icon, Input } from "semantic-ui-react";
-// First, import `draftToMarkdown`
-import { draftToMarkdown } from "../libs/markdown-draft-js";
-import debug_parse_doc from "../libs/md-2-tree";
+import GnbHeader from "../components/dashboard/gnbheader";
+import Aside from "../components/dashboard/aside";
+import InsertToolbar from "../components/editor/insertToolbar"; // Editor Toolbar (floated)
+import EditorComponent from "../components/editor/editorComponent";
+// import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
+// import { draftToMarkdown } from "../libs/markdown-draft-js";
+// import debug_parse_doc from "../libs/md-2-tree";
 
 // var markdownString = draftToMarkdown(rawObject);
-
+// <button onClick={this._onBoldClick.bind(this)}>Bold</button>
 class EditorPage extends Component {
+  /*
   constructor(props) {
     super(props);
     this.state = {
@@ -112,11 +115,11 @@ class EditorPage extends Component {
   _onBoldClick() {
     this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, "BOLD"));
   }
-
+*/
   render() {
     return (
       <div
-        className="editorWrapper"
+        className="contentWrapper"
         style={{
           width: "100%",
           height: "100vh",
@@ -125,21 +128,40 @@ class EditorPage extends Component {
           overflow: "hidden"
         }}
       >
-        에디터입니다. 변환 툴 개발중
-        <div className="editorRoot" style={{ background: "#e5e5e5" }}>
-          <button onClick={this._onBoldClick.bind(this)}>Bold</button>
-          <button>주제 만들기</button>
-          <button>지식 전달하기</button>
-          {this.state.editor ? (
-            <Editor
-              editorState={this.state.editorState}
-              handleKeyCommand={this.handleKeyCommand}
-              onChange={this.onChange}
-            />
-          ) : (
-            <div>에디터 로딩 중.</div>
-          )}
+        <GnbHeader />
+        <div
+          id="main"
+          style={{
+            display: "flex"
+          }}
+        >
+          <Aside />
+          <div
+            className="editorWrapper"
+            style={{
+              width: "100%",
+              height: "100vh",
+              margin: "0 auto",
+              textAlign: "left",
+              overflow: "hidden"
+            }}
+          >
+            <div className="editorRoot">
+              <EditorComponent />
+            </div>
+            <div className="insertToolbarWrapper">
+              <InsertToolbar />
+            </div>
+          </div>
         </div>
+      </div>
+    );
+  }
+}
+
+export default EditorPage;
+
+/*
         <div
           className="convertedRoot"
           style={{ marginTop: "3em", background: "#cccccc" }}
@@ -165,9 +187,4 @@ class EditorPage extends Component {
             />
           </div>
         </div>
-      </div>
-    );
-  }
-}
-
-export default EditorPage;
+*/
