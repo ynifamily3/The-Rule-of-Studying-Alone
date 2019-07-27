@@ -55,7 +55,9 @@ Quest.evaluator = {};
 
 // 참/거짓 유형 문제 생성
 Quest.generate_binary_quest = function(g) {
-	let subinfos = Soup.fetch_subinfos(g);
+	let subinfos = Soup.fetch_subinfos(g).filters(info => {
+		return info.attrs.length > 0;
+	});
 	let material = get_randomly(subinfos);
 	let ans = null;
 	let fact = null;
@@ -140,7 +142,12 @@ Quest.evaluator['selection'] = function(quest, response) {
 
 // 단답식 유형 문제 생성
 Quest.generate_short_quest = function(g, n) {
-	let material = get_randomly(Soup.fetch_subinfos(g));
+	let material = get_randomly(Soup.fetch_subinfos(g).filter(info => {
+		return info.attrs.length > 0;
+	}));
+
+	// 속성이 n개보다 적을 경우, n을 조절해줘서 util.js가
+	// 뻑나지 않도록 한다.
 	if(material.attrs.length < n)
 		n = material.attrs.length;
 	let attrs = Soup.select_positive_attrs(material, n);
