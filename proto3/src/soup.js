@@ -22,11 +22,9 @@ class Info {
 		console.assert(names instanceof Array && names.length > 0);
 		console.assert(attrs instanceof Array);
 
-		// names는 이 Info의 이름(들)을 String으로 저장한다.
 		this.names = names;
-
-		// attrs는 이 Info의 속성(들)을 String으로 저장한다.
 		this.attrs = attrs;
+		this.comment = '';
 
 		// parents 이 Info가 소속된 지식(들)을 레퍼런스로 저장한다.
 		// childs는 이 Info가 가진 하위 지식(들)을 레퍼런스로 저장한다.
@@ -42,8 +40,7 @@ class Info {
 		// 본래 id가 그 역할을 했으나, 몽고 DB에서의 고유키를 저장하는 것으로 바뀌면서
 		// jsid가 탄생하였다. jsid의 유일성은 한 세션 내에서만 보장된다.
 		this.jsid = Info.jsidcnt++;
-
-		this.comment = '';
+		
 		this.ext = [];
 	}
 }

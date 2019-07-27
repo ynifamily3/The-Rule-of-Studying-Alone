@@ -31,32 +31,7 @@ class Bar {
 
 # 스프(Soup)
 
-**스프**(`Soup`)는 주제와 지식으로 구성된 방향성 비순환 그래프(DAG)로, 기계적으로 문제를 만들 수 있는 자료구조다. 이름의 유래는 파이썬의 유명한 HTML 파싱 라이브러리 `Beautiful Soup`다.
-
-
-
-## 주제(Group)
-
-```pseudocode
-define Group:
-	String	name		// 1, 이름
-	Group[]	childgroups	// *, 자식주제
-	Info[]	infos		// *, 지식
-	String	comment		// 1, 주석
-	Object	ext			// 1, 문제 만들기와 관계없는, 서비스단을 위한 정보(ex: 학교)
-```
-
-**주제**(`Group`)는 다음과 같은 것들을 모델링하는데 사용한다.
-
-- **과목**(Subject): 자신이 공부하고자하는 과목에 대한 데이터의 모음.
-- **태그**(Tag): 자신이 필기한 내용을 부연설명하는 요소
-- **폴더**(Folder)
-
-어떤 주제 A에서 B로 유한 번의 참조로 도달할 수 있을 때, B는 A의 **하위주제**(`subgroups`), A는 B의 **상위주제**(`supergroup`)라고 한다.
-
-어떤 주제로부터 유한 번의 참조를 통해 도달할 수 있는 지식을, 그 주제의 **하위지식**(`subinfos`)이라 한다.
-
-임의의 주제 G에 대하여, G는 자신의 어떤 하위주제에도 소속되어선 안된다. 즉, 그래프 상에서 순환이 발생해서는 안된다.`child`가 들어가서 마치 트리처럼 보일 수도 있지만, 하나의 주제는 여러 주제의 자식주제가 될 수 있기 때문에 트리가 아닌 **DAG**(Directed Acylic Graph)를 형성한다.
+**스프**(`Soup`)는 **지식**으로 구성된 방향성 비순환 그래프(DAG)로, 기계적으로 문제를 만들 수 있는 자료구조다. 이름의 유래는 파이썬의 유명한 HTML 파싱 라이브러리 `Beautiful Soup`다.
 
 
 
@@ -65,12 +40,24 @@ define Group:
 ```pseudocode
 define Info:
 	String[]	names		// +, 이름
-	String[]	attrs		// +, 속성
-	Group[]		basegroups	// +, 소속주제
+	String[]	attrs		// *, 속성
+	String		comment		// 1, 주석
+	Info[]		parents		// +, 직속상위지식
+	Info[]		childs		// *, 직속하위지식
 	Object		ext			// 1, 기타 추가 정보
 ```
 
-**지식**(`Info`)은 1개 이상의 **이름**(`names`)과 1개 이상의 **속성**(`attrs`), 1개 이상의 **소속주제**(`basegroups`)으로 이루어진 단위 구조이다. 어떤 지식과 그 지식의 이름, 속성에 대하여 명제 *"[[이름]]은/는 [[속성]]이다"*는 참이어야 한다.
+**지식**(`Info`)는 다음과 같은 것들을 모델링하는데 사용한다.
+
+- **과목**(Subject): 자신이 공부하고자하는 과목에 대한 데이터의 모음.
+- **태그**(Tag): 자신이 필기한 내용을 부연설명하는 요소
+- **폴더**(Folder): 여러 연관성 있는 지식들을 하나로 묶음
+
+어떤 **지식** A에서 B로 유한 번의 참조로 도달할 수 있을 때, B는 A의 **하위지식**(`subinfo`), A는 B의 **상위지식**(`superinfo`)라고 한다.
+
+임의의 **지식** G에 대하여, G는 자신의 어떤 하위지식에도 소속되어선 안된다. 즉, 그래프 상에서 순환이 발생해서는 안된다. 어떤 지식과 그 지식의 이름, 속성에 대하여 명제 *"[[이름]]은/는 [[속성]]이다"*는 참이어야 한다.
+
+상위지식의 속성은 하위지식에서도 참이어야 한다.
 
 
 
@@ -122,7 +109,7 @@ define Doc:
 
 모든 **필기**는 **스프**로 변환할 수 있다. 그러나 그 역은 성립하지 않는다. 2019년 7월 12일 기준으로 **필기**는 **스프**의 모든 것을 표현할 수 없다. 대표적인 예시가 **지식**의 이름으로, 2개 이상의 이름을 **필기**에 표현할 규칙이 없다.
 
-**필기**와 수프는 1:1 대응이 아니다. 엄밀히, 본 서비스의 모든 데이터는 거대한 단일 스프로 이루어져 있다. 그 스프에서 특정 주제(or 과목)를 루트로 갖는 서브그래프가, 이용자가 다루게 될 부분이다.
+**필기**와 수프는 1:1 대응이 아니다. 엄밀히, 본 서비스의 모든 데이터는 거대한 단일 스프로 이루어져 있다. 그 스프에서 특정 지식을 루트로 갖는 서브그래프가, 이용자가 다루게 될 부분이다.
 
 이용자가 문서 작성/수정을 완료하면, 그 문서는 즉시 수프로 **조리**(`Cook`)한다. 여기에는 특별한 보안이 필요하지 않으므로, 조리 과정은 모두 클라이언트가 담당하도록 한다.
 
@@ -209,10 +196,9 @@ define Doc:
 
 전처리를 마친 문서는 다음 과정을 거쳐 수프로 만든다.
 
-* 현재 토큰이 `<제목n>`이면 그것을 `name`으로 갖는 *주제* G를 만든다.
-* `<제목n>` 아래에 `<속성>`이 하나라도 있으면, 같은 이름을 갖는 *지식* I를 만들고 G에 붙인다.
+* 현재 토큰이 `<제목n>`이면 그것을 `name`으로 갖는 **지식** G를 만든다.
 * `<제목n>` 아래에 `<제목m>`이 있으면, 자식을 만들어서 G에 붙인다.
-* 지식도 자식주제도 없는 주제는 폐기처리한다.
+* 지식도 자식주제도 없는 **지식**은 폐기처리한다.
 * 이를 재귀적으로 반복한다.
 
 자세한 의사코드는 다음과 같다. 음.... 당신이 이거 담당자가 아니라면 안읽는걸 추천한다.
@@ -227,8 +213,7 @@ function cook(tokens):
 
 // tokens[spos] must be title-n
 function assemble(tokens, spos, epos):
-	let out := new Group(name=tokens[spos])
-	let attrs := []
+	let out := new Info(names=[tokens[spos]], attrs=[])
 	spos := spos + 1
 	while spos < epos:
 		if tokens[spos] is <comment>:
@@ -237,7 +222,7 @@ function assemble(tokens, spos, epos):
 			spos := spos + 1
 		else if tokens[spos] is <attribute>:
 		// 현재 토큰이 <속성>인 경우
-			attrs := attrs + tokens[spos]
+			out.attrs := attrs + tokens[spos]
 			spos := spos + 1
 		else:
 		// 현재 토큰이 <제목n>인 경우, 다른 <제목n>을 찾아서 그 직전까지 자른다.
@@ -247,18 +232,14 @@ function assemble(tokens, spos, epos):
                 	spos < idx < epos and depth of tokens[idx] <= depth of token
                 if such idx not exists:
                 	idx := epos
-                out.childgroups += assemble(tokens, spos, idx) if its result is not NULL
+                result := assemble(tokens, spos, idx)
+                append result to out if result is not NULL
                 spos := idx
             while spos < epos:
 	end while:
 	
-	if attrs.length > 0:
-	// 속성이 하나라도 있으면 그 주제와 같은 이름의 지식을 만든다.
-		out.infos += new Info(names=[out.name], attrs=attrs)
-		return out
-	else if out.childgroups.length > 0:
-	// 자식주제가 하나라도 있으면 그냥 중간 주제로서 반환한다.
-		return out
+	if out has at least one attribute or child:
+		reutrn out
 	else:
 	// 지식도 없고 자식주제도 없으면 이 주제는 의미가 없다.
 		return NULL

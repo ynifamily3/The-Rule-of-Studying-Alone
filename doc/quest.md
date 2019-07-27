@@ -26,21 +26,19 @@ define Quest:
 
 # 하위지식 가져오기
 
-어떤 **주제(들)**의 하위지식을 반환한다. 평범한 DFS를 쓰면 된다. 전위탐색을 사용할 경우 주어진 주제로부터 가까운 지식이 리스트의 앞으로 오게 된다. 아래의 의사코드는 전위탐색으로 `g`의 하위지식을 `I`에 저장한다.
+어떤 **지식**의 하위지식을 반환한다. 평범한 DFS를 쓰면 된다. 전위탐색을 사용할 경우 주어진 주제로부터 가까운 지식이 리스트의 앞으로 오게 된다. 아래의 의사코드는 전위탐색으로 `g`의 하위지식을 `I`에 저장한다.
 
 ```pseudocode
 Let I := [] be the set of subinfos
-function fetch_subinfos(Group g):
-	foreach i in infos of g:
+function fetch_subinfos(Info g):
+	foreach i in childs of g:
 		if i is not visted:
 			I += i
-	foreach cg in childgroups of g:
-		if cg is not visted:
 			fetch_subinfos(cg)
 	return I
 ```
 
-구현 시 중복체크를 용이하게 하기 위해 `Group`과 `Info`에 정수 ID를 기록해두고, 해시셋으로 중복여부를 관리하는 것이 좋다.
+구현 시 중복체크를 용이하게 하기 위해 `Info`에 정수 ID를 기록해두고, 해시셋으로 중복여부를 관리하는 것이 좋다.
 
 
 
@@ -48,7 +46,7 @@ function fetch_subinfos(Group g):
 
 ## 참/거짓(Binary)
 
-주어진 지식 `i`로 참/거짓 고르기 문제를 만든다. 만약 지문에 사용할 속성을 다른 지식에서 가져올 경우, 그 속성이 `i`의 속성 중 일부와 동치여서는 안된다. 만약 `i`의 속성을 변조할 경우, 확실하게 거짓임이 보장되는 형태로 변조해야 한다.
+주어진 **지식** `i`로 참/거짓 고르기 문제를 만든다. 만약 지문에 사용할 속성을 다른 지식에서 가져올 경우, 그 속성이 `i`의 속성 중 일부와 동치여서는 안된다. 만약 `i`의 속성을 변조할 경우, 확실하게 거짓임이 보장되는 형태로 변조해야 한다.
 
 두 속성이 서로 동치인지 정확히 구분하는 것은 매우 어렵다. 하지만 문장의 의미는 잠시 내려두고, 문장을 이루는 단어의 구성이나 생김새로 유사 여부를 판단할 수는 있다. 만약 높은 유사성을 보인다면 그 속성을 선택하지 않으면 된다.
 
@@ -73,7 +71,7 @@ function fetch_subinfos(Group g):
 ```pseudocode
 Let ans be the unique answer of this quest
 Let fact be the proposition of this binary quest
-function generate_binary_quest(Group g):
+function generate_binary_quest(Info g):
 	Select material ~ fetch_subinfos(g)
 	Select r ~ [0, 1]
 	// 50%의 확률로 답이 T 또는 F이다.
@@ -102,8 +100,8 @@ function select_positive_attr(Info material):
 	Select attr ~ material.attrs
 	return attr
 
-// 주제 g에 있는 지식 중 지식 i와 충돌하지 않는 속성을 선택한다.
-function select_negative_attr(Group g, Info material):
+// 지식 g에 있는 직속하위지식 중 지식 material와 충돌하지 않는 속성을 선택한다.
+function select_negative_attr(Info g, Info material):
 	Let H := fetch_subinfos(g) - {material}
 	Let F := {h ∈ H : ∀a∈material.attrs ￢(h ≡ a)}
 	Select attr ~ F
@@ -133,11 +131,11 @@ function select_negative_attr(Group g, Info material):
 '옳지 않은 것'을 고르는 경우는 위와 동일하나 정답이 부정형/무관형이라는 점이 다르다.
 
 ```pseudocode
-// g: 문제를 출제할 주제
+// g: 문제를 출제할 지식
 // n: 선택지의 수
 // a: 정답 선택지의 수
 // inv: 옳은/옳지않은 트리거
-function generate_selection_quest(Group g, Number n, Number a, Boolean inv):
+function generate_selection_quest(Info g, Number n, Number a, Boolean inv):
 	Let p be the number of required attributes of material
 	if inv is false:
 		p := a
@@ -199,9 +197,9 @@ function generate_selection_quest(Group g, Number n, Number a, Boolean inv):
 띄어쓰기가 포함돼 있는 문제의 경우, 주제나 상황에 따라 다르게 처리한다. 만약 띄어쓰기가 중요시되는 상황에선 엄격히 채점을 하면 되고, 띄어쓰기가 중요하지 않은 상황에는 공백을 모두 삭제한 뒤 채점하면 된다.
 
 ```pseudocode
-// g: 문제를 출제할 주제
+// g: 문제를 출제할 지식
 // n: 지문에 보여줄 속성의 수
-function generate_short_quest(Group g, Number n):
+function generate_short_quest(Info g, Number n):
 	Select material ~ fetch_subinfos(g)
 	Let attrs := []
 	for p := 1, 2, ..., n:
