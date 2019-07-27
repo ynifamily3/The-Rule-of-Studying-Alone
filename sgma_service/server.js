@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 80;
 const dbConnect = require('./back/models');
 const passportConfig = require('./back/passport');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 
 const ExpressApp = express();
@@ -53,6 +54,7 @@ NextApp.prepare().then(() => {
 	dbConnect();
 	ExpressApp.use(bodyParser.json());
 	ExpressApp.use(bodyParser.urlencoded({extended:true}));
+	ExpressApp.use(cookieParser());
 	passportConfig(ExpressApp,passport);
 
 	ExpressApp.use("/",NextRouter);

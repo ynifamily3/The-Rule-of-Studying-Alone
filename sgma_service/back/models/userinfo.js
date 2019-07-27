@@ -24,6 +24,7 @@ const userSchema = new Schema({
 		type:String,
 		default:"photoURL",
 	},
+	/*
 	social:{
 		naver:{
 			access_token:String,
@@ -31,6 +32,7 @@ const userSchema = new Schema({
 			displayName:String,
 		}
 	},
+	*/
 	createdAt:{
 		type: Date,
 		default: Date.now,

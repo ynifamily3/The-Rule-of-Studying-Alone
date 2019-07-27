@@ -2,6 +2,7 @@ const NaverStrategy = require('passport-naver').Strategy;
 const {naverID,naverSecret,naverURI}=require('./secret');
 //const {naverID,naverSecret,naverURI}=require('./real_secret');
 
+
 const userinfo = require('../models/userinfo');
 require('dotenv').config();
 
@@ -26,14 +27,16 @@ module.exports = (app,passport)=>{
 		clientSecret:naverSecret,
 		callbackURL:naverURI
 	},(accessToken,refreshToken,profile,done)=>{
-		userinfo.findOne({'social.naver.id':profile.id})
+		userinfo.findOne({auth_method:'naver','user_id':profile.id})
 			.then(user=>{
+				console.log('findone');
 				if(!user){
 					const newUser = new userinfo();
 					newUser.auth_method='naver';
-					newUser.social.naver.access_token = accessToken;
-					newUser.social.naver.id = profile.id;
-					newUser.social.naver.displayName = profile.displayName;
+					//newUser.social.naver.access_token = accessToken;
+					newUser.user_id = profile.id;
+					if(profile.displayName)newUser.nickname = profile.displayName;
+					if(profile.email)newUser.email = profile.email;
 					return newUser.save()
 						.then(user=>done(null,user))
 						.catch(err=>done(err,false));

@@ -6,12 +6,24 @@ router.get('/',(req,res,next)=>{
 	console.log('get userinfo');
 	let users={};
 
+	if(req.cookies.user){
+		userinfo.findOne({_id:req.cookies.user})
+			.then((user)=>{
+				if(!user) return res.stats(404).json({error:'user not found'})
+				res.json({isLogin:true,user});
+			})
+			.catch((err)=>res.status(500).send({error:'database failure'}));
+	}
+	else res.status(401).send({isLogin:false});
+
+	/*
 	userinfo.find()
 		.then((user)=>{
 			users['userinfo']=user;
 			res.json(users);
 		})
 		.catch((err)=>res.status(500).send({error:'database failure'}));
+	*/
 });
 
 router.get('/:id',(req,res)=>{

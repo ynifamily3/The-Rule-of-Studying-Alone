@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import GnbHeader from "../components/dashboard/gnbheader";
 import Aside from "../components/dashboard/aside";
 import InsertToolbar from "../components/editor/insertToolbar"; // Editor Toolbar (floated)
-import EditorComponent from "../components/editor/editorComponent";
+import EditorComponent from "../components/editor/EditorComponent";
 // import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
 // import { draftToMarkdown } from "../libs/markdown-draft-js";
 // import debug_parse_doc from "../libs/md-2-tree";
