@@ -20,6 +20,6 @@
 }
 
 .editorWrapper .docContent :global(.public-DraftEditor-content) {
-  overflow: auto;
-  min-height: 300px;
+  overflow: scroll-y;
+  min-height: 3000px; /* 여기 또는 다른 곳에 오버플로우 스크롤 만들어야 함... */
 }

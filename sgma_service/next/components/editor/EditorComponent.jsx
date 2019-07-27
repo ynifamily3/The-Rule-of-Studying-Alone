@@ -28,30 +28,49 @@ class EditorComponent extends React.Component {
     this.toggleBlockType = this._toggleBlockType.bind(this);
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
 
+    /// custom zone
+    this.setDefaultHeaderStyle = this._setDefaultHeaderStyle.bind(this);
+    ///
+
+    this.mapKeyToEditorCommandTitle = this._mapKeyToEditorCommandTitle.bind(
+      this
+    );
+
     this.onChange = editorState => this.setState({ editorState });
     this.onChangeContent = editorStateContent =>
       this.setState({ editorStateContent });
   }
 
+  _setDefaultHeaderStyle(edesu) {
+    console.log("기본 설정을 적용합시다.");
+  }
+
   _handleKeyCommand(command, editorState) {
     // keyboard 단축키를 handler 한다.
-    console.log(`001 : command : ${command}`);
+    // console.log(`001 : command : ${command}`);
     const newState = RichUtils.handleKeyCommand(editorState, command);
-    console.log(`002 : editorState :${editorState}
+    // console.log(`002 : editorState :${editorState}
     /////
-    ${JSON.stringify(newState)}`);
     if (newState) {
-      console.log(`003`);
+      // console.log(`003`);
       this.onChangeContent(newState); // => 뭔가 스타일을 주고 다 지우면 오류가 트리거되므로 삭제 후 테스트 => 플러그인 버그 ㅅㅂㅅㅂ
-      console.log(`004`);
+      // console.log(`004`);
       // 삭제 했더니 그 줄을 다 지워도 해당 상태가 해제되지는 않는다. 의도된건데, 오류가 안 뜨게 할 수는 없을까?
       return true;
     }
     return false;
   }
 
+  _mapKeyToEditorCommandTitle(e) {
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      // this.refs.editor.focus(); // 내용 부분으로 포커스를 옮긴다. (근데 스크롤을 강제 이주시켜서 잠깐 주석처리;)
+    }
+  }
+
   _mapKeyToEditorCommand(e) {
     if (e.keyCode === 9 /*  TAB  */) {
+      e.preventDefault();
       const newEditorState = RichUtils.onTab(
         e,
         this.state.editorStateContent,
@@ -66,6 +85,8 @@ class EditorComponent extends React.Component {
   }
 
   _toggleBlockType(blockType) {
+    console.log("하지마리");
+    console.log(blockType); // header-one : String
     this.onChangeContent(
       RichUtils.toggleBlockType(this.state.editorStateContent, blockType)
     );
@@ -133,6 +154,7 @@ class EditorComponent extends React.Component {
               blockRenderMap={blockRenderMap}
               editorState={editorState}
               onChange={this.onChange}
+              keyBindingFn={this.mapKeyToEditorCommandTitle}
             />
           ) : (
             `Loading...`
@@ -149,6 +171,7 @@ class EditorComponent extends React.Component {
               handleKeyCommand={this.handleKeyCommand}
               keyBindingFn={this.mapKeyToEditorCommand}
               spellCheck={true}
+              onFocus={this.setDefaultHeaderStyle} // 포커스 시 내용이 없다면 기본 스타일을 적용시킨다.
               ref="editor"
             />
           ) : (
@@ -167,11 +190,22 @@ const styleMap = {
     padding: 2
   }
 };
-
 function getBlockStyle(block) {
   switch (block.getType()) {
     case "blockquote":
       return "RichEditor-blockquote";
+    case "header-one":
+      return "RichEditor-header-one";
+    case "header-two":
+      return "RichEditor-header-two";
+    case "header-three":
+      return "RichEditor-header-three";
+    case "header-four":
+      return "RichEditor-header-four";
+    case "header-five":
+      return "RichEditor-header-five";
+    case "unordered-list-item":
+      return "RichEditor-unordered-list-item";
     default:
       return null;
   }
@@ -204,6 +238,8 @@ const BLOCK_TYPES = [
   { label: "주제 (1수준)", style: "header-one" },
   { label: "주제 (2수준)", style: "header-two" },
   { label: "주제 (3수준)", style: "header-three" },
+  { label: "주제 (4수준)", style: "header-four" },
+  { label: "주제 (5수준)", style: "header-five" },
   { label: "지식", style: "unordered-list-item" },
   { label: "주석", style: "blockquote" }
 ];
