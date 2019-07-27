@@ -55,7 +55,7 @@ Quest.evaluator = {};
 
 // 참/거짓 유형 문제 생성
 Quest.generate_binary_quest = function(g) {
-	let subinfos = Soup.fetch_subinfos(g).filters(info => {
+	let subinfos = Soup.fetch_subinfos(g).filter(info => {
 		return info.attrs.length > 0;
 	});
 	let material = get_randomly(subinfos);
