@@ -1,6 +1,7 @@
 import React from "react";
 
 import "../../css/editor/editorWrapper.css";
+import "../../css/editor/editorRichEditor.css";
 import Editor from "draft-js-plugins-editor";
 import { EditorState, RichUtils, getDefaultKeyBinding } from "draft-js";
 import createSingleLinePlugin from "draft-js-single-line-plugin";
@@ -36,7 +37,7 @@ class EditorComponent extends React.Component {
     // keyboard 단축키를 handler 한다.
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
-      this.onChange(newState);
+      this.onChangeContent(newState);
       return true;
     }
     return false;
@@ -50,7 +51,7 @@ class EditorComponent extends React.Component {
         4 /* maxDepth */
       );
       if (newEditorState !== this.state.editorStateContent) {
-        this.onChange(newEditorState);
+        this.onChangeContent(newEditorState);
       }
       return;
     }
@@ -58,13 +59,13 @@ class EditorComponent extends React.Component {
   }
 
   _toggleBlockType(blockType) {
-    this.onChange(
+    this.onChangeContent(
       RichUtils.toggleBlockType(this.state.editorStateContent, blockType)
     );
   }
 
   _toggleInlineStyle(inlineStyle) {
-    this.onChange(
+    this.onChangeContent(
       RichUtils.toggleInlineStyle(this.state.editorStateContent, inlineStyle)
     );
   }
@@ -193,16 +194,11 @@ class StyleButton extends React.Component {
 }
 
 const BLOCK_TYPES = [
-  { label: "H1", style: "header-one" },
-  { label: "H2", style: "header-two" },
-  { label: "H3", style: "header-three" },
-  { label: "H4", style: "header-four" },
-  { label: "H5", style: "header-five" },
-  { label: "H6", style: "header-six" },
-  { label: "Blockquote", style: "blockquote" },
-  { label: "UL", style: "unordered-list-item" },
-  { label: "OL", style: "ordered-list-item" },
-  { label: "Code Block", style: "code-block" }
+  { label: "주제 (1수준)", style: "header-one" },
+  { label: "주제 (2수준)", style: "header-two" },
+  { label: "주제 (3수준)", style: "header-three" },
+  { label: "주석", style: "blockquote" },
+  { label: "지식", style: "unordered-list-item" }
 ];
 
 const BlockStyleControls = props => {
