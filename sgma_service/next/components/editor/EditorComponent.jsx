@@ -33,6 +33,9 @@ class EditorComponent extends React.Component {
       },
       unstyled: {
         element: "h1"
+      },
+      placeholder: {
+        element: "h1"
       }
     });
     return (
@@ -40,6 +43,7 @@ class EditorComponent extends React.Component {
         <div className="docTitle">
           {this.state.editorLoaded ? (
             <Editor
+              placeholder={`여기에 제목을 입력하십시오.`}
               plugins={plugins}
               blockRenderMap={blockRenderMap}
               editorState={this.state.editorState}
@@ -52,6 +56,7 @@ class EditorComponent extends React.Component {
         <div className="docContent">
           {this.state.editorLoaded ? (
             <Editor
+              placeholder={`여기에 내용의 흐름을 입력하십시오.`}
               editorState={this.state.editorStateContent}
               onChange={this.onChangeContent}
             />

@@ -20,7 +20,7 @@
   min-height: 100vh;
 }
 
-.editorWrapper :global(.public-DraftEditor-content) {
-  max-height: 200px;
-  overflow: auto;
+.editorWrapper .docContent :global(.public-DraftEditor-content) {
+  min-height: 1000px;
+  overflow: scroll;
 }
