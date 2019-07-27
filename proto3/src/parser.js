@@ -147,8 +147,8 @@ function cook(tokens) {
 // [spos, epos) 구간의 제목 단계는 n보다 커야한다.
 function assemble(tokens, spos, epos) {
 	//let out = new Group(tokens[spos][0]);
-	let out = soup.create_group(tokens[spos][0]);
-	let attrs = [];
+	// let out = soup.create_group(tokens[spos][0]);
+	let out = soup.create_info([tokens[spos][0]], []);
 	++spos;
 	while(spos < epos) {
 		if(tokens[spos][1] == '<주석>') {
@@ -158,7 +158,7 @@ function assemble(tokens, spos, epos) {
 		}
 		else if(tokens[spos][1] == '<속성>') {
 		// 현재 토큰이 <속성>이면 나중에 같은 이름의 지식 만듦
-			attrs.push(tokens[spos][0]);
+			out.attrs.push(tokens[spos][0]);
 			++spos;
 		}
 		else if(tokens[spos][1] == '<제목n>') {
@@ -179,13 +179,7 @@ function assemble(tokens, spos, epos) {
 		}
 	}
 
-	if(attrs.length > 0) {
-	// 속성이 있으면 그 주제와 같은 이름의 지식을 만들어서 추가
-		soup.append(out, soup.create_info([out.name], attrs));
-		return out;
-	}
-	else if(out.childgroups.length > 0) {
-	// 자식주제가 있는 경우, 유의미한 주제임
+	if(out.attrs.length > 0 || out.childs.length > 0) {
 		return out;
 	}
 	else {

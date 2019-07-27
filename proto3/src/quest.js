@@ -11,12 +11,12 @@
 	boolean Quest.evaluate(quest, response)
 
 	3. 참/거짓 문제
-	Quest Quest.generate_binary_quest(Group g);
+	Quest Quest.generate_binary_quest(Info g);
 
 	참/거짓 문제의 response는 ['T'] 또는 ['F'] 여야 한다.
 	
 	4. n지선다 문제
-	Quest Quest.generate_selection_quest(Group g, int n, int a, boolean inv)
+	Quest Quest.generate_selection_quest(Info g, int n, int a, boolean inv)
 		n: 선택지 수
 		a: 골라야 하는 답의 수
 		inv: 참이면 '옳지 않은 것', 거짓이면 '옳은 것'
@@ -25,7 +25,7 @@
 	문자열의 집합이어야 한다.
 
 	5. 단답형 문제
-	Quest Quest.generate_short_quest(Group g, int n);
+	Quest Quest.generate_short_quest(Info g, int n);
 		n: 주어지는 정보 수
 
 	이 이외의 함수는 건드렸을 때 책임 안짐
@@ -79,7 +79,7 @@ Quest.generate_binary_quest = function(g) {
 
 // 참거짓 채점기
 // 답을 맞춰야 함
-// Group g
+// Info g
 Quest.evaluator['binary'] = function(quest, response) {
 	if(response.length != 1)
 		return false;
@@ -88,7 +88,7 @@ Quest.evaluator['binary'] = function(quest, response) {
 };
 
 // n지선다 유형 문제 생성
-// g: 문제를 출제할 주제
+// g: 문제를 출제할 지식
 // n: 선택지의 수
 // a: 정답의 수
 // inv: 옳은/옳지 않은
