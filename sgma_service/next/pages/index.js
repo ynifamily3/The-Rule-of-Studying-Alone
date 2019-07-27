@@ -46,6 +46,9 @@ export default () => (
       <Link href="/dashboard">
         <Button color="red">대쉬보드로 가기</Button>
       </Link>
+      <Link href="/editor">
+        <Button color="black">에디터 (ProtoType)</Button>
+      </Link>
     </div>
   </Page>
 );

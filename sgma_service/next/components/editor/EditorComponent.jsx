@@ -2,8 +2,8 @@ import React from "react";
 
 import "../../css/editor/editorWrapper.css";
 import "../../css/editor/editorRichEditor.css";
-import Editor from "draft-js-plugins-editor";
-import { EditorState, RichUtils, getDefaultKeyBinding } from "draft-js";
+import TitleEditor from "draft-js-plugins-editor";
+import { Editor, EditorState, RichUtils, getDefaultKeyBinding } from "draft-js";
 import createSingleLinePlugin from "draft-js-single-line-plugin";
 
 import { Button } from "semantic-ui-react";
@@ -29,15 +29,22 @@ class EditorComponent extends React.Component {
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
 
     this.onChange = editorState => this.setState({ editorState });
-    this.onChangeContent = editorState =>
-      this.setState({ editorStateContent: editorState });
+    this.onChangeContent = editorStateContent =>
+      this.setState({ editorStateContent });
   }
 
   _handleKeyCommand(command, editorState) {
     // keyboard 단축키를 handler 한다.
+    console.log(`001 : command : ${command}`);
     const newState = RichUtils.handleKeyCommand(editorState, command);
+    console.log(`002 : editorState :${editorState}
+    /////
+    ${JSON.stringify(newState)}`);
     if (newState) {
-      this.onChangeContent(newState);
+      console.log(`003`);
+      this.onChangeContent(newState); // => 뭔가 스타일을 주고 다 지우면 오류가 트리거되므로 삭제 후 테스트 => 플러그인 버그 ㅅㅂㅅㅂ
+      console.log(`004`);
+      // 삭제 했더니 그 줄을 다 지워도 해당 상태가 해제되지는 않는다. 의도된건데, 오류가 안 뜨게 할 수는 없을까?
       return true;
     }
     return false;
@@ -120,7 +127,7 @@ class EditorComponent extends React.Component {
         </div>
         <div className="docTitle">
           {editorLoaded ? (
-            <Editor
+            <TitleEditor
               placeholder={`여기에 제목을 입력하십시오.`}
               plugins={plugins}
               blockRenderMap={blockRenderMap}
@@ -197,8 +204,8 @@ const BLOCK_TYPES = [
   { label: "주제 (1수준)", style: "header-one" },
   { label: "주제 (2수준)", style: "header-two" },
   { label: "주제 (3수준)", style: "header-three" },
-  { label: "주석", style: "blockquote" },
-  { label: "지식", style: "unordered-list-item" }
+  { label: "지식", style: "unordered-list-item" },
+  { label: "주석", style: "blockquote" }
 ];
 
 const BlockStyleControls = props => {
@@ -226,10 +233,10 @@ const BlockStyleControls = props => {
 };
 
 var INLINE_STYLES = [
-  { label: "Bold", style: "BOLD" },
-  { label: "Italic", style: "ITALIC" },
-  { label: "Underline", style: "UNDERLINE" },
-  { label: "Monospace", style: "CODE" }
+  { label: "진하게", style: "BOLD" },
+  { label: "기울임", style: "ITALIC" },
+  { label: "밑줄", style: "UNDERLINE" },
+  { label: "전각으로", style: "CODE" }
 ];
 
 const InlineStyleControls = props => {
