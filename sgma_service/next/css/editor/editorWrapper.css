@@ -1,8 +1,7 @@
 .editorRoot {
-  margin-top: 20rem;
   margin-left: 10rem;
   margin-right: 10rem;
-  font-size: 1.5rem;
+  font-size: 1rem;
 } /* 별 내용은 들어가지 않을 것이다. margin정도? */
 
 .editorRoot h1 {
@@ -21,6 +20,6 @@
 }
 
 .editorWrapper .docContent :global(.public-DraftEditor-content) {
-  min-height: 1000px;
-  overflow: scroll;
+  overflow: auto;
+  min-height: 300px;
 }

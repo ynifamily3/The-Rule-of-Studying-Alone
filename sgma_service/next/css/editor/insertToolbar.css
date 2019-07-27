@@ -13,7 +13,7 @@
   transform: translate(-50%, -50%);
   white-space: nowrap;
   z-index: 28;
-  pointer-events: none;
+  /*pointer-events: none;*/
   color: #ffffff;
   /*transition: transform 150ms ease-in-out, opacity 100ms ease-in-out;*/
 }
