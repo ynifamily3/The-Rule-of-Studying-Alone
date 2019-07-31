@@ -3,7 +3,15 @@ import React from "react";
 import "../../css/editor/editorWrapper.css";
 import "../../css/editor/editorRichEditor.css";
 import TitleEditor from "draft-js-plugins-editor";
-import { Editor, EditorState, RichUtils, getDefaultKeyBinding } from "draft-js";
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  getDefaultKeyBinding,
+  KeyBindingUtil
+} from "draft-js";
+const { hasCommandModifier } = KeyBindingUtil;
+
 import createSingleLinePlugin from "draft-js-single-line-plugin";
 
 import { Button } from "semantic-ui-react";
@@ -46,6 +54,7 @@ class EditorComponent extends React.Component {
   }
 
   _handleKeyCommand(command, editorState) {
+    console.log("머꼬?");
     // keyboard 단축키를 handler 한다.
     // console.log(`001 : command : ${command}`);
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -69,6 +78,7 @@ class EditorComponent extends React.Component {
   }
 
   _mapKeyToEditorCommand(e) {
+    // shift : 16
     if (e.keyCode === 9 /*  TAB  */) {
       e.preventDefault();
       const newEditorState = RichUtils.onTab(
@@ -76,6 +86,51 @@ class EditorComponent extends React.Component {
         this.state.editorStateContent,
         4 /* maxDepth */
       );
+      // console.log(BLOCK_TYPES.map(({ style }) => style));
+      /*
+      ["header-one", "header-two", "header-three", "header-four", "header-five", "unordered-list-item", "blockquote"] (7)
+      */
+      const shiftBlockStyles = BLOCK_TYPES.map(({ style }) => style).slice(
+        0,
+        5
+      );
+      const getNext = (arr, n) => {
+        return n === arr.length - 1 ? arr[0] : arr[n + 1];
+      };
+      const getPrev = (arr, n) => {
+        return n === 0 ? arr[arr.length - 1] : arr[n - 1];
+      };
+      console.log(shiftBlockStyles);
+      if (e.nativeEvent.shiftKey) {
+        // demote - mode
+        console.log(`with-Shift`);
+        this.onChangeContent(
+          RichUtils.toggleBlockType(
+            newEditorState,
+            getPrev(
+              shiftBlockStyles,
+              shiftBlockStyles.indexOf(
+                RichUtils.getCurrentBlockType(newEditorState)
+              )
+            )
+          )
+        );
+      } else {
+        console.log(RichUtils.getCurrentBlockType(newEditorState)); // unstyled
+        // promote - mode
+        this.onChangeContent(
+          RichUtils.toggleBlockType(
+            newEditorState,
+            getNext(
+              shiftBlockStyles,
+              shiftBlockStyles.indexOf(
+                RichUtils.getCurrentBlockType(newEditorState)
+              )
+            )
+          )
+        );
+      }
+      // 각 줄의 첫 -를 *로 치환할 필요가 있다.
       if (newEditorState !== this.state.editorStateContent) {
         this.onChangeContent(newEditorState);
       }
