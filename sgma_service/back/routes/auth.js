@@ -19,6 +19,15 @@ const cookieSet = (req,res)=>{
 	return cookie;
 }
 
+const login = (req,res)=>{
+	let cookie = res.req.user._id;
+	res.cookie("user",cookie,{
+		expires:new Date(Date.now()+900000),
+		httpOnly:true
+	})
+	res.redirect(successRedirect);
+}
+
 router.get('/',(req,res)=>{
 
 	if(req.cookies.user) res.json({login:'true',cookie:req.cookies.user});
@@ -31,19 +40,12 @@ router.get('/logout',(req,res)=>{
 	res.redirect('/');
 })
 
-router.get('/naver',isAuthenticated,passport.authenticate('naver',{
-	failureRedirect,
-}))
+router.get('/naver',isAuthenticated,passport.authenticate('naver'))
 
-router.get('/naver/callback',isAuthenticated,passport.authenticate('naver',{
-	failureRedirect,
-}),(req,res)=>{
-	let cookie = cookieSet(req,res);
-	res.cookie("user",cookie,{
-		expires:new Date(Date.now()+900000),
-		httpOnly:true
-	})
-	res.redirect(successRedirect);
-});
+router.get('/naver/callback',isAuthenticated,passport.authenticate('naver',{failureRedirect,}),login);
+
+router.get('/google',isAuthenticated,passport.authenticate('google'),(req,res)=>{console.log('test')});
+
+router.get('/google/callback',isAuthenticated,passport.authenticate('google',{failureRedirect,}),login);
 
 module.exports = router;

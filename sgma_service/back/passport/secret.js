@@ -1,8 +1,19 @@
-exports.naverID = "YOUR_NAVER_ID"
-exports.naverSecret = "YOUR_NAVER_SECRET";
-exports.naverURI = encodeURI('YOUR_NAVER_URI');
+const naverID = 'YOUR_ID';
+const naverSecret = 'YOUR_SECRET';
+const naverURI = encodeURI('YOUR_URI');
+exports.naverInfo = {
+	clientID:naverID,
+	clientSecret:naverSecret,
+	callbackURL:naverURI
+}
 
-exports.googleID = 'YOUR_GOOGLE_ID';
-exports.googleSecret = 'YOUR_GOOGLE_SECRET';
-exports.googleURI = encodeURI('YOUR_GOOGLE_URI');
+const googleID = 'YOUR_ID';
+const googleSecret = 'YOUR_SECRET';
+const googleURI = encodeURI('YOUR_URI');
+exports.googleInfo = {
+	clientID:googleID,
+	clientSecret:googleSecret,
+	callbackURL:googleURI,
+	scope:['https://www.googleapis.com/auth/plus.me']
+};
 
