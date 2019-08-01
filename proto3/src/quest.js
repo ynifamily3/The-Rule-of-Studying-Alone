@@ -1,3 +1,7 @@
+const Info = require('./info');
+const Soup = require('./soup');
+const Util = require('./util');
+
 /*
 	Quest 쓰는 방법
 
@@ -58,7 +62,7 @@ Quest.generate_binary_quest = function(g) {
 	let subinfos = Soup.fetch_subinfos(g).filter(info => {
 		return info.attrs.length > 0;
 	});
-	let material = get_randomly(subinfos);
+	let material = Util.get_randomly(subinfos);
 	let ans = null;
 	let fact = null;
 	if(Math.random() > 0.5) {
@@ -73,7 +77,7 @@ Quest.generate_binary_quest = function(g) {
 		// 	fact = Soup.mutate_attr(Soup.select_positive_attr(material));
 		fact = Soup.select_negative_attr(material, subinfos);
 	}
-	let name = get_randomly(material.names);
+	let name = Util.get_randomly(material.names);
 	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.<br>`
 		+`${material.names[0]}은(는) ${fact}`
 		,['T', 'F'], [ans]);
@@ -97,7 +101,7 @@ Quest.evaluator['binary'] = function(quest, response) {
 Quest.generate_selection_quest = function(g, n, a, inv) {
 	let p = inv ? n - a : a;
 	let subinfos = Soup.fetch_subinfos(g);
-	let material = get_randomly(subinfos.filter(info => {
+	let material = Util.get_randomly(subinfos.filter(info => {
 		return info.attrs.length >= p;
 	}));
 
@@ -108,7 +112,7 @@ Quest.generate_selection_quest = function(g, n, a, inv) {
 	let neg = Soup.select_negative_attrs(material, subinfos, n - p);
 
 	// 선택지 합치기
-	let choices = shuffle(pos.concat(neg), false);
+	let choices = Util.shuffle(pos.concat(neg), false);
 	let answers = null;
 	if(inv)
 		answers = neg.map(attr => {
@@ -118,7 +122,7 @@ Quest.generate_selection_quest = function(g, n, a, inv) {
 		answers = pos.map(attr => {
 			return choices.indexOf(attr);
 		});
-	let name = get_randomly(material.names);
+	let name = Util.get_randomly(material.names);
 
 	// 표현
 	let logic_label = inv ? '옳지 않은 것' : '옳은 것';
@@ -142,7 +146,7 @@ Quest.evaluator['selection'] = function(quest, response) {
 
 // 단답식 유형 문제 생성
 Quest.generate_short_quest = function(g, n) {
-	let material = get_randomly(Soup.fetch_subinfos(g).filter(info => {
+	let material = Util.get_randomly(Soup.fetch_subinfos(g).filter(info => {
 		return info.attrs.length > 0;
 	}));
 
@@ -169,3 +173,4 @@ Quest.evaluator['short'] = function(quest, response) {
 	return false;
 };
 
+module.exports = Quest;

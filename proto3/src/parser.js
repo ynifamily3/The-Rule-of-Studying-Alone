@@ -1,31 +1,33 @@
-/*
-	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
-*/
-function parse_doc(docstr) {
+const Info = require('./info');
+const Soup = require('./soup');
+const Parser = {};
+
+// String docstr를 Soup로 반환한다.
+Parser.parse_doc = function(docstr) {
 	// pre-process
-	let sentences = extract_sentences(docstr);
-	let tokens = reorganize(tokenize(sentences));
-	let soup = cook(tokens);
+	let sentences = Parser.extract_sentences(docstr);
+	let tokens = Parser.reorganize(Parser.tokenize(sentences));
+	let soup = Parser.cook(tokens);
 	return soup;
-}
+};
 
 // 선두 공백문자(leading space)의 끝지점을 찾아 반환한다.
 // ex: '  1234' -> 2
-function index_of_first_nonspace(target) {
+Parser.index_of_first_nonspace = function(target) {
 	let result = target.match(/^( |'\t')*/);
 	if(result)
 		return result[0].length;
 	else
 		return 0;
-}
+};
 
-// docstr에서 <문장>을 추출하여 배열로 반환한다.
-function extract_sentences(docstr) {
+// docstr에서 <문장>을 추출하여 String[]로 반환한다.
+Parser.extract_sentences = function(docstr) {
 	return docstr.split('\n')
 	.map(s => {
 	// 문장 앞에 나오는 공백을 제거한다.
 	// 제거할 필요가 없을 땐 복사를 막기 위해 원본을 반환한다.
-		let sidx = index_of_first_nonspace(s);
+		let sidx = Parser.index_of_first_nonspace(s);
 		if(sidx == 0)
 			return s;
 		else
@@ -34,7 +36,7 @@ function extract_sentences(docstr) {
 	// 공백 제거 후 내용이 없는 문장은 삭제한다.
 		return s != '';
 	});
-}
+};
 
 // sentences 배열의 원소들을 다음과 같이 가공하여 배열로 반환한다.
 // 	[식별 기호가 제외된 문장, 토큰 분류]
@@ -44,7 +46,7 @@ function extract_sentences(docstr) {
 //
 // 식별 기호를 제거했을 때 내용이 없는 토큰은 삭제한다.
 // ex: '* ' -> 삭제
-function tokenize(sentences) {
+Parser.tokenize = function(sentences) {
 	return sentences.map(s => {
 		let match_info = null;
 		if(match_info = s.match(/#+ /)) {
@@ -61,10 +63,10 @@ function tokenize(sentences) {
 	}).filter(token => {
 		return token[0] != '';
 	});
-}
+};
 
 // 토큰열을 제목 서브토큰 주석 속성 순으로 만들어준다.
-function reorganize(tokens) {
+Parser.reorganize = function(tokens) {
 	let stack = [];
 	for(let i = tokens.length - 1; i >= 0; --i) {
 		// 문서 상에서는 <소주석>과 <주석>을 이론적으로 구분하지만
@@ -97,11 +99,11 @@ function reorganize(tokens) {
 		}
 	}
 	return stack.reverse();
-}
+};
 
-// 토큰을 분석하여 수프를 만들어 Group[]으로 반환한다.
-// 문서에 따라서 트리가 아닌, 포레스트일 가능성이 있어 배열로 반환한다.
-function cook(tokens) {
+// 토큰을 분석하여 수프를 만들어 Soup로 반환한다.
+// Soup.roots에 루트가 있다.
+Parser.cook = function(tokens) {
 	// 에러
 	if(tokens == null)
 		throw new Error('[parser::cook] null pointer exception');
@@ -118,36 +120,34 @@ function cook(tokens) {
 	//
 	// 그래서 포레스트로 인정을 하며, 그걸 어떻게 다룰지는
 	// cook을 호출한 곳의 상황에 따라 결정하록 한다
-	let out = [];
+	let soup = new Soup();
 	let spos = 0;
 	let epos = 1;
 	let level = tokens[0][2];
 	while(epos <= tokens.length) {
 		if(epos == tokens.length) {
 		// 맨 마지막 경우
-			let temp = assemble(tokens, spos, epos);
+			let temp = Parser.assemble(soup, tokens, spos, epos);
 			if(temp)
-				out.push(temp);
+				soup.roots.push(temp);
 			spos = epos;
 		}
 		else if(tokens[epos][1] == '<제목n>' && tokens[epos][2] <= level) {
 		// 현재 토큰의 뎁스보다 더 깊은 녀석은 자식이다
 			level = tokens[epos][2];
-			let temp = assemble(tokens, spos, epos);
+			let temp = Parser.assemble(soup, tokens, spos, epos);
 			if(temp)
-				out.push(temp);
+				soup.roots.push(temp);
 			spos = epos;
 		}
 		++epos;
 	}
-	return out;
-}
+	return soup;
+};
 
 // 전제조건: tokens[spos]는 반드시 <제목n>이어야 하며
 // [spos, epos) 구간의 제목 단계는 n보다 커야한다.
-function assemble(tokens, spos, epos) {
-	//let out = new Group(tokens[spos][0]);
-	// let out = soup.create_group(tokens[spos][0]);
+Parser.assemble = function(soup, tokens, spos, epos) {
 	let out = soup.create_info([tokens[spos][0]], []);
 	++spos;
 	while(spos < epos) {
@@ -170,7 +170,7 @@ function assemble(tokens, spos, epos) {
 						&& tokens[idx][2] <= tokens[spos][2])) {
 					++idx;
 				}
-				let temp = assemble(tokens, spos, idx);
+				let temp = Parser.assemble(soup, tokens, spos, idx);
 				if(temp)
 					soup.append(out, temp);
 				spos = idx;
@@ -186,8 +186,9 @@ function assemble(tokens, spos, epos) {
 	// 속성도 없고 자식주제도 없으면 무의미하므로 제거
 		return null;
 	}
-}
-
-document.getElementById('docs').onchange = function(evt) {
-	debug_parse_doc(evt.target.value);
 };
+
+/*
+	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
+*/
+module.exports = Parser;

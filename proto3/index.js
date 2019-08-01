@@ -1,22 +1,29 @@
-let soup = new Soup();
-let root = null;
+const Parser = require('./src/parser');
+const Quest = require('./src/quest');
+
+document.getElementById('docs').onchange = function(evt) {
+	debug_parse_doc(evt.target.value);
+};
+
+let soup = null;
 
 // 파싱 예제
 function debug_parse_doc(docstr) {
 	// for debug purpose
 	let dom = document.querySelector('#tree');
 	dom.value = '';
-	root = parse_doc(docstr)[0];
+	soup = Parser.parse_doc(docstr);
+	console.log(soup);
 	dom.value = soup.get_tree();
 }
 
 // 참/거짓 문제 예제
 document.getElementById('quest-0-bt').onclick = function() {
-	if(!root)
+	if(!soup)
 		return;
 
 	// 문제 만들기
-	let quest = Quest.generate_binary_quest(root);
+	let quest = Quest.generate_binary_quest(soup.roots[0]);
 
 	// 지문 보여주기
 	document.getElementById('quest-0-stmt').innerHTML = quest.statement;
@@ -28,7 +35,7 @@ document.getElementById('quest-0-bt').onclick = function() {
 
 // n지선다 문제 예제
 document.getElementById('quest-1-bt').onclick = function() {
-	if(!root)
+	if(!soup)
 		return;
 
 	// 설정 값 읽기
@@ -37,7 +44,7 @@ document.getElementById('quest-1-bt').onclick = function() {
 	let inv = document.getElementById('quest-1-inv').checked;
 
 	// 문제 만들기
-	let quest = Quest.generate_selection_quest(root, n, a, inv);
+	let quest = Quest.generate_selection_quest(soup.roots[0], n, a, inv);
 
 	// 지문 보여주기
 	document.getElementById('quest-1-stmt').innerHTML = quest.statement;
@@ -56,14 +63,14 @@ document.getElementById('quest-1-bt').onclick = function() {
 };
 
 document.getElementById('quest-2-bt').onclick = function() {
-	if(!root)
+	if(!soup)
 		return;
 
 	// 설정 값 읽기
 	let n = parseInt(document.getElementById('quest-2-n').value);
 
 	// 문제 만들기
-	let quest = Quest.generate_short_quest(root, n);
+	let quest = Quest.generate_short_quest(soup.roots[0], n);
 
 	document.getElementById('quest-2-stmt').innerHTML = quest.statement;
 	document.getElementById('quest-2-input').value = quest.answers.toString();
