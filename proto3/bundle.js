@@ -91,7 +91,6 @@ document.getElementById('submit').onclick = function(evt) {
 	let cooked_json = Protocol.create_message(cooked_soup, 'add');
 
 	console.log(cooked_json);
-	return;
 
 	// URL 검증
 	let url = document.getElementById('url').value;
@@ -99,15 +98,20 @@ document.getElementById('submit').onclick = function(evt) {
 		return;
 
 	let xhr = new XMLHttpRequest();
+	let monitor = document.getElementById('response');
 	xhr.onreadystatechange = () => {
 		if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-			console.log(xhr.responseText);
+			monitor.value = '';
+			monitor.value += '==== HEADER ====\n';
+			monitor.value += xhr.getAllResponseHeaders();
+			monitor.value += '\n==== RESPONSE ====\n';
+			monitor.value += xhr.responseText;
 		}
 	};
 
 	xhr.open('post', url, true);
-	xhr.setRequestHeader('content-type', 'application/json');
-	xhr.send(JSON.stringify({test: 'test'}));
+	xhr.setRequestHeader('content-type', 'application/json; charset=utf-8');
+	xhr.send(JSON.stringify(cooked_json));
 };
 },{"./src/parser":3,"./src/protocol":4,"./src/quest":5}],2:[function(require,module,exports){
 class Info {
