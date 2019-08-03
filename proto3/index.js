@@ -1,5 +1,6 @@
 const Parser = require('./src/parser');
 const Quest = require('./src/quest');
+const Protocol = require('./src/protocol');
 
 document.getElementById('docs').onchange = function(evt) {
 	debug_parse_doc(evt.target.value);
@@ -74,4 +75,36 @@ document.getElementById('quest-2-bt').onclick = function() {
 
 	document.getElementById('quest-2-stmt').innerHTML = quest.statement;
 	document.getElementById('quest-2-input').value = quest.answers.toString();
+};
+
+// 네트워크 테스트
+// 참고
+// https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+// https://stackoverflow.com/questions/24468459/sending-a-json-to-server-and-retrieving-a-json-in-return-without-jquery
+
+
+document.getElementById('submit').onclick = function(evt) {
+	// Soup 조리
+	let docs_content = document.getElementById('docs').value;
+	let cooked_soup = Parser.parse_doc(docs_content);
+	let cooked_json = Protocol.create_message(cooked_soup, 'add');
+
+	console.log(cooked_json);
+	return;
+
+	// URL 검증
+	let url = document.getElementById('url').value;
+	if(url.match(/http:/) == null)
+		return;
+
+	let xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = () => {
+		if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+			console.log(xhr.responseText);
+		}
+	};
+
+	xhr.open('post', url, true);
+	xhr.setRequestHeader('content-type', 'application/json');
+	xhr.send(JSON.stringify({test: 'test'}));
 };

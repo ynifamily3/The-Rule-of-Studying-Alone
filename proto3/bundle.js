@@ -1,6 +1,7 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const Parser = require('./src/parser');
 const Quest = require('./src/quest');
+const Protocol = require('./src/protocol');
 
 document.getElementById('docs').onchange = function(evt) {
 	debug_parse_doc(evt.target.value);
@@ -76,7 +77,39 @@ document.getElementById('quest-2-bt').onclick = function() {
 	document.getElementById('quest-2-stmt').innerHTML = quest.statement;
 	document.getElementById('quest-2-input').value = quest.answers.toString();
 };
-},{"./src/parser":3,"./src/quest":4}],2:[function(require,module,exports){
+
+// 네트워크 테스트
+// 참고
+// https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+// https://stackoverflow.com/questions/24468459/sending-a-json-to-server-and-retrieving-a-json-in-return-without-jquery
+
+
+document.getElementById('submit').onclick = function(evt) {
+	// Soup 조리
+	let docs_content = document.getElementById('docs').value;
+	let cooked_soup = Parser.parse_doc(docs_content);
+	let cooked_json = Protocol.create_message(cooked_soup, 'add');
+
+	console.log(cooked_json);
+	return;
+
+	// URL 검증
+	let url = document.getElementById('url').value;
+	if(url.match(/http:/) == null)
+		return;
+
+	let xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = () => {
+		if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+			console.log(xhr.responseText);
+		}
+	};
+
+	xhr.open('post', url, true);
+	xhr.setRequestHeader('content-type', 'application/json');
+	xhr.send(JSON.stringify({test: 'test'}));
+};
+},{"./src/parser":3,"./src/protocol":4,"./src/quest":5}],2:[function(require,module,exports){
 class Info {
 	/*
 		String[] names: 지식의 이름들, 반드시 1개 이상
@@ -105,7 +138,16 @@ class Info {
 		// jsid가 탄생하였다. jsid의 유일성은 한 세션 내에서만 보장된다.
 		this.jsid = Info.jsidcnt++;
 		
-		this.ext = [];
+		//this.ext = [];
+	}
+
+	toJSON() {
+		return {
+			names: this.names,
+			attrs: this.attrs,
+			comment: this.comment,
+			id: this.id
+		};
 	}
 }
 
@@ -307,7 +349,52 @@ Parser.assemble = function(soup, tokens, spos, epos) {
 	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
 */
 module.exports = Parser;
-},{"./info":2,"./soup":5}],4:[function(require,module,exports){
+},{"./info":2,"./soup":6}],4:[function(require,module,exports){
+const Info = require('./info');
+
+const Protocol = {
+	// info의 하위지식을 comm에 직렬화한다.
+	__pack(info, comm) {
+		comm.idxmap[info.jsid] = comm.cnt++;
+		comm.out.infos.push(info.toJSON());
+		info.childs.forEach(child => {
+			if(comm.idxmap[child.jsid] === undefined)
+				Protocol.__pack(child, comm);
+			if(comm.out.type == 'add') {
+				comm.out.connections.push([
+					comm.idxmap[info.jsid],
+					comm.idxmap[child.jsid]
+				]);
+			}
+		});
+	},
+
+	// Info[] roots를 최상위 지식으로 삼는 스프를
+	// TopologyMessage로 만들어 반환한다.
+	// TopologyMessage의 형식은 다음과 같다.
+	// {
+	//		infos: [], connections: [], type: some string
+	// }
+	create_message(soup, type) {
+		let comm = {
+			idxmap: {},
+			cnt: 0,
+			out: {
+				infos: [],
+				connections: [],
+				type
+			}
+		};
+		soup.roots.forEach(root => {
+			if(comm.idxmap[root.jsid] === undefined)
+				Protocol.__pack(root, comm);
+		});
+		return comm.out;
+	}
+};
+
+module.exports = Protocol;
+},{"./info":2}],5:[function(require,module,exports){
 const Info = require('./info');
 const Soup = require('./soup');
 const Util = require('./util');
@@ -484,7 +571,7 @@ Quest.evaluator['short'] = function(quest, response) {
 };
 
 module.exports = Quest;
-},{"./info":2,"./soup":5,"./util":6}],5:[function(require,module,exports){
+},{"./info":2,"./soup":6,"./util":7}],6:[function(require,module,exports){
 const Info = require('./info');
 const Util = require('./util');
 
@@ -598,7 +685,7 @@ Soup.select_negative_attrs = function(material, subinfos, n) {
 };
 
 module.exports = Soup;
-},{"./info":2,"./util":6}],6:[function(require,module,exports){
+},{"./info":2,"./util":7}],7:[function(require,module,exports){
 const Util = {};
 
 /*

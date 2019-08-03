@@ -26,7 +26,16 @@ class Info {
 		// jsid가 탄생하였다. jsid의 유일성은 한 세션 내에서만 보장된다.
 		this.jsid = Info.jsidcnt++;
 		
-		this.ext = [];
+		//this.ext = [];
+	}
+
+	toJSON() {
+		return {
+			names: this.names,
+			attrs: this.attrs,
+			comment: this.comment,
+			id: this.id
+		};
 	}
 }
 
