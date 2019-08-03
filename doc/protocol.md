@@ -60,11 +60,11 @@ Let out = {
 	type: some string
 }
 
-function serialize(Info info):
+function pack(Info info):
+	out.infos += info
 	for child in info.childs:
 		if child is not visited:
-			out.infos += child
-			serialize(child)
+			pack(child)
 		if out.type is "add":
 			out.connections += (index of info in out.infos, index of child in out.infos)
 		
