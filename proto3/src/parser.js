@@ -53,7 +53,7 @@ Parser.tokenize = function(sentences) {
 		// <제목n식별자>
 			return [s.slice(match_info[0].length), '<제목n>',
 				match_info[0].length - 1];
-		} else if(match_info = s.match(/\* /)) {
+		} else if(match_info = s.match(/\- /)) {
 		// <속성>
 			return [s.slice(match_info[0].length), '<속성>'];
 		} else {
