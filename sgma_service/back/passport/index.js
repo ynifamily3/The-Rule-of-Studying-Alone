@@ -1,7 +1,8 @@
 const NaverStrategy = require('passport-naver').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy
 const {naverInfo,googleInfo}=require('./secret');
-//const {naverInfo,googleInfo}=require('./real_secret');
+//const {naverInfo,googleInfo,facebookInfo}=require('./real_secret');
 
 
 const userinfo = require('../models/userinfo');
@@ -66,5 +67,13 @@ module.exports = (app,passport)=>{
 		loginSuccess(profile.provider,id,nickname,email,profile_photo,done);
 	}));
 	
-	
+	passport.use('facebook',new FacebookStrategy(facebookInfo,(accessToken,refreshToken,profile,done)=>{
+		//console.log(profile);
+		let email;
+		let nickname = profile.displayName;
+		let profile_photo;
+		let id = profile._json.id;
+		loginSuccess(profile.provider,id,nickname,email,profile_photo,done);
+
+	}));
 }

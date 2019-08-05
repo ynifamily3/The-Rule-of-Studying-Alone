@@ -44,8 +44,12 @@ router.get('/naver',isAuthenticated,passport.authenticate('naver'))
 
 router.get('/naver/callback',isAuthenticated,passport.authenticate('naver',{failureRedirect,}),login);
 
-router.get('/google',isAuthenticated,passport.authenticate('google'),(req,res)=>{console.log('test')});
+router.get('/google',isAuthenticated,passport.authenticate('google'));
 
 router.get('/google/callback',isAuthenticated,passport.authenticate('google',{failureRedirect,}),login);
+
+router.get('/facebook',isAuthenticated,passport.authenticate('facebook'));
+
+router.get('/facebook/callback',isAuthenticated,passport.authenticate('facebook',{failureRedirect,}),login);
 
 module.exports = router;

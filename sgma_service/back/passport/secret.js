@@ -17,3 +17,13 @@ exports.googleInfo = {
 	scope:['https://www.googleapis.com/auth/plus.me']
 };
 
+const facebookID = 'YOUR_ID';
+const facebookSecret = 'YOUR_SECRET'
+const facebookURI = encodeURI('YOUR_URI');
+
+exports.facebookInfo = {
+    clientID:facebookID,
+    clientSecret:facebookSecret,
+    callbackURL:facebookURI,
+};
+
