@@ -93,7 +93,7 @@ document.getElementById('submit').onclick = function(evt) {
 
 	// URL 검증
 	let url = document.getElementById('url').value;
-	if(url.match(/http:/) == null)
+	if(url.match(/http(s)?:/) == null)
 		return;
 
 	let xhr = new XMLHttpRequest();
