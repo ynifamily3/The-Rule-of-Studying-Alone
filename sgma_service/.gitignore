@@ -94,3 +94,5 @@ next/.next/
 #passport secret
 back/passport/real_secret.js
 
+# DSstore files
+.DS_Store

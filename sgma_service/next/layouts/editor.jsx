@@ -5,8 +5,13 @@ import InsertToolbar from "../components/editor/insertToolbar"; // Editor Toolba
 import EditorComponent from "../components/editor/EditorComponent";
 import { convertToRaw } from "draft-js";
 import { draftToMarkdown } from "../libs/markdown-draft-js";
-import debug_parse_doc from "../libs/md-2-tree";
 import Modal from "react-modal";
+
+// import custom-made
+const Parser = require("../libs/md-2-tree/parser");
+
+// import test-paper
+import TestPaperComponent from "../components/quiz/paper";
 
 const modalStyles = {
   content: {
@@ -35,20 +40,24 @@ class EditorPage extends Component {
   }
 
   openModal() {
-    console.log(`모달이 오픈됨`);
+    // console.log(`모달이 오픈됨`);
     // console.log(this.refs.editorComponent);
     const markDown = draftToMarkdown(
       convertToRaw(
         this.refs.editorComponent.state.editorStateContent.getCurrentContent()
       )
     );
-    const finalSoup = debug_parse_doc(markDown.replace(/^-/gm, "*")); // 자체 console에선 문제 없었음. (tree 구축 과정에서 예전 변수를 안 비우고 쓰는 듯)
-    console.log(`파이널 soup`);
-    console.log(finalSoup); // 처음에 넣은 값이 바뀌지 않고 그대로 유지되는 거 같음 (bugs?)
-    console.log(`end of`);
+    /*
+    let cooked_soup = Parser.parse_doc(docs_content);
+    let cooked_json = Protocol.create_message(cooked_soup, 'add');  
+    */
+    const finalSoup = Parser.parse_doc(markDown);
+    // const createdServerData = Protocol.create_message(finalSoup, "add");
+    console.log(finalSoup);
+
     this.setState({
       modalIsOpen: true,
-      quiz: JSON.stringify(finalSoup) // => 이전께 불러와짐. (아마 라이브러리의 문제 같음.) 퀴즈 만드는덴 중요하지 않은 거 같으므로 일단 넘긴다.
+      finalSoup // => 이전께 불러와짐. (아마 라이브러리의 문제 같음.) 퀴즈 만드는덴 중요하지 않은 거 같으므로 일단 넘긴다.
     });
   }
 
@@ -101,18 +110,27 @@ class EditorPage extends Component {
             <Modal
               isOpen={this.state.modalIsOpen}
               onAfterOpen={this.afterOpenModal}
-              onRequestClose={this.closeModal}
+              /*onRequestClose={this.closeModal}*/
               style={modalStyles}
               contentLabel="Example Modal"
             >
-              <h2 ref={subtitle => (this.subtitle = subtitle)}>Hello</h2>
-              <button onClick={this.closeModal}>close</button>
               <div>
-                <div className="problemArea">만들어진 퀴즈 (ProtoType)</div>
+                <h2
+                  className="problemArea"
+                  ref={subtitle => (this.subtitle = subtitle)}
+                >
+                  Quiz
+                </h2>
                 <div className="problemBox">
-                  {this.state.quiz ? this.state.quiz : "Making...."}
+                  {this.state.finalSoup ? (
+                    <TestPaperComponent soup={this.state.finalSoup} />
+                  ) : (
+                    "문제지를 불러오는 중입니다."
+                  )}{" "}
                 </div>
               </div>
+              <button>PDF로 내보내기</button>{" "}
+              <button onClick={this.closeModal}>종료하기</button>
             </Modal>
           </div>
         </div>

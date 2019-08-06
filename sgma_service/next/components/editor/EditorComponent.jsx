@@ -8,9 +8,13 @@ import {
   EditorState,
   RichUtils,
   getDefaultKeyBinding,
-  KeyBindingUtil
+  KeyBindingUtil,
+  ContentState,
+  convertFromRaw
 } from "draft-js";
+import { markdownToDraft } from "../../libs/markdown-draft-js";
 const { hasCommandModifier } = KeyBindingUtil;
+import testData from "./testdata";
 
 import createSingleLinePlugin from "draft-js-single-line-plugin";
 
@@ -23,11 +27,15 @@ const plugins = [singleLinePlugin];
 class EditorComponent extends React.Component {
   constructor(props) {
     super(props);
+    const draftRawData = markdownToDraft(testData);
+    // console.log(draftRawData);
     this.state = {
       plugins: null,
       editorLoaded: false,
       editorState: EditorState.createEmpty(), // 단순 제목 string
-      editorStateContent: EditorState.createEmpty() // 내용 (중요!)
+      editorStateContent: EditorState.createWithContent(
+        convertFromRaw(draftRawData)
+      ) // 내용 (중요!)
     };
     this.focus = () => this.refs.editor.focus(); // 이건 뭐하는 걸까?
 
@@ -50,11 +58,11 @@ class EditorComponent extends React.Component {
   }
 
   _setDefaultHeaderStyle(edesu) {
-    console.log("기본 설정을 적용합시다.");
+    // console.log("기본 설정을 적용합시다."); => 진입이 되긴 하는데 현재로선 쓸 가치가 없다.
   }
 
   _handleKeyCommand(command, editorState) {
-    console.log("머꼬?");
+    // console.log("단축키 핸들");
     // keyboard 단축키를 handler 한다.
     // console.log(`001 : command : ${command}`);
     const newState = RichUtils.handleKeyCommand(editorState, command);

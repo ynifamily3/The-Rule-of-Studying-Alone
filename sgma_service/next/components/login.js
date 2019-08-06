@@ -1,10 +1,10 @@
-import React from "react";
+import React, { Component } from "react";
 import "../css/login.css";
 import CustomButton from "./custombutton";
 import Textbox from "./textbox";
 import ThirdPartyButton from "./thirdpartybutton";
 
-class LoginComponent extends React.Component {
+class LoginComponent extends Component {
   constructor(props) {
     super(props);
 

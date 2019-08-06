@@ -89,3 +89,6 @@ typings/
 
 # next build exports
 out/
+
+# DSstore files
+.DS_Store
