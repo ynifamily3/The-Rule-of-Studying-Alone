@@ -1,4 +1,6 @@
-기존의 `select_negative_attr` 함수는 자신을 포함하는 상위지식의 속성을 부정명제로 가져오는 문제점이 있었다. 아래의 개선된 알고리즘은 
+기존의 `select_negative_attr` 함수는 자신을 포함하는 상위지식의 속성을 부정명제로 가져오는 문제점이 있었다. 아래의 개선된 알고리즘은 확실하게 긍정인 명제들을 제외한다.
+
+![select-negative-attr-figure](./select-negative-attr-figure.jpg)
 
 ```pseudocode
 // TYPE_I: inter info. 소재가 되는 지식(material)의 하위지식. 소재에 대하여 참을 만족하기 때문에 골라선 안된다.
@@ -47,4 +49,3 @@ function select_negative_attr(Info upperbound, Info material):
 ```
 
 본래 위 함수를 하나로 통합할 수도 있으나, 함수 인자가 불필요하게 늘어나고 논리적으로 너무 난해해지기 때문에 고의적으로 분리하였다.
-
