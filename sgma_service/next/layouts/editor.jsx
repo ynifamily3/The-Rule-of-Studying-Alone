@@ -123,7 +123,10 @@ class EditorPage extends Component {
                 </h2>
                 <div className="problemBox">
                   {this.state.finalSoup ? (
-                    <TestPaperComponent soup={this.state.finalSoup} />
+                    <TestPaperComponent
+                      soup={this.state.finalSoup}
+                      problems={5}
+                    />
                   ) : (
                     "문제지를 불러오는 중입니다."
                   )}{" "}
