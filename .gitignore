@@ -92,3 +92,4 @@ out/
 
 # DSstore files
 .DS_Store
+proto3/bundle.js
