@@ -24,16 +24,16 @@ const QuizBox = props => {
   return (
     <Segment raised>
       <div className="problem-title">
-        {statement.split("<br>").map(line => {
+        {statement.split("<br>").map((line, i) => {
           return (
-            <span>
+            <span key={i + Math.random()}>
               {line}
               <br />
             </span>
           );
         })}
       </div>
-      <Form>{selectionComponent}</Form>
+      <Form.Field>{selectionComponent}</Form.Field>
     </Segment>
   );
 };

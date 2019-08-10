@@ -6,6 +6,7 @@ import EditorComponent from "../components/editor/EditorComponent";
 import { convertToRaw } from "draft-js";
 import { draftToMarkdown } from "../libs/markdown-draft-js";
 import Modal from "react-modal";
+import { Button } from "semantic-ui-react";
 
 // import custom-made
 const Parser = require("../libs/md-2-tree/parser");
@@ -20,7 +21,9 @@ const modalStyles = {
     right: "auto",
     bottom: "auto",
     marginRight: "-50%",
-    transform: "translate(-50%, -50%)"
+    transform: "translate(-50%, -50%)",
+    width: "480px",
+    height: "640px"
   }
 };
 
@@ -33,10 +36,25 @@ class EditorPage extends Component {
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.createPDF = this.createPDF.bind(this);
   }
 
   componentDidMount() {
     Modal.setAppElement("#contentWrapper");
+  }
+
+  createPDF() {
+    const html2canvas = require("html2canvas");
+    const jsPDF = require("jspdf");
+
+    const input = document.getElementById("paper");
+    html2canvas(input).then(canvas => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(canvas.toDataURL("image/png"), 0, 0, 210, 297);
+      // pdf.output('dataurlnewwindow');
+      pdf.save("문제.pdf");
+    });
   }
 
   openModal() {
@@ -63,7 +81,7 @@ class EditorPage extends Component {
 
   afterOpenModal() {
     // 레퍼가 동기화되고 접근할 수 있음.
-    this.subtitle.style.color = "skyblue";
+    this.subtitle.style.color = "grey";
   }
 
   closeModal() {
@@ -98,7 +116,7 @@ class EditorPage extends Component {
               height: "100vh",
               margin: "0 auto",
               textAlign: "left",
-              overflow: "hidden"
+              overflow: "scroll"
             }}
           >
             <div className="editorRoot">
@@ -114,12 +132,13 @@ class EditorPage extends Component {
               style={modalStyles}
               contentLabel="Example Modal"
             >
-              <div>
+              <div id="paper">
                 <h2
                   className="problemArea"
                   ref={subtitle => (this.subtitle = subtitle)}
+                  style={{ textAlign: "center" }}
                 >
-                  Quiz
+                  ❤️문제지❤️
                 </h2>
                 <div className="problemBox">
                   {this.state.finalSoup ? (
@@ -132,8 +151,17 @@ class EditorPage extends Component {
                   )}{" "}
                 </div>
               </div>
-              <button>PDF로 내보내기</button>{" "}
-              <button onClick={this.closeModal}>종료하기</button>
+              <div
+                style={{
+                  textAlign: "center",
+                  marginTop: "1.5em"
+                }}
+              >
+                <Button.Group>
+                  <Button onClick={this.createPDF}>PDF로 내보내기</Button>
+                  <Button onClick={this.closeModal}>종료하기</Button>
+                </Button.Group>
+              </div>
             </Modal>
           </div>
         </div>
