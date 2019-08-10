@@ -72,10 +72,10 @@ Quest.generate_binary_quest = function(g) {
 	else {
 		ans = 'F';
 		//if(Math.random() > 0.5)
-		// 	fact = Soup.select_negative_attr(material);
+		// 	fact = Soup.select_negative_attrs(material, 1);
 		// else
 		// 	fact = Soup.mutate_attr(Soup.select_positive_attr(material));
-		fact = Soup.select_negative_attr(material, subinfos);
+		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
 	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.<br>`
@@ -109,7 +109,7 @@ Quest.generate_selection_quest = function(g, n, a, inv) {
 	let pos = Soup.select_positive_attrs(material, p);
 
 	// 오답 선택지 만들기
-	let neg = Soup.select_negative_attrs(material, subinfos, n - p);
+	let neg = Soup.select_negative_attrs(g, material, n - p);
 
 	// 선택지 합치기
 	let choices = Util.shuffle(pos.concat(neg), false);
