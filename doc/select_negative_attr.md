@@ -11,8 +11,9 @@
 function discard_subinfos(Info root, Info{} check):
 	check[root.jsid] := TYPE_I
 	for child in root.childs:
-		// discard_subinfos가 실행되기 전에 부정명제로 판정되었던
-		// 하위지식이 존재할 수 있으므로, check를 조회해야 한다
+		// discard_subinfos가 실행되기 전에 TYPE_O로 간주된
+		// 하위지식이 존재할 수 있으므로, 방문한 적이 있더라도 확인해야 한다
+		// 여담으로 TYPE_M인 경우는 존재할 수가 없다
 		if child is not visited or check[child.jsid] is TYPE_O:
 			discard_subinfos(child, check)
 
@@ -20,28 +21,27 @@ function discard_subinfos(Info root, Info{} check):
 // material 자기자신을 포함하여 material에 도달할 수 있는 모든 중간지식도 제외된다
 // upperbound에서 material로 도달할 수 있으면 false를
 // 그렇지 않으면 true를 반환한다
-function traverse_down(Info upperbound, Info material, Info{} check):
-	if upperbound is material:
+function traverse_down(Info root, Info material, Info{} check):
+	if root is material:
 		discard_subinfos(material)
 		return TYPE_M
 	else:
-		Let ub_type := TYPE_O
+		Let rtype := TYPE_O
 		for child in root.childs:
-			if (
-					child is not visited and 
-					traverse_down(child, material, check) is TYPE_M
-				) or
-				(
-					check[child.jsid] is TYPE_M
-				):
-					ub_type := TYPE_M
-		check[upperbound.jsid] := ub_type
+			Let ctype := NULL
+			if child is not visited:
+				ctype := traverse_down(child, material, check)
+			else:
+				ctype := check[child.jsid]
+			if ctype is TYPE_M:
+				rtype := TYPE_M
+		check[root.jsid] := ub_type
 		return ub_type
 		
-function select_negative_attr(Info upperbound, Info material):
+function select_negative_attr(Info root, Info material):
 	Let out := []
 	Let check := {}
-	traverse_down(upperbound, material, check)
+	traverse_down(root, material, check)
 	for (key, value) in check:
 		if check is TYPE_O:
 			out += get Info having its jsid as key
