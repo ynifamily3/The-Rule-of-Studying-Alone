@@ -81,7 +81,7 @@ class EditorComponent extends React.Component {
   _mapKeyToEditorCommandTitle(e) {
     if (e.keyCode === 9) {
       e.preventDefault();
-      // this.refs.editor.focus(); // 내용 부분으로 포커스를 옮긴다. (근데 스크롤을 강제 이주시켜서 잠깐 주석처리;)
+      this.refs.editor.focus(); // 내용 부분으로 포커스를 옮긴다. (근데 롤을 강제 이주시켜서 잠깐 주석처리;)
     }
   }
 
