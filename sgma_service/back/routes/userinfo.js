@@ -1,31 +1,20 @@
 //const express = require('express');
 const router = require('express').Router();
 var userinfo = require('../models/userinfo');
+const loginCheck = require('./util').loginCheck;
 
-router.get('/',(req,res,next)=>{
+router.get('/',loginCheck,(req,res,next)=>{
 	console.log('get userinfo');
 	let users={};
-
-	if(req.cookies.user){
-		userinfo.findOne({_id:req.cookies.user})
-			.then((user)=>{
-				if(!user) return res.stats(404).json({error:'user not found'})
-				res.json({isLogin:true,user});
-			})
-			.catch((err)=>res.status(500).send({error:'database failure'}));
-	}
-	else res.status(401).send({isLogin:false});
-
-	/*
-	userinfo.find()
+	
+	userinfo.findOne({_id:req.cookies.user},{_id:0,_subjects:0})
 		.then((user)=>{
-			users['userinfo']=user;
-			res.json(users);
+			if(!user) return res.stats(404).json({error:'user not found'});
+			res.json({isLogin:true,user});
 		})
 		.catch((err)=>res.status(500).send({error:'database failure'}));
-	*/
 });
-
+/*
 router.get('/:id',(req,res)=>{
 	console.log(`get userinfo/${req.params.id}`);
 
@@ -39,6 +28,7 @@ router.get('/:id',(req,res)=>{
 
 router.post('/',(req,res)=>{
 	console.log('post userinfo');
+	console.log(req.body);
 	
 	let newUser = new userinfo();
 	if(req.body.auth_method) newUser.auth_method=req.body.auth_method;
@@ -46,9 +36,16 @@ router.post('/',(req,res)=>{
 	if(req.body.nickname) newUser.nickname=req.body.nickname;
 	if(req.body.email) newUser.email=req.body.email;
 	if(req.body.profile_photo) newUser.profile_photo=req.body.profile_photo;
-	newUser.save()
-		.then(()=>res.json({result:"Post success"}))
+	let ret = newUser.save()
+		.then((test)=>{
+			res.json({result:"Post success"})
+			console.log("test",test);
+		})
 		.catch((err)=>res.json({result:"Post error"}));
+
+	console.log("ret",ret);
+
+		
 });
 
 router.put('/:id',(req,res)=>{
@@ -71,5 +68,5 @@ router.delete('/:id',(req,res)=>{
 		})
 		.catch((err)=>res.status(500).json({error:'database failure'}));
 });
-
+*/
 module.exports = router;

@@ -24,15 +24,10 @@ const userSchema = new Schema({
 		type:String,
 		default:"photoURL",
 	},
-	/*
-	social:{
-		naver:{
-			access_token:String,
-			id:String,
-			displayName:String,
-		}
+	subjects:{
+		type:Array,
+		default:[],
 	},
-	*/
 	createdAt:{
 		type: Date,
 		default: Date.now,

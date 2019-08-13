@@ -1,8 +1,8 @@
 const NaverStrategy = require('passport-naver').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy
-const {naverInfo,googleInfo}=require('./secret');
-//const {naverInfo,googleInfo,facebookInfo}=require('./real_secret');
+//const {naverInfo,googleInfo,facebookInfo}=require('./secret');
+const {naverInfo,googleInfo,facebookInfo}=require('./real_secret');
 
 
 const userinfo = require('../models/userinfo');
