@@ -7,7 +7,7 @@ router.get('/',loginCheck,(req,res,next)=>{
 	console.log('get userinfo');
 	let users={};
 	
-	userinfo.findOne({_id:req.cookies.user},{_id:0,_subjects:0})
+	userinfo.findOne({_id:req.cookies.user},{_id:0,subjects:0})
 		.then((user)=>{
 			if(!user) return res.stats(404).json({error:'user not found'});
 			res.json({isLogin:true,user});

@@ -1,5 +1,5 @@
 var userinfo = require('../models/userinfo');
-var soupinfo = require('../models/soup');
+//var soupinfo = require('../models/soup');
 var subjectinfo = require('../models/subject')
 
 exports.loginCheck = (req,res,next) => {
@@ -10,6 +10,10 @@ exports.loginCheck = (req,res,next) => {
 	res.status(401).send({isLogin:false});
 }
 
+exports.decodeCookie = (res,req,next)=>{
+	req.cookies.user
+}
+	/*
 exports.subjectCheck = (req,res) =>{
 	//실제 코드에서는 해당 서브젝트의 다른 정보를 기준으로 find함
 	console.log("subjectCheck");
@@ -34,3 +38,4 @@ const connectWrite = (num,_id,connects) =>{
 	})
 	return connects;
 }
+*/

@@ -42,7 +42,7 @@ module.exports = () =>{
 	});
 	
 	require('./userinfo');
-	require('./soup');
+	//require('./soup');
 	require('./subject');
 	require('./file');
 };

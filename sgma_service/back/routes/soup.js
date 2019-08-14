@@ -2,10 +2,10 @@ const express = require('express');
 const router = require('express').Router();
 const cors = require('cors');
 const {loginCheck,subjectCheck,soupWrite} = require('./util');
-var soupinfo = require('../models/soup');
+//var soupinfo = require('../models/soup');
 var fileinfo = require('../models/file');
 var subjectinfo = require('../models/subject');
-
+/*
 let cors_option = {
 	origin: function(origin, cb){
 		console.log(`CORS request from ${origin}`);
@@ -64,12 +64,12 @@ router.get('/',(req,res,next)=>{
 	res.json({test:'test'});
 });
 
-router.post('/',cors(cors_option)/*,loginCheck*/,(req,res,next)=>{
+router.post('/',cors(cors_option)/*,loginCheck,(req,res,next)=>{
 	console.log(req.body);
 	//let subject = subjectCheck(req,res);
 	//console.log("subject--",subject);
 	setSubject(req.body);
 	//res.json(subject,req.body);
 });
-
+*/
 module.exports = router;

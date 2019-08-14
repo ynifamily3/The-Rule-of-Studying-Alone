@@ -1,4 +1,4 @@
-const mongoose= require('mongoose');
+const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const fileSchema = new Schema({
@@ -6,21 +6,27 @@ const fileSchema = new Schema({
 		type:String,
 		default:""
 	},
-	comment:{
-		type:String,
-		default:""
+	subject:{
+		type:mongoose.Schema.Types.ObjectId,
+		ref:'Subject',
+		required:true,
 	},
-	owner:{
-		type:String
-	},
-	childs:{
+	soups:{
 		type:Array,
 		default:[]
 	},
 	connections:{
 		type:Array,
-		defualt:[]
+		default:[]
+	},
+	md_text:{
+		type:String,
+		default:""
 	}
 });
 
-module.exports = mongoose.model('File',fileSchema,'File');
+fileSchema.static.findName=(name,callback)=>{
+	this.findOne({name:name},callback)
+}
+
+module.exports = mongoose.model('file',fileSchema,'File');

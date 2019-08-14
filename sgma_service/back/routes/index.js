@@ -6,7 +6,7 @@ const router = require('express').Router();
 
 router.use('/userinfo',userinfoRouter);
 router.use('/auth',authRouter);
-router.use('/soup',soupRouter);
+//router.use('/soup',soupRouter);
 router.use('/doc',docRouter);
 router.use('/docs',docsRouter);
 

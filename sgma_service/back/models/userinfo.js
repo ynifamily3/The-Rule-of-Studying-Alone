@@ -32,6 +32,10 @@ const userSchema = new Schema({
 		type: Date,
 		default: Date.now,
 		  },
-		});
+});
+
+userSchema.static.findId=(id,callback)=>{
+	this.find({_id:id}.callback)
+}
 
 module.exports = mongoose.model('userinfo',userSchema,'userinfo');
