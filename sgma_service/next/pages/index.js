@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Page from "../layouts/main";
 import Gnb from "../layouts/gnb";
 import Link from "next/link";
@@ -7,26 +6,6 @@ import { useDispatch } from "react-redux";
 import { LOG_IN } from "../reducers/userinfo";
 
 export default () => {
-  const dispatch = useDispatch();
-  /*
-  useEffect 는 리액트 컴포넌트가 렌더링 될 때마다 특정 작업을 수행하도록 설정 할 수 있는 Hook 입니다. 
-  클래스형 컴포넌트의 componentDidMount 와 componentDidUpdate 를 합친 형태로 보아도 무방합니다.
-  */
-
-  // 밑은 확인용 디버그 코드
-  useEffect(() => {
-    dispatch({
-      type: LOG_IN,
-      data: {
-        auth_method: "naver",
-        user_id: "_99773",
-        nickname: "쫑근9 - 미엘9",
-        email: "ynifamily3@gmail.com",
-        profile_photo: "https://miel9photo.com",
-        createdAt: "2019-03-03"
-      } // 액션을 dispatch 한다. (클라이언트 사이드에 state가 된다.)
-    });
-  }, []);
   return (
     <Page>
       <Gnb />
