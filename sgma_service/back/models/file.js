@@ -11,6 +11,10 @@ const fileSchema = new Schema({
 		ref:'Subject',
 		required:true,
 	},
+	owner:{
+		type:mongoose.Schema.Types.ObjectId,
+		required:true,
+	},
 	soups:{
 		type:Array,
 		default:[]

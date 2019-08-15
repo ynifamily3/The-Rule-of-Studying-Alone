@@ -11,7 +11,7 @@ const subjectSchema = new Schema({
 		ref:'userinfo',
 		default:null,
 	},
-	files:[{type:mongoose.Schema.Types.ObjectId,ref:'File'}]
+	files:[{type:mongoose.Schema.Types.ObjectId,ref:'file'}]
 });
 //const model = mongoose.model('subject',subjectSchema,'Subject');
 
