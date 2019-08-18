@@ -7,14 +7,26 @@ import reducer from "../reducers";
 
 // store == state + action + reducer
 
-const YASM = ({ Component, store }) => {
+const YASM = ({ Component, store, pageProps }) => {
   return (
     <Provider store={store}>
       <Container>
-        <Component />
+        <Component {...pageProps} />
       </Container>
     </Provider>
   );
+};
+
+// 전체 앱의 하위 컴포넌트의 getInitialProps를 후킹한다.
+YASM.getInitialProps = async ({ Component, router, ctx }) => {
+  // console.warn("마이앱의 겟 이니셜.", router);
+  let pageProps = {};
+  if (Component.getInitialProps) {
+    // console.warn("컴포넌트에 getInitialProps가 존재함");
+    pageProps = await Component.getInitialProps(ctx);
+  }
+  // console.warn("받은 props.", pageProps);
+  return { pageProps };
 };
 
 export default withRedux((initialState, options) => {

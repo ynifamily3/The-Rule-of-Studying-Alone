@@ -4,7 +4,7 @@
   "description": "교양 시험을 필기하고, 자동 문제 생성을 통해 여러분의 암기 시험을 도와드립니다.",
   "main": "server.js",
   "scripts": {
-    "dev": "next ./next",
+    "dev": "next ./front",
     "build": "next build ./front",
     "start": "node server.js",
     "front": "next start ./front"
