@@ -1,11 +1,13 @@
 export const initialState = {
   isLogin: false,
-  auth_method: null,
-  user_id: null,
-  nickname: null,
-  email: null,
-  profile_photo: null,
-  createdAt: null
+  user: {
+    auth_method: null,
+    user_id: null,
+    nickname: null,
+    email: null,
+    profile_photo: null,
+    createdAt: null
+  }
 };
 
 export const LOG_IN = "LOG_IN"; // 로그인하는 액션의 이름

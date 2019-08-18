@@ -5,9 +5,9 @@
   "main": "server.js",
   "scripts": {
     "dev": "next ./next",
-    "build": "next build ./next",
+    "build": "next build ./front",
     "start": "node server.js",
-    "front": "next start ./next"
+    "front": "next start ./front"
   },
   "keywords": [],
   "author": {
