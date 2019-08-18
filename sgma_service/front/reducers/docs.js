@@ -1,9 +1,9 @@
 /*
 {
   docs: [
-    { folder_name: "수학", files_name: ["수열", "기하", "집합", "함수"] },
-    { folder_name: "과학", files_name: ["생물", "지구과학"] },
-    { folder_name: "소녀전선", files_name: ["인형", "전략"] }
+    { folder_name: "수학", file_name: ["수열", "기하", "집합", "함수"] },
+    { folder_name: "과학", file_name: ["생물", "지구과학"] },
+    { folder_name: "소녀전선", file_name: ["인형", "전략"] }
   ];
 }
 */
@@ -21,7 +21,7 @@ export const DELETE_FILE = "DELETE_FILE";
 
 export const addFolder = {
   type: ADD_FOLDER,
-  data: { folder_name: "folder_name_default", files_name: [] }
+  data: { folder_name: "folder_name_default", file_name: [] }
 };
 
 export const addFile = {
@@ -44,9 +44,9 @@ const reducer = (state = initialState, action) => {
           ...state.docs.filter(x => x.folder_name !== data.folder_name),
           {
             folder_name: data_folder_name,
-            files_name: [
+            file_name: [
               ...state.docs.filter(x => x.folder_name === data.folder_name)[0]
-                .files_name,
+                .file_name,
               data.file_name
             ]
           }

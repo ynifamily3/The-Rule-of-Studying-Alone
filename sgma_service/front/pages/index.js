@@ -2,10 +2,25 @@ import Page from "../layouts/main";
 import Gnb from "../layouts/gnb";
 import Link from "next/link";
 import { Button, Segment } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
-import { LOG_IN } from "../reducers/userinfo";
+import { useSelector, useDispatch } from "react-redux";
+import { LOG_OUT } from "../reducers/userinfo";
 
-export default () => {
+export default ctx => {
+  const dispatch = useDispatch();
+  const { isLogin, user } = useSelector(state => state.userinfo); // reducer -> index.js -> rootReducer -> userinfo
+
+  const goLogout = e => {
+    dispatch({
+      type: LOG_OUT
+    });
+  };
+
+  /*
+  if (!(ctx && ctx.req)) {
+    console.log(user);
+  }
+  */
+
   return (
     <Page>
       <Gnb />
@@ -41,17 +56,27 @@ export default () => {
         </ul>
       </Segment>
       <div style={{ textAlign: "center", marginTop: "15px" }}>
-        <Link href="/login">
-          <Button color="grey">로그인</Button>
-        </Link>
-        <Link href="/problem">
-          <Button color="blue">문제 샘플 보기</Button>
-        </Link>
+        {isLogin ? (
+          <Button color="grey" onClick={goLogout}>
+            로그아웃 ({user.nickname})
+          </Button>
+        ) : (
+          <Link href="/login">
+            <a>
+              <Button color="orange">로그인</Button>
+            </a>
+          </Link>
+        )}
+
         <Link href="/dashboard">
-          <Button color="red">대쉬보드로 가기</Button>
+          <a>
+            <Button color="red">대쉬보드로 가기</Button>
+          </a>
         </Link>
         <Link href="/editor">
-          <Button color="black">에디터 (ProtoType)</Button>
+          <a>
+            <Button color="black">에디터 (ProtoType)</Button>
+          </a>
         </Link>
       </div>
     </Page>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import { useDispatch } from "react-redux";
 import "../css/login.css";
 import CustomButton from "./custombutton";
@@ -8,19 +9,8 @@ import ThirdPartyButton from "./thirdpartybutton";
 import { Form, Button } from "semantic-ui-react";
 import { LOG_IN, LOG_OUT } from "../reducers/userinfo";
 
-/*
-    static async getInitialProps (ctx) {
-        if (ctx && ctx.req) {
-            console.log('server side')
-            ctx.res.writeHead(302, {Location: `/`})
-            ctx.res.end()
-        } else {
-            console.log('client side')
-            Router.push(`/`)
-        }
-*/
-
 const LoginComponent = props => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const {
     isLogin,
@@ -56,6 +46,18 @@ const LoginComponent = props => {
       }
     });
   };
+
+  const goBack = e => {
+    router.back();
+  };
+
+  const goLogout = e => {
+    goBack(e); // 밑 줄과 순서를 바꾸면 퍼포먼스 문제가 있을지도?
+    dispatch({
+      type: LOG_OUT
+    });
+  };
+
   // 로그인 여부에 따라서 컴포넌트 분기
   if (!isLogin) {
     return (
@@ -159,8 +161,8 @@ const LoginComponent = props => {
         <div className="thirdparty-line">
           <div className="login">
             <Button.Group>
-              <Button>로그아웃</Button>
-              <Button>이전 페이지로</Button>
+              <Button onClick={goLogout}>로그아웃</Button>
+              <Button onClick={goBack}>이전 페이지로</Button>
             </Button.Group>
           </div>
         </div>
