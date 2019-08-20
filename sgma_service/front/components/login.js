@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import "../css/login.css";
 import CustomButton from "./custombutton";
 import Textbox from "./textbox";
-import ThirdPartyButton from "./thirdpartybutton";
 import { Form, Button, Image } from "semantic-ui-react";
 import CustomModal from "../components/modal/custommodal";
 import { LOG_IN, LOG_OUT } from "../reducers/userinfo";
@@ -18,6 +17,13 @@ const LoginComponent = props => {
     isLogin,
     user = { user_id, nickname, email, profile_photo, createdAt, auth_method }
   } = props.user;
+
+  // manage modal state
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const onChangeModalIsOpen = e => {
+    setModalIsOpen(false);
+  };
 
   // manage inputbox state
   const [id, setID] = useState("");
@@ -54,7 +60,7 @@ const LoginComponent = props => {
   };
 
   const goLogout = e => {
-    goBack(e); // 밑 줄과 순서를 바꾸면 퍼포먼스 문제가 있을지도?
+    goBack(e); // 이래도 밑에 디스패치는 된다.
     dispatch({
       type: LOG_OUT
     });
@@ -63,15 +69,22 @@ const LoginComponent = props => {
   // 구글 로그인 클릭시 서버 주소를 넣는다.
   // {`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver}
 
-  const loginWithNaver = e => {
-    alert("네이버");
+  const loginWithNaver = async e => {
+    // alert("네이버");
+    setModalIsOpen(true); // 로딩 모달 띄우기
+    const requestLoginJson = await fetch(
+      `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`
+    ); // 이걸 페이지 이동형으로 바꾸어야 한다.
+    const responseLoginResult = await requestLoginJson.text();
+    console.log(responseLoginResult);
+    setModalIsOpen(false);
   };
 
-  const loginWithFacebook = e => {
+  const loginWithFacebook = async e => {
     alert("페북");
   };
 
-  const loginWithGoogle = e => {
+  const loginWithGoogle = async e => {
     alert("구글");
   };
 
@@ -79,6 +92,14 @@ const LoginComponent = props => {
   if (!isLogin) {
     return (
       <div className="center-wrapper">
+        <CustomModal
+          open={modalIsOpen}
+          closeOnEscape={true}
+          closeOnDimmerClick={false}
+          onClose={onChangeModalIsOpen}
+          message={"로그인 중입니다..."}
+          dimmer={"inverted"}
+        />
         <h1 className="logo">로그인</h1>
         <div className="input" id="login-wrapper">
           <div className="login">
@@ -128,7 +149,7 @@ const LoginComponent = props => {
               <span>또는</span>
             </div>
             <div className="thirdparty-buttons">
-              <div style={{ width: "100%" }}>
+              <div style={{ width: "100%", marginBottom: "10px" }}>
                 <Image
                   src="./static/img/login_naver.png"
                   width="100%"
@@ -138,19 +159,27 @@ const LoginComponent = props => {
                   onClick={loginWithNaver}
                 />
               </div>
-              <ThirdPartyButton
-                label="Facebook"
-                icon="facebook"
-                color="facebook"
-                onClick={loginWithFacebook}
-              />
+              <div style={{ width: "100%", marginBottom: "10px" }}>
+                <Image
+                  src="./static/img/login_google.png"
+                  width="100%"
+                  style={{
+                    cursor: "pointer"
+                  }}
+                  onClick={loginWithGoogle}
+                />
+              </div>
 
-              <ThirdPartyButton
-                label="Google"
-                icon="google"
-                color="google plus"
-                onClick={loginWithGoogle}
-              />
+              <div style={{ width: "100%" }}>
+                <Image
+                  src="./static/img/login_facebook.png"
+                  width="100%"
+                  style={{
+                    cursor: "pointer"
+                  }}
+                  onClick={loginWithFacebook}
+                />
+              </div>
             </div>
             <ul id="help-links">
               <li>회원 가입</li>
