@@ -1,3 +1,6 @@
+require("dotenv").config(); // enbale dotenv
+const path = require("path"); // using current path
+const dotenvWebpack = require("dotenv-webpack"); // using dotenv with webpack
 const withCSS = require("@zeit/next-css");
 const withProgressBar = require("next-progressbar");
 const WebpackBar = require("webpackbar");
@@ -18,7 +21,14 @@ module.exports = withCSS(
         }
       });
       config.plugins = config.plugins || [];
-      // config.plugins.push(new WebpackBar());
+      config.plugins = [
+        ...config.plugins,
+        new dotenvWebpack({
+          path: path.join(__dirname, ".env"),
+          systemvars: true
+        })
+      ];
+      // plugins.push(new WebpackBar()); // 문제 생길 시 이 부분을 주석 처리하여도 무방하다.
       return config;
     }
   })

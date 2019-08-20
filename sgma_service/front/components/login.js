@@ -6,8 +6,10 @@ import "../css/login.css";
 import CustomButton from "./custombutton";
 import Textbox from "./textbox";
 import ThirdPartyButton from "./thirdpartybutton";
-import { Form, Button } from "semantic-ui-react";
+import { Form, Button, Image } from "semantic-ui-react";
+import CustomModal from "../components/modal/custommodal";
 import { LOG_IN, LOG_OUT } from "../reducers/userinfo";
+import fetch from "isomorphic-unfetch";
 
 const LoginComponent = props => {
   const router = useRouter();
@@ -58,11 +60,26 @@ const LoginComponent = props => {
     });
   };
 
+  // 구글 로그인 클릭시 서버 주소를 넣는다.
+  // {`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver}
+
+  const loginWithNaver = e => {
+    alert("네이버");
+  };
+
+  const loginWithFacebook = e => {
+    alert("페북");
+  };
+
+  const loginWithGoogle = e => {
+    alert("구글");
+  };
+
   // 로그인 여부에 따라서 컴포넌트 분기
   if (!isLogin) {
     return (
       <div className="center-wrapper">
-        <h1 className="logo">로그인페이지</h1>
+        <h1 className="logo">로그인</h1>
         <div className="input" id="login-wrapper">
           <div className="login">
             <Form onSubmit={onSubmit}>
@@ -111,16 +128,28 @@ const LoginComponent = props => {
               <span>또는</span>
             </div>
             <div className="thirdparty-buttons">
+              <div style={{ width: "100%" }}>
+                <Image
+                  src="./static/img/login_naver.png"
+                  width="100%"
+                  style={{
+                    cursor: "pointer"
+                  }}
+                  onClick={loginWithNaver}
+                />
+              </div>
               <ThirdPartyButton
                 label="Facebook"
                 icon="facebook"
                 color="facebook"
+                onClick={loginWithFacebook}
               />
 
               <ThirdPartyButton
                 label="Google"
                 icon="google"
                 color="google plus"
+                onClick={loginWithGoogle}
               />
             </div>
             <ul id="help-links">

@@ -2,11 +2,24 @@
 // css 임포트는 컴포넌트에서 해야 한다. 변경 요망
 import "../css/gnb.css";
 import Link from "next/link";
+import { Image } from "semantic-ui-react";
+
 export default () => (
   <header className="gnbHeader">
     <div className="headerWrap">
       <div className="boxGnb">
-        <h1>Logo</h1>
+        <div
+          style={{
+            position: "absolute",
+            background: `url('./static/img/logo_sgma.png')  no-repeat`,
+            width: "100px",
+            height: "60px",
+            backgroundSize: "100%",
+            color: "transparent"
+          }}
+        >
+          혼공의 정석 로고
+        </div>
         <nav>
           <ul>
             <li>

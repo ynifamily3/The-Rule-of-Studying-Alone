@@ -87,10 +87,16 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .thirdparty-buttons > button {
-  width: 50%;
+  width: 49%;
+  margin-top: 10px !important;
+}
+
+.thirdparty-buttons > a {
+  width: 100%;
 }
 
 #help-links {

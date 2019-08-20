@@ -33,6 +33,7 @@ export default ctx => {
           marginTop: "30px"
         }}
       >
+        <h1>{process.env.BACKEND_SERVICE_DOMAIN}</h1>
         <h2>초고교급암기머신(가칭)</h2> <h3>소개</h3>{" "}
         {`아직도 백지에 모든 걸 쓰며
       불필요한 정보까지 외우시나요?

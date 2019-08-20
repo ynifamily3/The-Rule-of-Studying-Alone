@@ -1,6 +1,17 @@
 import React from "react";
 import { Button, Icon } from "semantic-ui-react";
 
+const ThirdPartyButton = props => {
+  const { label, icon, color, onClick } = props;
+  return (
+    <Button color={color} onClick={onClick}>
+      {icon ? <Icon name={icon} /> : ""}
+      {label}
+    </Button>
+  );
+};
+
+/*
 class ThirdPartyButton extends React.Component {
   render() {
     return (
@@ -11,5 +22,6 @@ class ThirdPartyButton extends React.Component {
     );
   }
 }
+*/
 
 export default ThirdPartyButton;
