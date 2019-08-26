@@ -75,6 +75,7 @@ const makeFile= (subject,owner,file_name,contents)=>{
 //api/docs
 docsRouter.get('/',util.loginCheck,(req,res)=>{
 	let docs = [];
+	console.log('docs');
 	subjectinfo.find({owner:req.cookies.user}).populate('files',{name:1,_id:0})
 		.then(async (subjects)=>{
 			if(subjects){
@@ -148,7 +149,7 @@ docRouter.put('/:subject_name',util.loginCheck,(req,res)=>{
 		.then((user)=>{
 			if(user){
 				if(makeSubject(req.params.subject_name,user._id)){
-					res.json({result:"post success",subject})
+					res.json({result:"put success",subject})
 				} else{
 					res.json({result:"same subject name"})
 				}
@@ -193,8 +194,8 @@ docRouter.post('/:subject_name',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
 			if(user){
-				if(ret=makeFile(req.params.subject_name,user._id,req.body.name,req.body))
-					res.json({result:ret})
+				if(makeFile(req.params.subject_name,user._id,req.body.name,req.body)!==null)
+					res.json({result:"make file success"})
 				else
 					res.status(404).json({erorr:"subject not found"});
 			}
