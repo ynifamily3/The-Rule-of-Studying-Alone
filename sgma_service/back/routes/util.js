@@ -5,9 +5,11 @@ var subjectinfo = require('../models/subject')
 exports.loginCheck = (req,res,next) => {
 	console.log('loginCheck');
 	if(req.cookies.user){
+		console.log("in");
 		return next()
 	}
-	res.status(401).send({isLogin:false});
+	res.status(200).send({isLogin:false});
+	console.log("end")
 }
 
 exports.decodePromise = new Promise((res,rej)=>{

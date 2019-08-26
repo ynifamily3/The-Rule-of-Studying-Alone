@@ -44,7 +44,7 @@ NextApp.prepare().then(() => {
   /*ExpressApp.use( SOME MIDDLEWARE 1 );
   ExpressApp.use( SOME MIDDLEWARE 2 );*/
   // ExpressApp.use("/api", CustomRouter);
-  // dbConnect();
+  dbConnect();
   ExpressApp.use(bodyParser.json());
   ExpressApp.use(bodyParser.urlencoded({ extended: true }));
   ExpressApp.use(cookieParser());
