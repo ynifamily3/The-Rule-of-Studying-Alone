@@ -8,7 +8,6 @@ import Textbox from "./textbox";
 import { Form, Button, Image } from "semantic-ui-react";
 import CustomModal from "../components/modal/custommodal";
 import { LOG_IN, LOG_OUT } from "../reducers/userinfo";
-import fetch from "isomorphic-unfetch";
 
 const LoginComponent = props => {
   const router = useRouter();
@@ -39,19 +38,8 @@ const LoginComponent = props => {
 
   const onSubmit = e => {
     // action dispatch
-    // 디버깅 중이므로 검증을 하지 않고 바로 디스패치 후 리디렉션 한다.
     dispatch({
-      type: LOG_IN,
-      data: {
-        user: {
-          auth_method: "서드파티(테스트)",
-          user_id: "아이디(테스트)",
-          nickname: "닉네임(테스트)",
-          email: "test@testdomain.com",
-          profile_photo: "test.jpg",
-          createdAt: "2019-03-03(테스트)"
-        }
-      }
+      type: LOG_IN
     });
   };
 
@@ -71,13 +59,17 @@ const LoginComponent = props => {
 
   const loginWithNaver = async e => {
     // alert("네이버");
-    setModalIsOpen(true); // 로딩 모달 띄우기
+    setModalIsOpen(true); // 로딩 모달 띄우기 (필요한가?) 어차피 리로딩 되는데 ㅡㅡ;;
+    /*
     const requestLoginJson = await fetch(
       `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`
     ); // 이걸 페이지 이동형으로 바꾸어야 한다.
     const responseLoginResult = await requestLoginJson.text();
     console.log(responseLoginResult);
     setModalIsOpen(false);
+    */
+    router.replace(`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`);
+    // 필연적으로 리로딩 된다.
   };
 
   const loginWithFacebook = async e => {
