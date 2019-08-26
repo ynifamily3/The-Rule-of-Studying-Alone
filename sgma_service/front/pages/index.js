@@ -6,6 +6,8 @@ import { Button, Segment } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import { LOG_OUT } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
+import fetch from "isomorphic-unfetch";
+import axios from "axios";
 
 export default ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
@@ -13,7 +15,7 @@ export default ctx => {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector(state => state.userinfo); // reducer -> index.js -> rootReducer -> userinfo
   // manage modal state
-  const [modalIsOpen, setModalIsOpen] = useState(false); // 로딩을 true 로 걸어놓는다.
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const onChangeModalIsOpen = e => {
     setModalIsOpen(false);
   };
@@ -25,13 +27,20 @@ export default ctx => {
   };
 
   useEffect(() => {
+    // *** 혹은 getInitialProps 후킹 걸어놓고, 서버 사이드 / 클라이언트 사이드 처리를 이원화하고,
+    // 서버의 경우 api 서버와의 통신이 완료된 경우 뿌려주고 ,클라는 모달로 한다음 클라에서 api를 로딩하고 결정
     setModalIsOpen(true); // BLOCK 걸어놓고 state에 대한 서버 검증 (갱신)
-    console.log("안녕");
-    const loginTest = fetch(
-      `${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`
+    console.log("안녕2");
+    const loginTest = axios(
+      `${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`,
+      {
+        withCredentials: true // 쿠키를 함께 보내도록 요청
+      }
     )
       .then(resp => {
-        return resp.json();
+        //console.log(resp);
+        console.log(resp.data);
+        return 123;
       })
       .then(fdata => {
         console.log(fdata);
