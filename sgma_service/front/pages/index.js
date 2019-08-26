@@ -29,7 +29,13 @@ export default ctx => {
     console.log("안녕");
     const loginTest = fetch(
       `${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`
-    );
+    )
+      .then(resp => {
+        return resp.json();
+      })
+      .then(fdata => {
+        console.log(fdata);
+      });
   }, []); // componentDidMount와 유사함., deps를 주면 ([]라도,) 한 번만 실행
   return (
     <Page>
