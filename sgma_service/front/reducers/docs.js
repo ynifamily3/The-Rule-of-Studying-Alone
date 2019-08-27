@@ -1,11 +1,15 @@
 /*
 {
-  docs: [
-    { folder_name: "수학", file_name: ["수열", "기하", "집합", "함수"] },
-    { folder_name: "과학", file_name: ["생물", "지구과학"] },
-    { folder_name: "소녀전선", file_name: ["인형", "전략"] }
-  ];
+  docs : [
+    {type:'folder', name:'과학', docs:[
+      {type: 'folder', name: '기타과학', docs[...]},
+      {type: 'file', name:'지구과학'}
+    ]},
+    {type:'folder', name: '리시프', docs:[...]},
+    {type:'file', name:'수학'}
+  ]
 }
+
 */
 export const initialState = {
   docs: [

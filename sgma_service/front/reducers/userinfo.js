@@ -55,7 +55,7 @@ const reducer = (state = initialState, action) => {
     case LOG_IN_FAILURE:
       return { ...initialState };
     case LOG_OUT_SUCCESS:
-      return { isLogin: false };
+      return { ...initialState };
     case LOG_OUT_FAILURE:
       return { ...state };
     default:
