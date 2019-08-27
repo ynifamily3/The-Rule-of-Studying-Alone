@@ -4,7 +4,19 @@ import { Icon, Input } from "semantic-ui-react";
 export default ({ children }) => (
   <header className="dashboardGnb">
     <div className="logo">
-      <div className="logoElement">{"{{logo}}"}</div>
+      <div
+        className="logoElement"
+        style={{
+          position: "absolute",
+          background: `url('./static/img/logo_sgma.png')  no-repeat`,
+          width: "100px",
+          height: "60px",
+          backgroundSize: "100%",
+          color: "transparent"
+        }}
+      >
+        혼공의 정석 로고
+      </div>
     </div>
     <div className="searchBox">
       <form style={{ height: "100%" }} onSubmit={e => e.preventDefault()}>

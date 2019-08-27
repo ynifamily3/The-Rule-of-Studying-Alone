@@ -4,18 +4,17 @@ import Gnb from "../layouts/gnb";
 import Link from "next/link";
 import { Button, Segment } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
-import { LOG_OUT } from "../reducers/userinfo";
+import { LOG_OUT, LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
-import fetch from "isomorphic-unfetch";
 import axios from "axios";
 
-export default ctx => {
+const IndexPage = ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
   // 그 전 까진 앱을 모달로 얼려놓는다.
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector(state => state.userinfo); // reducer -> index.js -> rootReducer -> userinfo
   // manage modal state
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false); // 모달의 기볹값은 false (ssr환경에서 true로 하면 이상한 종속성 에러가 표출된다.)
   const onChangeModalIsOpen = e => {
     setModalIsOpen(false);
   };
@@ -30,22 +29,28 @@ export default ctx => {
     // *** 혹은 getInitialProps 후킹 걸어놓고, 서버 사이드 / 클라이언트 사이드 처리를 이원화하고,
     // 서버의 경우 api 서버와의 통신이 완료된 경우 뿌려주고 ,클라는 모달로 한다음 클라에서 api를 로딩하고 결정
     setModalIsOpen(true); // BLOCK 걸어놓고 state에 대한 서버 검증 (갱신)
-    console.log("안녕2");
     const loginTest = axios(
       `${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`,
-      {
-        withCredentials: true // 쿠키를 함께 보내도록 요청
-      }
-    )
+      { withCredentials: true }
+    ) // with cookie-based Auth
       .then(resp => {
-        //console.log(resp);
+        setModalIsOpen(false);
         console.log(resp.data);
-        return 123;
-      })
-      .then(fdata => {
-        console.log(fdata);
+        const loginTest = resp.data;
+        if (!loginTest.isLogin) {
+          dispatch({ type: LOG_IN_FAILURE });
+        } else {
+          dispatch({
+            type: LOG_IN_SUCCESS,
+            data: {
+              ...loginTest
+            }
+          });
+        }
+        return loginTest; // 안 해도 되나?
       });
   }, []); // componentDidMount와 유사함., deps를 주면 ([]라도,) 한 번만 실행
+
   return (
     <Page>
       <CustomModal
@@ -53,7 +58,7 @@ export default ctx => {
         closeOnEscape={false} // esc로 탈출 불가
         closeOnDimmerClick={false} // 외부클릭으로 탈출 불가
         onClose={onChangeModalIsOpen}
-        message={"잠시만 기다려주세요..."}
+        message={"서버와 통신 중입니다..."}
         dimmer={"inverted"}
       />
       <Gnb />
@@ -115,3 +120,19 @@ export default ctx => {
     </Page>
   );
 };
+
+IndexPage.getInitialProps = async ({ req }) => {
+  // 얘를 꼭 클라이언트에서 실행해야 하므로 여기에 있는 구문은 의미없구나 (혹은 백에 있는 몽고 db에 직접 접근해야 함. 보류)
+  /*
+  axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
+    withCredentials: true
+  }) // with cookie-based Auth
+    .then(resp => {
+      console.log(resp.data);
+      return resp.data;
+    });
+    */
+  return {};
+};
+
+export default IndexPage;

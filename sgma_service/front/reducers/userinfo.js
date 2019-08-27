@@ -14,6 +14,8 @@ export const LOG_IN = "LOG_IN"; // 로그인하는 액션의 이름
 export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS"; // 로그인 성공
 export const LOG_IN_FAILURE = "LOG_IN_FAILURE"; // 로그인 실패
 export const LOG_OUT = "LOG_OUT";
+export const LOG_OUT_SUCCESS = "LOG_OUT_SUCCESS";
+export const LOG_OUT_FAILURE = "LOG_OUT_FAILURE";
 
 export const loginAction = {
   type: LOG_IN
@@ -31,6 +33,14 @@ export const logoutAction = {
   type: LOG_OUT
 };
 
+export const logoutSuccessAction = {
+  type: LOG_OUT_SUCCESS
+};
+
+export const logoutFailureAction = {
+  type: LOG_OUT_FAILURE
+};
+
 // state와 action을 받아서 다음 state를 만들어 낸다.
 const reducer = (state = initialState, action) => {
   const { type, data } = action;
@@ -43,7 +53,11 @@ const reducer = (state = initialState, action) => {
       // console.log(data);
       return { isLogin: true, ...data };
     case LOG_IN_FAILURE:
+      return { ...initialState };
+    case LOG_OUT_SUCCESS:
       return { isLogin: false };
+    case LOG_OUT_FAILURE:
+      return { ...state };
     default:
       return { ...state };
   }

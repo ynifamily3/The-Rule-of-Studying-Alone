@@ -8,7 +8,11 @@
 }
 */
 export const initialState = {
-  docs: []
+  docs: [
+    { folder_name: "수학", file_name: ["수열", "기하", "집합", "함수"] },
+    { folder_name: "과학", file_name: ["생물", "지구과학"] },
+    { folder_name: "영어", file_name: ["문법", "듣기", "읽기"] }
+  ] // sample - data
 };
 
 export const ADD_FOLDER = "ADD_FOLDER";

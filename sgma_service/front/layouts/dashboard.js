@@ -1,7 +1,7 @@
 import GnbHeader from "../components/dashboard/gnbheader";
 import Aside from "../components/dashboard/aside";
 import Contents from "../components/dashboard/contents";
-export default ({ children }) => (
+export default props => (
   <div
     className="contentWrapper"
     style={{
@@ -20,7 +20,7 @@ export default ({ children }) => (
       }}
     >
       <Aside />
-      <Contents />
+      <Contents {...props} />
     </div>
   </div>
 );

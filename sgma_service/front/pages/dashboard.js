@@ -19,6 +19,7 @@ docs:[{
 const DashBoardPage = pageProps => {
   const user = useSelector(state => state.userinfo);
   const docs = useSelector(state => state.docs);
+  // 서버에서 또 한번 받아와 갱신 - 검증할거라 별론가?
   return (
     <Page>
       <DashBoard user={user} docs={docs} />

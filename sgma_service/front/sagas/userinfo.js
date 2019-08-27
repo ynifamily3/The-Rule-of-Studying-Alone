@@ -1,6 +1,13 @@
 import { all, fork, takeLatest, put, call } from "redux-saga/effects";
-import { LOG_IN, LOG_IN_SUCCESS, LOG_IN_FAILURE } from "../reducers/userinfo";
-import fetch from "isomorphic-unfetch";
+import {
+  LOG_IN,
+  LOG_IN_SUCCESS,
+  LOG_IN_FAILURE,
+  LOG_OUT,
+  LOG_OUT_SUCCESS,
+  LOG_OUT_FAILURE
+} from "../reducers/userinfo";
+import axios from "axios";
 
 function loginAPI() {
   // 서버에 요청을 보내는 부분
@@ -9,6 +16,16 @@ function loginAPI() {
   console.log("뀨..?");
 
   return false;
+}
+
+function logoutAPI() {
+  // axios 로 logout page call
+  console.log("logout api 실행됨");
+  axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/logout`, {
+    withCredentials: true
+  }).then(resp => {
+    return true;
+  });
 }
 
 function* login() {
@@ -37,12 +54,31 @@ function* login() {
   }
 }
 
+function* logout() {
+  try {
+    yield call(logoutAPI);
+    yield put({
+      // dispatch 격
+      type: LOG_OUT_SUCCESS
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOG_OUT_FAILURE
+    });
+  }
+}
+
+function* watchLogout() {
+  yield takeLatest(LOG_OUT, logout); // LOG_OUT Action을 감시한다.
+}
+
 function* watchLogin() {
   yield takeLatest(LOG_IN, login); // LOG_IN Action을 감시한다.
 }
 
 export default function* userinfoSaga() {
-  yield all([fork(watchLogin)]);
+  yield all([fork(watchLogin), fork(watchLogout)]);
 }
 
 // 서버에 요청을 보낸다 -> request -> 로그인 성공(LOG_IN_SUCCESS) * / 로그인 실패(LOG_IN_FAILURE) -> 로그인 (LOG_IN)
