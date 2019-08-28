@@ -20,7 +20,7 @@ export default props => (
       }}
     >
       <Aside />
-      <Contents {...props} />
+      <Contents user={props.user} docs={props.docs} path={props.path} />
     </div>
   </div>
 );

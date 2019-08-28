@@ -13,10 +13,17 @@
 */
 export const initialState = {
   docs: [
-    { folder_name: "수학", file_name: ["수열", "기하", "집합", "함수"] },
-    { folder_name: "과학", file_name: ["생물", "지구과학"] },
-    { folder_name: "영어", file_name: ["문법", "듣기", "읽기"] }
-  ] // sample - data
+    {
+      type: "folder",
+      name: "과학",
+      docs: [
+        { type: "folder", name: "기타과학", docs: [] },
+        { type: "file", name: "지구과학" }
+      ]
+    },
+    { type: "folder", name: "리시프", docs: [] },
+    { type: "file", name: "수학" }
+  ]
 };
 
 export const ADD_FOLDER = "ADD_FOLDER";

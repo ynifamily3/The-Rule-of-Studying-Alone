@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { LOG_OUT, LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
 import axios from "axios";
+import { encodeSGMAStr, decodeSGMAStr } from "../libs/path-encryptor";
+import { md5 } from "../libs/md5";
 
 const IndexPage = ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
@@ -106,7 +108,15 @@ const IndexPage = ctx => {
           </Link>
         )}
 
-        <Link href="/dashboard">
+        <Link
+          href={{
+            pathname: "/dashboard",
+            query: {
+              path: encodeSGMAStr("과학/지구과학"),
+              pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
+            }
+          }}
+        >
           <a>
             <Button color="red">대쉬보드로 가기</Button>
           </a>

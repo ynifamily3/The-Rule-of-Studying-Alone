@@ -1,31 +1,10 @@
 import "../../css/dashboard/contents.css";
-import { Checkbox, Button, Icon } from "semantic-ui-react";
-import Item from "./itemunit";
-let jsxObject = fileName => (
-  <li>
-    <div className="itemHeader">
-      <span
-        style={{
-          display: "flex",
-          alignItems: "center"
-        }}
-      >
-        <Checkbox size="small" />
-      </span>
-      <span>
-        <Icon name="star outline" />
-      </span>
-    </div>
-    <Item type="folder">
-      <Icon name="folder" size="huge" />
-    </Item>
-    <div className="fileName">{fileName}</div>
-  </li>
-);
+import { Checkbox, Button } from "semantic-ui-react";
+import FileItems from "./fileitems";
 
 const DashboardContentComponents = props => {
-  console.log(props); // 이 데이터를 믿고 싶은데 현실은 서버에서 다시 fetch 해야 함.
-  // 이럴거면 redux 안쓰고 그냥 지영이한테 graphQL 시킬걸
+  // if (typeof window !== "undefined") console.log(props); // 여기서 props가 진실의 근원이다.
+  // {user: {…}, docs: {…}, path: ""}
   return (
     <article className="contents">
       <div className="functions">
@@ -43,10 +22,7 @@ const DashboardContentComponents = props => {
         <Button basic>공유</Button>
       </div>
       <div className="workingArea">
-        <ul className="items">
-          {jsxObject("수학")}
-          {jsxObject("과학")}
-        </ul>
+        <FileItems docs={props.docs} path={props.path} />
       </div>
     </article>
   );
