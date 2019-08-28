@@ -108,7 +108,7 @@ const IndexPage = ctx => {
           </Link>
         )}
 
-        <Link
+        {/*<Link
           href={{
             pathname: "/dashboard",
             query: {
@@ -116,7 +116,8 @@ const IndexPage = ctx => {
               pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
             }
           }}
-        >
+        >*/}
+        <Link href="/dashboard">
           <a>
             <Button color="red">대쉬보드로 가기</Button>
           </a>

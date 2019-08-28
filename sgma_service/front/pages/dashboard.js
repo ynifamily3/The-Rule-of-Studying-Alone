@@ -40,6 +40,7 @@ DashBoardPage.getInitialProps = async ({ res, query }) => {
     (pv && path && md5(decodeSGMAStr(path)) !== pv)
   ) {
     if (res) {
+      // server - side
       res.writeHead(302, {
         Location: "/dashboard"
       });

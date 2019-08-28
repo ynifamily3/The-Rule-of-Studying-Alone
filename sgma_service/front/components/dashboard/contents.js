@@ -1,6 +1,7 @@
 import "../../css/dashboard/contents.css";
 import { Checkbox, Button } from "semantic-ui-react";
 import FileItems from "./fileitems";
+import Steps from "./steps";
 
 const DashboardContentComponents = props => {
   // if (typeof window !== "undefined") console.log(props); // 여기서 props가 진실의 근원이다.
@@ -20,6 +21,12 @@ const DashboardContentComponents = props => {
         </span>
         <Button basic>새 폴더</Button>
         <Button basic>공유</Button>
+      </div>
+      <div
+        className="pathViewArea"
+        style={{ paddingLeft: "10px", marginBottom: "8px" }}
+      >
+        <Steps path={props.path} /> {/* path indicator */}
       </div>
       <div className="workingArea">
         <FileItems docs={props.docs} path={props.path} />

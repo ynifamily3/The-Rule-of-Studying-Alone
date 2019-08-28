@@ -2,8 +2,8 @@ import "../../css/editor/insertToolbar.css";
 import { Button } from "semantic-ui-react";
 export default props => (
   <div className="insertToolbar">
-    <Button.Group basic color="blue">
-      <Button onClick={props.onClick}>제출 (Proto => Modal)</Button>
+    <Button.Group basic color="orange">
+      <Button onClick={props.onClick}>문제 생성하기</Button>
     </Button.Group>
   </div>
 );
