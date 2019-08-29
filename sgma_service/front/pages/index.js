@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import Page from "../layouts/main";
 import Gnb from "../layouts/gnb";
 import Link from "next/link";
-import { Button, Segment } from "semantic-ui-react";
+import { Segment } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import { LOG_OUT, LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
 import axios from "axios";
-import { encodeSGMAStr, decodeSGMAStr } from "../libs/path-encryptor";
-import { md5 } from "../libs/md5";
 
 const IndexPage = ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
@@ -21,20 +19,13 @@ const IndexPage = ctx => {
     setModalIsOpen(false);
   };
 
-  const goLogout = e => {
-    dispatch({
-      type: LOG_OUT
-    });
-  };
-
   useEffect(() => {
     // *** 혹은 getInitialProps 후킹 걸어놓고, 서버 사이드 / 클라이언트 사이드 처리를 이원화하고,
     // 서버의 경우 api 서버와의 통신이 완료된 경우 뿌려주고 ,클라는 모달로 한다음 클라에서 api를 로딩하고 결정
     setModalIsOpen(true); // BLOCK 걸어놓고 state에 대한 서버 검증 (갱신)
-    const loginTest = axios(
-      `${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`,
-      { withCredentials: true }
-    ) // with cookie-based Auth
+    axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
+      withCredentials: true
+    }) // with cookie-based Auth
       .then(resp => {
         setModalIsOpen(false);
         console.log(resp.data);
@@ -73,7 +64,8 @@ const IndexPage = ctx => {
           marginTop: "30px"
         }}
       >
-        <h2>혼공의 정석</h2> <h3>소개</h3>
+        <h2>혼공의 정석</h2>
+        <h3>소개</h3>
         {`아직도 백지에 모든 걸 쓰며
       불필요한 정보까지 외우시나요?
       복학생이라 같이 교양 들을 친구가 없다구요?
@@ -95,55 +87,8 @@ const IndexPage = ctx => {
           </li>
         </ul>
       </Segment>
-      <div style={{ textAlign: "center", marginTop: "15px" }}>
-        {isLogin ? (
-          <Button color="grey" onClick={goLogout}>
-            로그아웃 ({user.nickname})
-          </Button>
-        ) : (
-          <Link href="/login">
-            <a>
-              <Button color="orange">로그인</Button>
-            </a>
-          </Link>
-        )}
-
-        {/*<Link
-          href={{
-            pathname: "/dashboard",
-            query: {
-              path: encodeSGMAStr("과학/지구과학"),
-              pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
-            }
-          }}
-        >*/}
-        <Link href="/dashboard">
-          <a>
-            <Button color="red">대쉬보드로 가기</Button>
-          </a>
-        </Link>
-        <Link href="/editor">
-          <a>
-            <Button color="black">에디터 (ProtoType)</Button>
-          </a>
-        </Link>
-      </div>
     </Page>
   );
-};
-
-IndexPage.getInitialProps = async ({ req }) => {
-  // 얘를 꼭 클라이언트에서 실행해야 하므로 여기에 있는 구문은 의미없구나 (혹은 백에 있는 몽고 db에 직접 접근해야 함. 보류)
-  /*
-  axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
-    withCredentials: true
-  }) // with cookie-based Auth
-    .then(resp => {
-      console.log(resp.data);
-      return resp.data;
-    });
-    */
-  return {};
 };
 
 export default IndexPage;

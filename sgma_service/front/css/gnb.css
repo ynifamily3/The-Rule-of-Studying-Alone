@@ -55,10 +55,10 @@
 }
 
 .boxGnb a {
-  display: block;
+  display: inline-block;
   position: relative;
   height: 60px;
-  padding: 0 14px 0 13px;
+  padding: auto 3px;
   font-size: 16px;
   line-height: 58px;
   color: #1e1e1e;

@@ -1,16 +1,17 @@
-import { Icon, Step } from "semantic-ui-react";
+import { Breadcrumb, Icon } from "semantic-ui-react";
+import Link from "next/link";
 
 const StepElem = props => {
-  const { isFinal, text, icon } = props;
+  const { isFinal, text } = props;
   return (
-    <Step link={!isFinal} active={!!isFinal}>
-      <Step.Content>
-        <Step.Title>
-          <Icon name={icon} />
-          {text}
-        </Step.Title>
-      </Step.Content>
-    </Step>
+    <>
+      <Breadcrumb.Section link={!isFinal}>{text}</Breadcrumb.Section>
+      {!isFinal && (
+        <Breadcrumb.Divider>
+          <Icon name="right angle" />
+        </Breadcrumb.Divider>
+      )}
+    </>
   );
 };
 
@@ -30,16 +31,11 @@ const Steps = ({ path }) => {
               key={Math.random() + i}
               isFinal={i === pathArr.length - 1}
               text={x}
-              icon="folder"
             />
           );
         })
       ];
-  return (
-    <Step.Group size="tiny" attached={false}>
-      {elem}
-    </Step.Group>
-  );
+  return <Breadcrumb>{elem}</Breadcrumb>;
 };
 
 export default Steps;

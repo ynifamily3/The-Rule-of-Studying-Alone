@@ -1,6 +1,6 @@
 import File from "./fileunit";
 
-// returns 배열
+// returns 배열 (문서들을 가지고 있다.)
 const findPath = (docs, pathStr) => {
   const arr = pathStr ? pathStr.split("/") : [];
   let ref = docs; // 해당 폴더를 가리키는 참조형 변수
@@ -20,10 +20,23 @@ const FileItems = props => {
   }
 
   // 해당 레벨 객체로 이동하여 폴더와 파일 리스트를 표출한다.
+  /*
+  0: {type: "folder", name: "과학", docs: Array(2)}
+  1: {type: "folder", name: "리시프", docs: Array(0)}
+  2: {type: "file", name: "수학"}
+  */
   return (
     <ul className="items">
-      <File fileName="수학" type="folder" />
-      <File fileName="과학" type="file" />
+      {currPathList.map((x, i) => {
+        return (
+          <File
+            fileName={x.name}
+            type={x.type}
+            key={"fileElem" + i}
+            path={x.type === "folder" && path + "/" + x.name}
+          />
+        );
+      })}
     </ul>
   );
 };
