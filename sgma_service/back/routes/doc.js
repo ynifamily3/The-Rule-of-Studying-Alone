@@ -5,7 +5,7 @@ var fileinfo = require('../models/file')
 var subjectinfo = require('../models/subject')
 const util = require('./util');
 
-const makeSubject = (subject,owner)=>{
+const makeSubject = (res,subject,owner)=>{
 
 	subjectinfo.findOne({name:subject,owner:owner})
 		.then((sub)=>{
@@ -17,16 +17,17 @@ const makeSubject = (subject,owner)=>{
 				});
 				newSubject.save()
 					.then((subject)=>{
-						return true//res.json({result:"post success",subject})
+						return res.json({result:"make subject success"})
 					});
 			} else{
 				console.log("collision");
-				return false//res.json({result:"same subject name"})
+				return res.json({result:"same subject name"})
 			}
 		}) 
 }
 
 const setPath = (res,subject,owner,file_name,body) => {
+	console.log("setPath")
 	subjectinfo.findOne({name:subject,owner:owner})
 		.then(async (sub)=>{
 			console.log("subject",sub);
@@ -63,6 +64,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 	fileinfo.findOne({name:file_name,subject:sub._id,owner:owner,path:my_path})
 		.then((file)=>{
 			console.log("file",file);
+			console.log("soup0---------",body.soups)
 			if(!file){
 				console.log("파일 생성")
 				let newFile = new fileinfo({
@@ -71,12 +73,13 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 					owner:owner,
 					//parent_id:parent._id,
 					path:my_path,
-					soups:body.infos,
+					soups:body.soups,
 					connections:body.connections,
 					md_text:body.md_text,
 					type:body.type
 				});
 				if(parent) newFile.parent_id=parent._id;
+				console.log("newFile",newFile)
 				newFile.save()
 					.then((f)=>{
 						subjectinfo.update({_id:sub._id},{$push:{files:f._id}})
@@ -92,8 +95,8 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 					})
 			} else {//중복 파일 시
 				console.log("파일 덮어씌우기");
-				fileinfo.update({_id:file._id},{$set:{
-					soups:body.infos,
+				fileinfo.updateOne({_id:file._id},{$set:{
+					soups:body.soups,
 					connections:body.connections,
 					md_text:body.md_text,
 					type:body.type
@@ -203,8 +206,9 @@ docRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 				.then((file)=>{
 					if(!file){
 						res.status(404).json({error:"file not found"})
+					} else {
+						res.json(file);
 					}
-					res.json(file);
 				})
 		})
 		
@@ -231,11 +235,7 @@ docRouter.put('/:subject_name',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
 			if(user){
-				if(makeSubject(req.params.subject_name,user._id)){
-					res.json({result:"put success",subject})
-				} else{
-					res.json({result:"same subject name"})
-				}
+				makeSubject(res,req.params.subject_name,user._id)
 			} 
 		})
 		.catch((err)=>{
