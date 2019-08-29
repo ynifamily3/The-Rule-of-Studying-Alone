@@ -25,69 +25,132 @@ const makeSubject = (subject,owner)=>{
 			}
 		}) 
 }
-const makeFile= (subject,owner,file_name,contents)=>{
+
+const setPath = (res,subject,owner,file_name,body) => {
 	subjectinfo.findOne({name:subject,owner:owner})
-		.then((sub)=>{
+		.then(async (sub)=>{
 			console.log("subject",sub);
-
 			if(!sub){
-				return null//return res.status(404).json({error:"subject not fount"})
+				return res.json({error:"can't not find subject"})
 			} else {
-				//res.json({success:"find subject"})
+				if(body.path===""||body.path===undefined){
+					return makeFile(res,null,sub,owner,file_name,body)
+					//return res.json({success:"success"})
+				} else {
+					fileinfo.findOne({subject:sub._id,owner:owner,path:body.path,type:"folder"})
+						.then(async (parent)=>{
+							if(parent){
+								console.log("parent path",parent.path);
+								console.log("parent",parent);
+								return makeFile(res,parent,sub,owner,file_name,body)
+							} else {
+								return res.json({failed:"path fail"})
+							}
+							//return res.json({success:"success2"})
+						})			
+				}
 
-				fileinfo.findOne({name:file_name,subject:sub._id,owner:owner})
-					.then((file)=>{
-						console.log("file-",file);
-
-						if(!file){
-							let newFile = new fileinfo({
-								name:file_name,
-								owner:owner,
-								subject:sub._id,
-								soups:contents.infos,
-								connections:contents.connections,
-								md_text:contents.md_text
-							});
-							newFile.save()
-								.then((f)=>{
-									subjectinfo.update({_id:sub._id},{$push:{files:f._id}})
-										.then((nf)=>{
-											return "make new file"//res.json({result:"make new file"})							
-										})
-								})
-						} else{
-							fileinfo.update({_id:file._id},{$set:{
-								soups:contents.infos,
-								connections:contents.connections,
-								md_text:contents.md_text
-							}})
-								.then((f)=>{
-									return "change file"//res.json({result:"change file"})
-								})
-						}
-					})
 			}
 		})
 }
 
+const makeFile = (res,parent,sub,owner,file_name,body) =>{
+	console.log("makefile")
+	if(parent)
+		var my_path=parent.path+"/"+file_name;
+	else
+		var my_path="/"+file_name;
+	fileinfo.findOne({name:file_name,subject:sub._id,owner:owner,path:my_path})
+		.then((file)=>{
+			console.log("file",file);
+			if(!file){
+				console.log("파일 생성")
+				let newFile = new fileinfo({
+					name:file_name,
+					subject:sub._id,
+					owner:owner,
+					//parent_id:parent._id,
+					path:my_path,
+					soups:body.infos,
+					connections:body.connections,
+					md_text:body.md_text,
+					type:body.type
+				});
+				if(parent) newFile.parent_id=parent._id;
+				newFile.save()
+					.then((f)=>{
+						subjectinfo.update({_id:sub._id},{$push:{files:f._id}})
+							.then((u_sub)=>{
+								if(parent!==null)
+									fileinfo.update({_id:parent._id},{$push:{files:f._id}})
+										.then((f)=>{
+											console.log("file update");
+											return res.json({success:"new file"})
+										})
+								else return res.json({success:"new file"})
+							})
+					})
+			} else {//중복 파일 시
+				console.log("파일 덮어씌우기");
+				fileinfo.update({_id:file._id},{$set:{
+					soups:body.infos,
+					connections:body.connections,
+					md_text:body.md_text,
+					type:body.type
+				}})
+					.then((f)=>{
+						return res.json({success:"overwrite file"})
+					})
+			}
+		})
+	console.log("parent path",my_path)
 
+}
+async function makeSub(sub){
+	let files= [];
+	for(f of sub.files){
+		if(!f.parent_id){
+			if(f.type==="folder"){
+				await files.push({type:f.type,name:f.name,docs:await makeDocs(f.files)});
+			} else
+				await files.push({type:f.type,name:f.name});
+		}
+	}
+	return files;
+}
+async function makeDocs(file_ids){
+//const makeDocs = (file_ids)=>{
+	let array=[];
+
+	for(id of file_ids){
+		
+		await fileinfo.findOne({_id:id})
+			.then(async (file)=>{
+				//let file_ary = [];
+				if(file.type==="folder"&&file.files!=[])
+				{
+					array.push({type:file.type,name:file.name,docs:await makeDocs(file.files)})
+				} else {
+					array.push({type:file.type,name:file.name})
+				}
+			})
+			
+	}
+	return array;
+}
 
 //api/docs
 docsRouter.get('/',util.loginCheck,(req,res)=>{
 	let docs = [];
 	console.log('docs');
-	subjectinfo.find({owner:req.cookies.user}).populate('files',{name:1,_id:0})
+	subjectinfo.find({owner:req.cookies.user}).populate('files',{name:1,type:1,files:1,parent_id:1,_id:0})
 		.then(async (subjects)=>{
 			if(subjects){
 				for(sub of subjects){
-					let files= [];
-					for(f of sub.files){
-						files.push(f.name);
-					}
-					docs.push({folder_name:sub.name,files_name:files})
+					await docs.push({subject_name:sub.name,docs:await makeSub(sub)})
 				
 				}
-				res.json({docs:docs});
+				res.json({subjects:docs});
 			}
 		})
 		.catch((err)=>{
@@ -95,29 +158,48 @@ docsRouter.get('/',util.loginCheck,(req,res)=>{
 		})
 });
 
-//api/doc
-//docRouter.get('/',(req,res)=>{
-//	res.json({test:"test"});
-//});
+
 
 docRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
-	console.log("tt");
-	subjectinfo.findOne({name:req.params.subject_name,owner:req.cookies.user}).populate('files',{name:1,_id:0})
+	subjectinfo.findOne({name:req.params.subject_name,owner:req.cookies.user,parent_id:null}).populate('files',{name:1,type:1,files:1,parent_id:1,_id:1})
 		.then(async (subject)=>{
 			let files= [];
-			for(f of subject.files){
-				files.push(f.name);
+			if(subject){
+				for(f of subject.files){
+					console.log("name----",f.name);
+					console.log("p_id----",f.parent_id);
+					if(!f.parent_id){
+						console.log("check=====")
+						if(f.type==="folder"){
+							//let array=await makeDocs(f.files);
+							await files.push({type:f.type,name:f.name,docs:await makeDocs(f.files)});
+						} else
+							await files.push({type:f.type,name:f.name});
+					}
+				}
+				res.json({docs:files})
+			} else {
+				res.json({error:"subject not found"})
 			}
-			res.json({files_name:files})
 		})
 })
 docRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
+	console.log("req.doby.path",req.body.path);
+	console.log("file_name",req.params.file_name);
+	console.log("query",req.query.path)
+	//res.json({test:req.params.file_name})
+	if(req.query.path)
+		var my_path = req.query.path + "/" + req.params.file_name
+	else
+		var my_path = "/"+req.params.file_name
+	
 	subjectinfo.findOne({name:req.params.subject_name,owner:req.cookies.user})
 		.then((sub)=>{
 			if(!sub){
 				res.status(404).json({error:"subject not found"});
 			}
-			fileinfo.findOne({name:req.params.file_name,subject:sub._id,owner:req.cookies.user},{_id:0,name:0,subject:0,owner:0,__v:0})
+			//상위의 경로를 query로 받음 -> 자기자신의 경로가 아님
+			fileinfo.findOne({name:req.params.file_name,subject:sub._id,owner:req.cookies.user,path:my_path},{_id:0,subject:0,owner:0,parent_id:0,__v:0}).populate('files',{name:1,type:1,_id:0})
 				.then((file)=>{
 					if(!file){
 						res.status(404).json({error:"file not found"})
@@ -125,6 +207,7 @@ docRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 					res.json(file);
 				})
 		})
+		
 });
 
 
@@ -160,46 +243,19 @@ docRouter.put('/:subject_name',util.loginCheck,(req,res)=>{
 		})
 });
 
-docRouter.post('/:subject_name',util.loginCheck,(req,res)=>{
-
-	util.decodeCookie(req.cookies.user)
-		.then((user)=>{
-			if(user){
-				if(makeFile(req.params.subject_name,user._id,req.body.name,req.body)!==null)
-					res.json({result:"make file success"})
-				else
-					res.status(404).json({erorr:"subject not found"});
-			}
-		})
-});
 
 docRouter.put('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 	let ret;
 
-	util.decodeCookie(req.cookies.user)
-		.then((user)=>{
-			if(user){
-				if(makeFile(req.params.subject_name,user._id,req.params.file_name,req.body)!==null)
-					res.json({result:"make file success"})
-				else
-					res.status(404).json({erorr:"subject not found"});
-			}
-		})
-});
-
-
-docRouter.post('/:subject_name',util.loginCheck,(req,res)=>{
-	let ret;
+	console.log(req.body.path);
 
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
 			if(user){
-				if(makeFile(req.params.subject_name,user._id,req.body.name,req.body)!==null)
-					res.json({result:"make file success"})
-				else
-					res.status(404).json({erorr:"subject not found"});
+				setPath(res,req.params.subject_name,user._id,req.params.file_name,req.body)
 			}
 		})
 });
+
 
 module.exports = {docRouter,docsRouter};

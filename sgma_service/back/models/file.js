@@ -15,6 +15,18 @@ const fileSchema = new Schema({
 		type:mongoose.Schema.Types.ObjectId,
 		required:true,
 	},
+	parent_id:{
+		type:mongoose.Schema.Types.ObjectId
+	},
+	path:{
+		type:String,
+		default:"",
+	},
+	type:{
+		type:String,//folder or file
+		required:true,
+	},
+	files:[{type:mongoose.Schema.Types.ObjectId,ref:'file'}],
 	soups:{
 		type:Array,
 		default:[]

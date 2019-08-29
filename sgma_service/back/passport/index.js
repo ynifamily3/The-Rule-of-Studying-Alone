@@ -54,6 +54,8 @@ module.exports = (app,passport)=>{
 		let id = profile._json.id;
 		//	loginSuccess('naver',profile,done);
 		console.log(profile);
+		console.log("accessToken",accessToken);
+		console.log("refreshToken",refreshToken);
 		loginSuccess(profile.provider,id,nickname,email,profile_photo,done);
 	}));
 	
@@ -64,15 +66,20 @@ module.exports = (app,passport)=>{
 		let id=profile.id;
 		//loginSuccess('google',profile,done);
 		console.log(profile);
+		console.log("accessToken",accessToken);
+		console.log("refreshToken",refreshToken);
 		loginSuccess(profile.provider,id,nickname,email,profile_photo,done);
 	}));
 	
-	passport.use('facebook',new FacebookStrategy(facebookInfo,(accessToken,refreshToken,profile,done)=>{
+	passport.use('facebook',new FacebookStrategy(facebookInfo,(req,accessToken,refreshToken,profile,done)=>{
 		//console.log(profile);
 		let email;
 		let nickname = profile.displayName;
 		let profile_photo;
 		let id = profile._json.id;
+		console.log(profile);
+		console.log("accessToken",accessToken);
+		console.log("refreshToken",refreshToken);
 		loginSuccess(profile.provider,id,nickname,email,profile_photo,done);
 
 	}));
