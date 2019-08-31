@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Page from "../layouts/main";
 import Gnb from "../layouts/gnb";
-import Link from "next/link";
 import { Segment } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
-import { LOG_OUT, LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
+import { LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
 import axios from "axios";
 
@@ -12,7 +11,6 @@ const IndexPage = ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
   // 그 전 까진 앱을 모달로 얼려놓는다.
   const dispatch = useDispatch();
-  const { isLogin, user } = useSelector(state => state.userinfo); // reducer -> index.js -> rootReducer -> userinfo
   // manage modal state
   const [modalIsOpen, setModalIsOpen] = useState(false); // 모달의 기볹값은 false (ssr환경에서 true로 하면 이상한 종속성 에러가 표출된다.)
   const onChangeModalIsOpen = e => {
@@ -28,7 +26,6 @@ const IndexPage = ctx => {
     }) // with cookie-based Auth
       .then(resp => {
         setModalIsOpen(false);
-        console.log(resp.data);
         const loginTest = resp.data;
         if (!loginTest.isLogin) {
           dispatch({ type: LOG_IN_FAILURE });

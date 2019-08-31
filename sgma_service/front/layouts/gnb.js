@@ -4,8 +4,9 @@ import "../css/gnb.css";
 import Link from "next/link";
 import { Button } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
-import { encodeSGMAStr, decodeSGMAStr } from "../libs/path-encryptor";
+import { encodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
+import { LOG_OUT } from "../reducers/userinfo";
 
 export default () => {
   const dispatch = useDispatch();

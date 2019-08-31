@@ -4,8 +4,6 @@ import FileItems from "./fileitems";
 import Steps from "./steps";
 
 const DashboardContentComponents = props => {
-  // if (typeof window !== "undefined") console.log(props); // 여기서 props가 진실의 근원이다.
-  // {user: {…}, docs: {…}, path: ""}
   return (
     <article className="contents">
       <div className="functions">

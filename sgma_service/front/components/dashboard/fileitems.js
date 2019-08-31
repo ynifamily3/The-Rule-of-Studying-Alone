@@ -1,10 +1,17 @@
 import File from "./fileunit";
 
-// returns 배열 (문서들을 가지고 있다.)
+// docs : 전체 state
+// pathstr : 과학/지구과학 또는 ""
 const findPath = (docs, pathStr) => {
-  const arr = pathStr ? pathStr.split("/") : [];
+  // 디펜던시 찾기 귀찮아서 처음에 "/"가 들어가는 원인을 파악 못함...
+  const arr = pathStr ? pathStr.split("/") : []; // 쪼개진 경로
   let ref = docs; // 해당 폴더를 가리키는 참조형 변수
-  // filter 로 찾아야지
+  for (let i = 0; i < arr.length; i++) {
+    ref = ref.filter(elem => {
+      return elem.type === "folder" && elem.name === arr[i];
+    })[0].docs;
+    if (!ref) break; // 유효하지 않은 경로로 접근할 때 (필요없는 코드인데 삭제 요망)
+  }
   return ref;
 };
 
@@ -12,19 +19,6 @@ const FileItems = props => {
   const { path } = props; // path: current path
   const { docs } = props.docs;
   const currPathList = findPath(docs, path);
-  // console.warn(docs);
-  console.warn(currPathList);
-  if (typeof window !== "undefined") {
-    console.log(`docs :`, docs);
-    console.log(`path : ${path ? path : "<root>"}`);
-  }
-
-  // 해당 레벨 객체로 이동하여 폴더와 파일 리스트를 표출한다.
-  /*
-  0: {type: "folder", name: "과학", docs: Array(2)}
-  1: {type: "folder", name: "리시프", docs: Array(0)}
-  2: {type: "file", name: "수학"}
-  */
   return (
     <ul className="items">
       {currPathList.map((x, i) => {
@@ -33,7 +27,7 @@ const FileItems = props => {
             fileName={x.name}
             type={x.type}
             key={"fileElem" + i}
-            path={x.type === "folder" && path + "/" + x.name}
+            path={path ? path.concat("/").concat(x.name) : x.name} // 처음에 /생기는거 방지
           />
         );
       })}

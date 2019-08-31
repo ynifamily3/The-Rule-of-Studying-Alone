@@ -1,16 +1,3 @@
-/*
-{
-  docs : [
-    {type:'folder', name:'과학', docs:[
-      {type: 'folder', name: '기타과학', docs[...]},
-      {type: 'file', name:'지구과학'}
-    ]},
-    {type:'folder', name: '리시프', docs:[...]},
-    {type:'file', name:'수학'}
-  ]
-}
-
-*/
 export const initialState = {
   docs: [
     {
@@ -18,7 +5,14 @@ export const initialState = {
       name: "과학",
       docs: [
         { type: "folder", name: "기타과학", docs: [] },
-        { type: "file", name: "지구과학" }
+        {
+          type: "folder",
+          name: "지구과학",
+          docs: [
+            { type: "file", name: "지구과학의 역사" },
+            { type: "file", name: "내가 지구를 만들었다" }
+          ]
+        }
       ]
     },
     { type: "folder", name: "리시프", docs: [] },

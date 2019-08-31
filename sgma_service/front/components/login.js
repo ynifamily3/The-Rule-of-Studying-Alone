@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useDispatch } from "react-redux";
 import "../css/login.css";
 import CustomButton from "./custombutton";
