@@ -1,30 +1,13 @@
-import Immutable from "immutable";
+import Immutable, { fromJS } from "immutable";
 
 export const initialState = Immutable.fromJS({
   subjects: []
 });
 
-/*
-
-{
-    subjects: [
-        {
-            subject_name: *String,
-            docs: [
-                ...
-            ]
-        },
-        {
-            ...
-        }
-    ]
-}
-
-*/
-
 export const ADD_SUBJECT = "ADD_SUBJECT";
 export const ADD_SUBJECT_SUCCESS = "ADD_SUBJECT_SUCCESS";
 export const ADD_SUBJECT_FAILURE = "ADD_SUBJECT_FAILURE";
+// 다음과 같은 액션 추가 : API로 일괄적으로 모든 data를 로드해 오는것
 
 export const addSubjectAction = {
   type: ADD_SUBJECT
@@ -41,27 +24,28 @@ export const addSubjectFailureAction = {
 // apply redux - saga
 // ADD_SUBJECT -> saga -> API call -> 1) ADD_SUBJECT_SUCCESS || 2) ADD_SUBJECT_FAILURE
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = initialState.toJS(), action) => {
   const { type, data } = action;
   switch (type) {
-    case ADD_SUBJECT: // redux saga로 파라미터를 넘기는 법은?
-      return { ...state };
+    case ADD_SUBJECT:
+      return fromJS(state); // toJS() => fromJS 이렇게 해도 performance 문제는 없나? 좀더 나은 해결책은 고민해 봐야 겠음.
 
     case ADD_SUBJECT_FAILURE:
-      return { ...state };
+      return fromJS(state);
 
     case ADD_SUBJECT_SUCCESS:
       // subject_name의 중복 체크 안함. 해야됨. (혹은 서버 단에서 거부하면 failure action으로 내려온다.)
+      const rawData = data.toJS();
       return state.updateIn(["subjects"], docs =>
         docs.push(
           Immutable.fromJS({
-            subject_name: data["subject_name"],
+            subject_name: rawData["subject_name"],
             docs: []
           })
         )
       );
     default:
-      return { ...state };
+      return fromJS(state);
   }
 };
 

@@ -1,25 +1,51 @@
 import axios from "axios";
-import { all, fork, takeLatest, put, call } from "redux-saga/effects";
+import {
+  all,
+  fork,
+  take,
+  takeLatest,
+  put,
+  call,
+  delay
+} from "redux-saga/effects";
 import {
   ADD_SUBJECT,
   ADD_SUBJECT_SUCCESS,
   ADD_SUBJECT_FAILURE
 } from "../reducers/subjects";
+import { Map } from "immutable";
 
-function addSubjectAPI() {
-  return false;
+// const HEELO_SAGA = "HELLO_SAGA";
+
+function addSubjectAPI({ subject_name }) {
+  console.log(subject_name);
+  axios
+    .put(
+      `${process.env.BACKEND_SERVICE_DOMAIN}/api/doc/${subject_name}`,
+      {},
+      {
+        withCredentials: true
+      }
+    )
+    .then(({ data }) => {
+      console.log(data);
+      alert(data); // 해당 메시지 표출은 saga의 call API 단에서 잡아내야 한다. 여기도 수정
+    });
+  // 잘되는데 미완
 }
 
-function* addSubject() {
+function* addSubject(action) {
+  // payload를 가져올 수 있을 것이라 기대한다.
   try {
-    yield call(addSubjectAPI); // 서버에 요청을 보낸다.
+    // yield delay(100);
+    yield call(addSubjectAPI, action.data); // 서버에 요청을 보낸다.
     yield put({
       // == dispatch
       // data["subject_name"],
       type: ADD_SUBJECT_SUCCESS,
-      data: {
-        subject_name: "data-".concat(Math.random())
-      }
+      data: Map({
+        subject_name: action.data["subject_name"]
+      })
     });
   } catch (e) {
     console.error(e);
@@ -34,9 +60,30 @@ function* addSubject() {
 }
 
 function* watchaddSubject() {
-  yield takeLatest(ADD_SUBJECT, addSubject); // LOG_IN Action을 감시한다.
+  yield takeLatest(ADD_SUBJECT, addSubject); // ADD_SUBJECT Action을 감시한다.
 }
+
+/*
+function* testSaga() {
+  console.log("hello ^^");
+  yield take(HEELO_SAGA); // take가 HELLO_SAGA를 기다리겠다는 뜻임
+  // take : 해당 액션이 dispatch되면 generator를 next하는 이펙트
+  // 비동기, 타이머 해도 됨
+  // 같은 action을 여러번 dispatch를 듣기 위해선 (함수가 안 끝나게)
+  // while(true) {yield ...} 해도 됨
+  // while (let i = 0; i < ; i++) 하면 dispatch 수를 제한시킬 수 있음
+}
+*/
 
 export default function* subjectsSaga() {
   yield all([fork(watchaddSubject)]);
+  /*
+  yield all([ // 하나만 있을땐 yield testSaga(); 해도 되는데 여러개라면..
+    // all 은 여러 이펙트를 동시에 실행할 수 있게 한다.
+      testSaga(),
+      watchXXX(), // watch 컨벤션 사용 권장
+      watchYYY(),
+      ...
+  ])
+  */
 }

@@ -7,6 +7,8 @@ import { LOG_IN_FAILURE, LOG_IN_SUCCESS } from "../reducers/userinfo";
 import CustomModal from "../components/modal/custommodal";
 import axios from "axios";
 
+import { ADD_SUBJECT } from "../reducers/subjects";
+
 const IndexPage = ctx => {
   // ajax로 로그인 상태 검사하여 직접 LOG_IN_SUCCESS를 dispatch
   // 그 전 까진 앱을 모달로 얼려놓는다.
@@ -18,6 +20,17 @@ const IndexPage = ctx => {
   };
 
   useEffect(() => {
+    /*
+    // *** 테스트 : dispatch
+    dispatch({
+      type: ADD_SUBJECT,
+      data: {
+        subject_name: "리시프 좋아.."
+      }
+    });
+
+    // end of test
+    */
     // *** 혹은 getInitialProps 후킹 걸어놓고, 서버 사이드 / 클라이언트 사이드 처리를 이원화하고,
     // 서버의 경우 api 서버와의 통신이 완료된 경우 뿌려주고 ,클라는 모달로 한다음 클라에서 api를 로딩하고 결정
     setModalIsOpen(true); // BLOCK 걸어놓고 state에 대한 서버 검증 (갱신)

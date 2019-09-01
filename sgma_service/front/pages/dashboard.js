@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Page from "../layouts/main";
 import DashBoard from "../layouts/dashboard";
 import Router from "next/router";
@@ -12,6 +12,7 @@ const DashBoardPage = pageProps => {
   const user = useSelector(state => state.userinfo);
   const docs = useSelector(state => state.docs);
   const { path } = router.query;
+
   return (
     <Page>
       <DashBoard user={user} docs={docs} path={decodeSGMAStr(path)} />
