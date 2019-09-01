@@ -1,3 +1,5 @@
+// deprecated 대신, subjects.js 사용
+
 export const initialState = {
   docs: [
     {

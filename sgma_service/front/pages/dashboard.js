@@ -7,18 +7,6 @@ import { useRouter } from "next/router";
 import { decodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
 
-// 미 로그인시 메인 화면으로 이동 시연
-// 여기서는 redux-state로 1차 판별을 하고 2차적으로 api로 판별한다. (백 구현시 구현)
-/*
-GET /api/docs
-로그인된 상태인 경우
-{
-docs:[{
-  folder_name:String,
-  file_name:[String]
-  }]
-}
-*/
 const DashBoardPage = pageProps => {
   const router = useRouter();
   const user = useSelector(state => state.userinfo);
