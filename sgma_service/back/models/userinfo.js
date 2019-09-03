@@ -4,6 +4,7 @@ const {Schema} = mongoose;
 const userSchema = new Schema({
 	auth_method:{
 		type:String,
+		enum:['naver','google','facebook','direct'],
 		default: "direct",
 	},
 	user_id:{
@@ -24,10 +25,12 @@ const userSchema = new Schema({
 		type:String,
 		default:"photoURL",
 	},
+	/*
 	subjects:{
 		type:Array,
 		default:[],
 	},
+	*/
 	createdAt:{
 		type: Date,
 		default: Date.now,

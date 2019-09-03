@@ -24,6 +24,7 @@ const fileSchema = new Schema({
 	},
 	type:{
 		type:String,//folder or file
+		enum:['folder','file'],
 		required:true,
 	},
 	files:[{type:mongoose.Schema.Types.ObjectId,ref:'file'}],

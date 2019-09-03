@@ -20,7 +20,7 @@ const loginSuccess = (platform,id,nickname,email,photo,done)=>{
 				newUser.user_id=id;
 				if(nickname)newUser.nickname=nickname;
 				if(email)newUser.email=email;
-				if(photo)neuser.profile_photo=photo;
+				if(photo)newUser.profile_photo=photo;
 				return newUser.save()
 					.then(user=>done(null,user))
 					.catch(err=>done(err,false));

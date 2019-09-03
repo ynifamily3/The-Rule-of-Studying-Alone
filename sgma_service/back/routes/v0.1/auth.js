@@ -23,11 +23,11 @@ const login = (req,res)=>{
 	let cookie = res.req.user._id;
 	console.log("login");
 	res.cookie("user",cookie,{
-		expires:new Date(Date.now()+9000000),
+		expires:new Date(Date.now()+900000),
 		httpOnly:true
 	})
-	res.redirect("http://127.0.0.1:3000");//test환경
-	//	res.redirect(successRedirect);
+	//res.redirect("http://127.0.0.1:3000");//test환경
+	res.redirect(successRedirect);
 }
 
 router.get('/',(req,res)=>{
@@ -42,15 +42,15 @@ router.get('/logout',(req,res)=>{
 	res.redirect('/');
 })
 
-router.get('/naver',isAuthenticated,passport.authenticate('naver'),login)
+router.get('/naver',isAuthenticated,passport.authenticate('naver',{failureRedirect,}),login)
 
 router.get('/naver/callback',isAuthenticated,passport.authenticate('naver',{failureRedirect,}),login);
 
-router.get('/google',isAuthenticated,passport.authenticate('google'));
+router.get('/google',isAuthenticated,passport.authenticate('google',{failureRedirect}),login);
 
 router.get('/google/callback',isAuthenticated,passport.authenticate('google',{failureRedirect,}),login);
 
-router.get('/facebook',isAuthenticated,passport.authenticate('facebook'));
+router.get('/facebook',isAuthenticated,passport.authenticate('facebook',{failureRedirect}),login);
 
 router.get('/facebook/callback',isAuthenticated,passport.authenticate('facebook',{failureRedirect,}),login);
 

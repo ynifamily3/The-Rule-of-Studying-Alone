@@ -4,6 +4,7 @@ const soupRouter = require('./soup');
 const {docRouter,docsRouter} = require('./doc');
 const router = require('express').Router();
 const cors = require('cors');
+const v01 = require('./v0.1');
 
 var whitelist = ['https://yasm.miel.dev',
 'http://127.0.0.1',
@@ -39,5 +40,7 @@ router.use('/auth',authRouter);
 //router.use('/soup',soupRouter);
 router.use('/doc',docRouter);
 router.use('/docs',docsRouter);
+
+router.use('/v0.1',v01);
 
 module.exports = router;
