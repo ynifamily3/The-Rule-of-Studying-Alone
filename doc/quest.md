@@ -6,6 +6,7 @@ define Quest:
 	String		statement	// 1, 지문
 	String[]	choices		// +, 선택지
 	String[]	answers		// +, 정답
+	Info		material    // 1, 이 문제 출제에 사용된 소재
 ```
 
 **문제**(`Quest`)는 사용자가 풀어야 할 문제를 모델링한 것이다.
@@ -92,7 +93,8 @@ function generate_binary_quest(Info g):
 		statement: "다음 문장의 참 거짓을 판별하시오.\n{name}은(는) {fact}",
 		type: "binary",
 		choices: [true, false],
-		answers: [ans]
+		answers: [ans],
+		material: material
 	}
 	
 // 지식 i에서 올바른 속성을 선택한다.
@@ -180,7 +182,8 @@ function generate_selection_quest(Info g, Number n, Number a, Boolean inv):
 		statement: "다음 중 {name}에 대한 설명으로 {logic_label}을 고르시오.",
 		type: "selection",
 		choices: choices,
-		answers: answers
+		answers: answers,
+		material: material
 	}
 ```
 
@@ -208,7 +211,8 @@ function generate_short_quest(Info g, Number n):
 		statement: "다음이 설명하는 것을 적으시오.\n{attrs[1], attrs[2], ...}",
 		type: "short",
 		choices: null,
-		answers: material.names
+		answers: material.names,
+		material: material
 	}
 ```
 
