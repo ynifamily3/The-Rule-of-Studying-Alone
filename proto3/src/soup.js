@@ -144,14 +144,16 @@ Soup.select_negative_attrs = function(root, material, n) {
 
 	// 1개짜리와 n개짜리를 처리하는데 복잡도가 달라지기 때문에
 	// 특별히 구분해준다.
+	// Util.get_randomly의 반환형은 배열이 아니기 때문에
+	// 호환성을 위해 배열로 만들어준다.
 	if(n == 1) {
-		return Util.get_randomly(out.reduce((accm, info) => {
+		return [Util.get_randomly(out.reduce((accm, info) => {
 			// if(is_subject_to(info, material))
 			// 	return accm.concat(info.attrs);
 			// else
 			// 	return accm;
 			return accm.concat(info.attrs);
-		}, []));
+		}, []))];
 	}
 	else {
 		return Util.get_randomly_multi(out.reduce((accm, info) => {
