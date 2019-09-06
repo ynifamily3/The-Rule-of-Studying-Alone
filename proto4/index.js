@@ -86,7 +86,7 @@ function distribute(G, N) {
 	let M = G.V.size;
 	let quotient = Math.floor(N / M);
 	for(let i = 0; i < M; ++i)
-		ratio[i] = quotient;5
+		ratio[i] = quotient;
 	N -= quotient * M;
 	
 	// 나머지는 랜덤분배
