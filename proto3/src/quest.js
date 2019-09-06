@@ -39,7 +39,7 @@ class Quest {
 	/*
 		type은 {'binary', 'selection', 'short'} 중 하나일 것
 	*/
-	constructor(type, statement, choices, answers) {
+	constructor(type, statement, choices, answers, materials) {
 		console.assert(type);
 		console.assert(statement);
 		console.assert(choices instanceof Array);
@@ -48,6 +48,7 @@ class Quest {
 		this.statement = statement;
 		this.choices = choices;
 		this.answers = answers;
+		this.materials = materials;
 	}
 }
 
@@ -58,11 +59,11 @@ Quest.evaluate = function(quest, response) {
 Quest.evaluator = {};
 
 // 참/거짓 유형 문제 생성
-Quest.generate_binary_quest = function(g) {
-	let subinfos = Soup.fetch_subinfos([g]).filter(info => {
-		return info.attrs.length > 0;
-	});
-	let material = Util.get_randomly(subinfos);
+Quest.generate_binary_quest = function(g, material) {
+	// let subinfos = Soup.fetch_subinfos([g]).filter(info => {
+	// 	return info.attrs.length > 0;
+	// });
+	// let material = Util.get_randomly(subinfos);
 	let ans = null;
 	let fact = null;
 	if(Math.random() > 0.5) {
@@ -78,9 +79,9 @@ Quest.generate_binary_quest = function(g) {
 		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
-	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.<br>`
+	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.`
 		+`${material.names[0]}은(는) ${fact}`
-		,['T', 'F'], [ans]);
+		,['T', 'F'], [ans], material);
 };
 
 // 참거짓 채점기
@@ -128,7 +129,7 @@ Quest.generate_selection_quest = function(g, n, a, inv) {
 	let logic_label = inv ? '옳지 않은 것' : '옳은 것';
 	return new Quest('selection', 
 		`다음 중 ${name}에 대한 설명으로 ${logic_label}을 고르시오.`,
-		choices, answers);
+		choices, answers, material);
 };
 
 // n지선다 채점기
@@ -155,11 +156,11 @@ Quest.generate_short_quest = function(g, n) {
 	if(material.attrs.length < n)
 		n = material.attrs.length;
 	let attrs = Soup.select_positive_attrs(material, n);
-	let stmt = '다음이 설명하는 것을 적으시오.<br>';
+	let stmt = '다음이 설명하는 것을 적으시오.';
 	attrs.forEach(attr => {
-		stmt += ' * ' + attr + '<br>';
+		stmt += ' * ' + attr;
 	});
-	return new Quest('short', stmt, [], material.names);
+	return new Quest('short', stmt, [], material.names, material);
 };
 
 // 단답식 채점기

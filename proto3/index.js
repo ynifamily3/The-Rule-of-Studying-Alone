@@ -4,6 +4,34 @@ const Quest = require('./src/quest');
 const Protocol = require('./src/protocol');
 const Mocktest = require('./src/mocktest');
 
+/*
+	모의고사 데모 예시
+*/
+function create_tfquest_dom(quest) {
+	console.assert(quest.type == 'binary');
+
+	let dom = document.createElement('div');
+	dom.className = 'section';
+
+	let stmt = document.createElement('p');
+	stmt.innerText = quest.statement;
+	dom.appendChild(stmt);
+
+	let radio_t = document.createElement('input');
+	radio_t.type = 'radio';
+	radio_t.checked = (quest.answers[0] == 'T');
+	dom.appendChild(radio_t);
+	dom.appendChild(document.createTextNode('T'));
+
+	let radio_f = document.createElement('input');
+	radio_f.type = 'radio';
+	radio_f.checked = (quest.answers[0] == 'F');
+	dom.appendChild(radio_f);
+	dom.appendChild(document.createTextNode('F'));
+
+	return dom;
+}
+
 document.getElementById('docs').onchange = function(evt) {
 	debug_parse_doc(evt.target.value);
 };
@@ -26,13 +54,24 @@ document.getElementById('mocktest').onclick = function() {
 		return;
 
 	let n = parseInt(document.getElementById('mocktest-n').value);
-	let out_dom = document.getElementById('mocktest-out');
 	let subinfos = Soup.fetch_subinfos([soup.roots[0]]);
-	let domains = Mocktest.distribute(subinfos, n);
+	let domains = Mocktest.select_test_materials(subinfos, n);
+	console.log('문제출제범위 선택 완료');
 	console.log(domains);
-	out_dom.innerText = '';
+
+	let out_dom = document.getElementById('mocktest-out');
+	out_dom.innerText = '==== 선택된 지식들 ====\n';
 	domains.forEach(info => {
 		out_dom.innerText += `${info.names[0]}\n`;
+	});
+
+	let mocktest = Mocktest.create_mocktest([soup.roots[0]], n);
+	console.log('문제출제 완료');
+	console.log(mocktest);
+
+	mocktest.quests.forEach(quest => {
+		out_dom.appendChild(document.createElement('hr'));
+		out_dom.appendChild(create_tfquest_dom(quest));
 	});
 }
 
@@ -42,7 +81,7 @@ document.getElementById('quest-0-bt').onclick = function() {
 		return;
 
 	// 문제 만들기
-	let quest = Quest.generate_binary_quest(soup.roots[0]);
+	//let quest = Quest.generate_binary_quest(soup.roots[0]);
 
 	// 지문 보여주기
 	document.getElementById('quest-0-stmt').innerHTML = quest.statement;
