@@ -1,6 +1,8 @@
+const Soup = require('./src/soup');
 const Parser = require('./src/parser');
 const Quest = require('./src/quest');
 const Protocol = require('./src/protocol');
+const Mocktest = require('./src/mocktest');
 
 document.getElementById('docs').onchange = function(evt) {
 	debug_parse_doc(evt.target.value);
@@ -16,6 +18,22 @@ function debug_parse_doc(docstr) {
 	soup = Parser.parse_doc(docstr);
 	console.log(soup);
 	dom.value = soup.get_tree();
+}
+
+// 모의고사 생성!
+document.getElementById('mocktest').onclick = function() {
+	if(!soup)
+		return;
+
+	let n = parseInt(document.getElementById('mocktest-n').value);
+	let out_dom = document.getElementById('mocktest-out');
+	let subinfos = Soup.fetch_subinfos([soup.roots[0]]);
+	let domains = Mocktest.distribute(subinfos, n);
+	console.log(domains);
+	out_dom.innerText = '';
+	domains.forEach(info => {
+		out_dom.innerText += `${info.names[0]}\n`;
+	});
 }
 
 // 참/거짓 문제 예제
