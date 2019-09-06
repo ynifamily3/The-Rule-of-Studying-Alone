@@ -52,8 +52,8 @@ class Soup {
 	}
 }
 
-// 지식 g로부터 도달할 수 있는 모든 지식을 반환한다.
-Soup.fetch_subinfos = function(g) {
+// 지식 g들로부터 도달할 수 있는 모든 지식을 반환한다.
+Soup.fetch_subinfos = function(gs) {
 	function __fetch_subinfos(info, out, dup) {
 		info.childs.forEach(child => {
 			if(!dup[child.jsid]) {
@@ -64,7 +64,11 @@ Soup.fetch_subinfos = function(g) {
 		});
 		return out;
 	}
-	return __fetch_subinfos(g, [], {});
+
+	let dup = {};
+	let out = [];
+	gs.forEach(g => __fetch_subinfos(g, out, dup));
+	return out;
 };
 
 // 지식 material에서 임의의 속성을 선택한다.

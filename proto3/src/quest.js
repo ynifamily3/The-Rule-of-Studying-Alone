@@ -59,7 +59,7 @@ Quest.evaluator = {};
 
 // 참/거짓 유형 문제 생성
 Quest.generate_binary_quest = function(g) {
-	let subinfos = Soup.fetch_subinfos(g).filter(info => {
+	let subinfos = Soup.fetch_subinfos([g]).filter(info => {
 		return info.attrs.length > 0;
 	});
 	let material = Util.get_randomly(subinfos);
@@ -100,7 +100,7 @@ Quest.evaluator['binary'] = function(quest, response) {
 // inv: 옳은/옳지 않은
 Quest.generate_selection_quest = function(g, n, a, inv) {
 	let p = inv ? n - a : a;
-	let subinfos = Soup.fetch_subinfos(g);
+	let subinfos = Soup.fetch_subinfos([g]);
 	let material = Util.get_randomly(subinfos.filter(info => {
 		return info.attrs.length >= p;
 	}));
@@ -146,7 +146,7 @@ Quest.evaluator['selection'] = function(quest, response) {
 
 // 단답식 유형 문제 생성
 Quest.generate_short_quest = function(g, n) {
-	let material = Util.get_randomly(Soup.fetch_subinfos(g).filter(info => {
+	let material = Util.get_randomly(Soup.fetch_subinfos([g]).filter(info => {
 		return info.attrs.length > 0;
 	}));
 
