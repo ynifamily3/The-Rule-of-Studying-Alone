@@ -22,8 +22,7 @@ import { Map } from "immutable";
 // const HEELO_SAGA = "HELLO_SAGA";
 
 function addSubjectAPI({ subject_name }) {
-  console.log(subject_name);
-  axios
+  const result = axios
     .put(
       `${process.env.BACKEND_SERVICE_DOMAIN}/api/doc/${subject_name}`,
       {},
@@ -33,18 +32,17 @@ function addSubjectAPI({ subject_name }) {
     )
     .then(({ data }) => {
       console.log(data);
-      // alert(data); // 해당 메시지 표출은 saga의 call API 단에서 잡아내야 한다. 여기도 수정
       const { result } = data;
       if (!result || result !== APISET.API_ADD_SUBJECT_SUCCESS) {
         return APISET.API_ADD_SUBJECT_FAILURE_SAME;
       }
       return APISET.API_ADD_SUBJECT_SUCCESS;
     });
-  // 잘되는데 미완
+  return result;
 }
 
-function fetchSubjectAPI() {
-  axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/docs`, {
+async function fetchSubjectAPI() {
+  const result = await axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/docs`, {
     withCredentials: true
   }).then(({ data }) => {
     if (data.isLogin === false) {
@@ -54,11 +52,13 @@ function fetchSubjectAPI() {
       // redux-saga에서 fetch한 것들을 state로 바꾸는 방법은 무엇일까/
     }
   });
+  // 리턴을 이쪽에서 해야됨 ㅅㄱ
+  return result;
 }
 
 function* fetchSubject(action) {
   const result = yield call(fetchSubjectAPI); // result 가 안 넘어온다?
-  console.warn(result);
+  // console.warn(result);
   if (result === 0) {
     // login failed 등의 문제
     yield put({
@@ -78,6 +78,8 @@ function* addSubject(action) {
   //try {
   // yield delay(100);
   const result = yield call(addSubjectAPI, action.data); // 서버에 요청을 보낸다.\
+  console.log("애드");
+  console.log(result);
   // 리턴값 어떻게 가져오지. 이렇게 result 하는게 의미가 없다구!@!@
   if (result === APISET.API_ADD_SUBJECT_SUCCESS) {
     yield put({

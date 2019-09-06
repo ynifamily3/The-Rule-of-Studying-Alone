@@ -34,13 +34,9 @@ const SubjectsPage = pageProps => {
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
     }).then(({ data }) => {
-      // 여기에서 fetch 해본다...
-      console.log("디스패치 전");
       dispatch({
         type: FETCH_SUBJECT
       });
-      console.log("디스패치 후");
-      console.log(data);
       setModalIsOpen(false);
       if (data.isLogin) {
         setIsLogin(true);
