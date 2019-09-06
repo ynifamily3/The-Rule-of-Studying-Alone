@@ -1,13 +1,28 @@
-import Immutable, { fromJS } from "immutable";
+import Immutable from "immutable";
 
 export const initialState = Immutable.fromJS({
   subjects: []
 });
 
+export const FETCH_SUBJECT = "FETCH_SUBJECT";
+export const FETCH_SUBJECT_SUCCESS = "FETCH_SUBJECT_SUCCESS";
+export const FETCH_SUBJECT_FAILURE = "FETCH_SUBJECT_FAILURE";
 export const ADD_SUBJECT = "ADD_SUBJECT";
 export const ADD_SUBJECT_SUCCESS = "ADD_SUBJECT_SUCCESS";
 export const ADD_SUBJECT_FAILURE = "ADD_SUBJECT_FAILURE";
 // 다음과 같은 액션 추가 : API로 일괄적으로 모든 data를 로드해 오는것
+
+export const fetchSubjectAction = {
+  type: FETCH_SUBJECT
+};
+
+export const fetchSubjectSuccessAction = {
+  type: FETCH_SUBJECT_SUCCESS
+};
+
+export const fetchSubjectFailureAction = {
+  type: FETCH_SUBJECT_FAILURE
+};
 
 export const addSubjectAction = {
   type: ADD_SUBJECT
@@ -28,10 +43,11 @@ const reducer = (state = initialState.toJS(), action) => {
   const { type, data } = action;
   switch (type) {
     case ADD_SUBJECT:
-      return fromJS(state); // toJS() => fromJS 이렇게 해도 performance 문제는 없나? 좀더 나은 해결책은 고민해 봐야 겠음.
+      return Immutable.fromJS(state); // toJS() => fromJS 이렇게 해도 performance 문제는 없나? 좀더 나은 해결책은 고민해 봐야 겠음.
 
     case ADD_SUBJECT_FAILURE:
-      return fromJS(state);
+      console.log("서브젝트 추가 실패...!!");
+      return Immutable.fromJS(state);
 
     case ADD_SUBJECT_SUCCESS:
       // subject_name의 중복 체크 안함. 해야됨. (혹은 서버 단에서 거부하면 failure action으로 내려온다.)
@@ -44,8 +60,15 @@ const reducer = (state = initialState.toJS(), action) => {
           })
         )
       );
+    case FETCH_SUBJECT:
+      return Immutable.fromJS(state);
+    case FETCH_SUBJECT_FAILURE:
+      console.log("Failed to fetch subjects");
+      return Immutable.fromJS(state);
+    case FETCH_SUBJECT_SUCCESS:
+      return Immutable.fromJS(data.toJS()); // 그냥 from이랑 to랑 상쇄되는거 아님? 나중에 수정예상
     default:
-      return fromJS(state);
+      return Immutable.fromJS(state);
   }
 };
 
