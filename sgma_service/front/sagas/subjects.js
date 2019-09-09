@@ -49,7 +49,7 @@ async function fetchSubjectAPI() {
       return 0; // fail
     } else {
       return data; // success
-      // redux-saga에서 fetch한 것들을 state로 바꾸는 방법은 무엇일까/
+      // redux-saga에서 fetch한 것들을 state로 바꾸는 방법은 무엇일까/ => 아마 해결한듯
     }
   });
   // 리턴을 이쪽에서 해야됨 ㅅㄱ

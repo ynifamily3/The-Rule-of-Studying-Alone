@@ -6,7 +6,9 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { decodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
-
+{
+  /* 2019 09 09 수정. 로딩 완료 후, useEffect으로 api 서버와 통신 하도록 구현할 것 */
+}
 const DashBoardPage = pageProps => {
   const router = useRouter();
   const user = useSelector(state => state.userinfo);

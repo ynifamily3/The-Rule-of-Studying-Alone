@@ -86,17 +86,9 @@ export default () => {
                   </a>
                 </Link>
               )}
-              <Link
-                href={{
-                  pathname: "/dashboard",
-                  query: {
-                    path: encodeSGMAStr("과학/지구과학"),
-                    pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
-                  }
-                }}
-              >
+              <Link href="/subjects">
                 <a>
-                  <Button color="blue">나의 노트로 가기</Button>
+                  <Button color="blue">내 공부방</Button>
                 </a>
               </Link>
               <Link href="/editor">
@@ -112,12 +104,17 @@ export default () => {
   );
 };
 
-/*<Link
-          href={{
-            pathname: "/dashboard",
-            query: {
-              path: encodeSGMAStr("과학/지구과학"),
-              pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
-            }
-          }}
+/*              <Link
+                href={{
+                  pathname: "/dashboard",
+                  query: {
+                    path: encodeSGMAStr("과학/지구과학"),
+                    pv: md5("과학/지구과학") // 샘플용임. 나중에 지워야 함
+                  }
+                }}
+              >
+                <a>
+                  <Button color="blue">내 공부방</Button>
+                </a>
+              </Link>
 >*/
