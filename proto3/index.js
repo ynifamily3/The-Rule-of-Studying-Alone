@@ -101,11 +101,8 @@ document.getElementById('mocktest').onclick = function() {
 
 	// 문제출제 범위 선택
 	let out_dom = document.getElementById('mocktest-out');
+	out_dom.innerHTML = '';
 	let n = parseInt(document.getElementById('mocktest-n').value);
-	let subinfos = Soup.fetch_subinfos(soup.roots);
-	let domains = Mocktest.select_test_materials(subinfos, n);
-	console.log('문제출제범위 선택 완료');
-	console.log(domains);
 
 	// 모의고사 문제 생성
 	let mocktest = Mocktest.create_mocktest(soup.roots, n);
