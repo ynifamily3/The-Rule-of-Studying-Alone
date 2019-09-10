@@ -12,7 +12,7 @@ const findPath = (docs, pathStr) => {
     })[0].docs;
     if (!ref) break; // 유효하지 않은 경로로 접근할 때 (필요없는 코드인데 삭제 요망)
   }
-  return ref;
+  return ref ? ref : []; // undefined 방지용
 };
 
 const FileItems = props => {

@@ -9,15 +9,6 @@ import axios from "axios";
 
 // subjects들을 선택하는 페이지이다.
 
-/*
-    dispatch({
-      type: ADD_SUBJECT,
-      data: {
-        subject_name: "리시프 좋아.."
-      }
-    });
-*/
-
 const SubjectsPage = pageProps => {
   const dispatch = useDispatch();
   const [userName, setuserName] = useState(null);

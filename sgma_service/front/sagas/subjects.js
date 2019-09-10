@@ -21,8 +21,9 @@ import { Map } from "immutable";
 
 // const HEELO_SAGA = "HELLO_SAGA";
 
-function addSubjectAPI({ subject_name }) {
-  const result = axios
+async function addSubjectAPI({ subject_name }) {
+  // 이거 잘 되냐?
+  const result = await axios
     .put(
       `${process.env.BACKEND_SERVICE_DOMAIN}/api/doc/${subject_name}`,
       {},
@@ -78,8 +79,8 @@ function* addSubject(action) {
   //try {
   // yield delay(100);
   const result = yield call(addSubjectAPI, action.data); // 서버에 요청을 보낸다.\
-  console.log("애드");
-  console.log(result);
+  //console.log("애드");
+  //console.log(result);
   // 리턴값 어떻게 가져오지. 이렇게 result 하는게 의미가 없다구!@!@
   if (result === APISET.API_ADD_SUBJECT_SUCCESS) {
     yield put({

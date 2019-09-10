@@ -6,18 +6,35 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { decodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
+import { FETCH_DOCS } from "../reducers/docs";
+
 {
   /* 2019 09 09 수정. 로딩 완료 후, useEffect으로 api 서버와 통신 하도록 구현할 것 */
 }
 const DashBoardPage = pageProps => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const user = useSelector(state => state.userinfo);
-  const docs = useSelector(state => state.docs);
-  const { path } = router.query;
+  // const docs = useSelector(state => state.docs);
+  // 이 부분을 이제 fetch 액션을 통해서 하도록 해야 함.
+  const { path, subject } = router.query;
+
+  useEffect(() => {
+    // console.log("파닭은 역시");
+    // console.log(docs);
+    dispatch({
+      type: FETCH_DOCS,
+      data: {
+        subject_name: subject
+      }
+    });
+    // console.log(docs); // 이거 자꾸 갱신되나?
+    // useeffect once until refresh 필요할 것 같다 (19.09.10.)
+  }, []);
 
   return (
     <Page>
-      <DashBoard user={user} docs={docs} path={decodeSGMAStr(path)} />
+      <DashBoard user={user} path={decodeSGMAStr(path)} />
     </Page>
   );
 };
