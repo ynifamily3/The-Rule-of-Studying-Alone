@@ -26,8 +26,8 @@ const login = (req,res)=>{
 		expires:new Date(Date.now()+900000),
 		httpOnly:true
 	})
-	res.redirect("http://127.0.0.1:3000");//test환경
-	//res.redirect(successRedirect);
+	//res.redirect("http://127.0.0.1:3000");//test환경
+	res.redirect(successRedirect);
 }
 
 router.get('/',(req,res)=>{

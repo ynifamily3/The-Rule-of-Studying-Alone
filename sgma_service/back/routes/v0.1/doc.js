@@ -153,7 +153,8 @@ docsRouter.get('/',util.loginCheck,(req,res)=>{
 			console.log(subjects)
 			if(subjects){
 				for(sub of subjects){
-					await docs.push({subject_name:sub.name,docs:await makeSub(sub)})
+					await docs.push({subject_name:sub.name})
+					//await docs.push({subject_name:sub.name,docs:await makeSub(sub)})
 				}
 				res.json({subjects:docs});
 			}
@@ -332,7 +333,7 @@ docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 									await subject.update({_id:subject._id},{$pull:{files:f._id}})
 								}
 							}
-							res.json({test:"test"});
+							res.json({result:"delete file success"});
 						} else {
 							res.json({error:"can't find subject"});
 						}
