@@ -79,7 +79,7 @@ Quest.generate_binary_quest = function(g, material) {
 		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
-	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.`
+	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.\n`
 		+`${material.names[0]}은(는) ${fact}`
 		,['T', 'F'], [ans], material);
 };
@@ -95,16 +95,44 @@ Quest.evaluator['binary'] = function(quest, response) {
 };
 
 // n지선다 유형 문제 생성
-// g: 문제를 출제할 지식
+// material은 반드시 root가 아니어야 한다. root면 무조건 에러난다.
+// 문제 생성에 실패할 경우 에러가 발생한다.
+//
+// material의 속성의 수는 a (inv가 true이면 n - a)개 이상이어야 한다.
+// material: 문제를 출제할 지식
 // n: 선택지의 수
 // a: 정답의 수
 // inv: 옳은/옳지 않은
-Quest.generate_selection_quest = function(g, n, a, inv) {
+Quest.generate_selection_quest = function(material, n, a, inv) {
 	let p = inv ? n - a : a;
-	let subinfos = Soup.fetch_subinfos([g]);
-	let material = Util.get_randomly(subinfos.filter(info => {
-		return info.attrs.length >= p;
-	}));
+
+	// 부정 명제를 가져올 범위를 찾는다. 직접
+	// 명제의 수를 세기 때문에 최악의 경우 O(n^2)
+	// 의 시간 복잡도를 갖지만, n이 1000 미만이라 괜찮을듯.
+	// 그래도 최적화가 필요해 보인다
+	let g = material;
+	while(g.parents.length > 0) {
+		// 원리:
+		// 자신의 부모 아래의 모든 명제의 수에서 자신의 명제 수를 뺀
+		// 것이 선택할 수 있는 부정 명제의 수다.
+		// 그렇다면 이 수가 가장 큰 부모를 찾아서, 필요한 부정 명제의
+		// 수를 넘을 때까지 거슬러 올라가면 된다.
+		let maxv = -1;
+		let maxp = null;
+		g.parents.forEach(parent => {
+			let newv = Soup.total_attrs_count([parent]) - g.attrs.length;
+			if(maxv < newv) {
+				maxv = newv;
+				maxp = parent;
+			}
+		});
+		if(maxp == null)
+			break;
+		g = maxp;
+		if(maxv >= n - p)
+			break;
+	}
+	console.log(g);
 
 	// 정답 선택지 만들기
 	let pos = Soup.select_positive_attrs(material, p);
@@ -117,11 +145,11 @@ Quest.generate_selection_quest = function(g, n, a, inv) {
 	let answers = null;
 	if(inv)
 		answers = neg.map(attr => {
-			return choices.indexOf(attr);
+			return `${choices.indexOf(attr)}`;
 		});
 	else
 		answers = pos.map(attr => {
-			return choices.indexOf(attr);
+			return `${choices.indexOf(attr)}`;
 		});
 	let name = Util.get_randomly(material.names);
 
@@ -146,11 +174,7 @@ Quest.evaluator['selection'] = function(quest, response) {
 };
 
 // 단답식 유형 문제 생성
-Quest.generate_short_quest = function(g, n) {
-	let material = Util.get_randomly(Soup.fetch_subinfos([g]).filter(info => {
-		return info.attrs.length > 0;
-	}));
-
+Quest.generate_short_quest = function(material, n) {
 	// 속성이 n개보다 적을 경우, n을 조절해줘서 util.js가
 	// 뻑나지 않도록 한다.
 	if(material.attrs.length < n)
@@ -158,7 +182,7 @@ Quest.generate_short_quest = function(g, n) {
 	let attrs = Soup.select_positive_attrs(material, n);
 	let stmt = '다음이 설명하는 것을 적으시오.';
 	attrs.forEach(attr => {
-		stmt += ' * ' + attr;
+		stmt += '\n * ' + attr;
 	});
 	return new Quest('short', stmt, [], material.names, material);
 };

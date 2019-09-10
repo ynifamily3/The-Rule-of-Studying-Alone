@@ -3,6 +3,22 @@ const Soup = require('./soup');
 const Quest = require('./quest');
 const Util = require('./Util');
 
+/*
+	외부 사용법
+
+	let domains = 선택한 과목/폴더/필기에 해당하는 Info의 배열
+	let mocktest = Mocktest.create_mocktest(domains, 문제수)
+	mocktest.quests.forEach(q => {
+		if(!q)
+			return;
+
+		// DOM에 q를 렌더링하기
+	})
+
+	가끔 버그로 문제 생성 실패할 때가 있는데 그 문제(quest)는 NULL로
+	채워진다. 나중에 버그 수정할 예정이니 NULL 대응 부탁 바람
+*/
+
 // 절대 외부에서 이 클래스를 직접 인스턴스화하지 마시오
 class Mocktest {
 	constructor(quests) {
@@ -57,31 +73,43 @@ Mocktest.create_mocktest = function(roots, n) {
 	
 	// 지금은 25%는 T/F문제, 75%는 4지선다 문제로 낸다.
 	let quest_types = [];
-	// quest_types[0] = Math.floor(n / 4);
-	// quest_types[1] = n - quest_types[0];
-	quest_types[0] = n;
-	quest_types[1] = 0;
-	quest_types[2] = 0;
+	quest_types[0] = Math.floor(n / 3.0);
+	quest_types[1] = Math.floor(n / 3.0);
+	quest_types[2] = n - quest_types[0] - quest_types[1];
 
 	// 각 유형별로 문제를 만든다.
 	let quests = [];
 	let type_ptr = 0;
 	for(let k = 0; k < n; ++k) {
 		// 현재 유형을 다 만들면 다음 유형으로 넘어간다.
-		if(quest_types[type_ptr]-- < 0)
+		if(quest_types[type_ptr]-- <= 0)
 			++type_ptr;
 		console.assert(type_ptr < quest_types.length);
 
 		// 각 유형에 맞는 문제를 만든다.
-		let new_quest;
+		//
+		// n지선다 만들 때 이슈가 있는데, 속성의 수가 너무
+		// 적은 경우나 부정명제를 못가져오는 상황인 경우
+		// 에러가 난다.
+		//
+		// 이는 루트를 선택하지 못하게 select_test_material을
+		// 수정하고, 유저로부터 강제로 3개 이상을 입력하도록
+		// 함으로서 해결할 수 있다. 19년 9월 10일 기준 미반영
+		let new_quest = null;
+		try {
 		if(type_ptr == 0)
 			new_quest = Quest.generate_binary_quest(roots[0], domains[k]);
-		else if(type_ptr == 1)
-			new_quest = Quest.generate_selection_quest(domains[k], 4, 1, Math.random() > 0.5);
+		else if(type_ptr == 1) 
+			new_quest = Quest.generate_selection_quest(domains[k], 4, 1, false);
 		else if(type_ptr == 2)
 			new_quest = Quest.generate_short_quest(domains[k], 4);
 		else
+			throw new Error('Illegal Quest Type Included: ' + type_ptr);
+		}
+		catch(err) {
+			console.log(err);
 			new_quest = null;
+		}
 		quests.push(new_quest);
 	}
 

@@ -71,6 +71,24 @@ Soup.fetch_subinfos = function(gs) {
 	return out;
 };
 
+// 지식들 infos에 존재하는 모든 속성의 수를 구한다.
+// DFS를 돌리므로 주의해서 사용해야 한다.
+Soup.total_attrs_count = function(infos) {
+	let cnt = 0;
+	function __total_attrs_count(info, dup) {
+		cnt += info.attrs.length;
+		info.childs.forEach(child => {
+			if(!dup[child.jsid]) {
+				dup[child.jsid] = true;
+				__total_attrs_count(child, dup);
+			}
+		});
+	}
+	let dup = {};
+	infos.forEach(info => __total_attrs_count(info, dup));
+	return cnt;
+};
+
 // 지식 material에서 임의의 속성을 선택한다.
 Soup.select_positive_attr = function(material) {
 	return Util.get_randomly(material.attrs);
