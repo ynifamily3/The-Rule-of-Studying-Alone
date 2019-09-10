@@ -46,7 +46,7 @@ const reducer = (state = initialState.toJS(), action) => {
     case FETCH_DOCS:
       return Immutable.fromJS(state);
     case FETCH_DOCS_FAILURE: // 실패인 경우 에러 코드를 집어넣는게 좋을 것 같기도... 아예 비어 있으니 뭔가 이상함.
-      return Immutable.fromJS(state);
+      return Immutable.fromJS({ error: "failed to fetch docs" });
     case FETCH_DOCS_SUCCESS:
       return data; // 문제 없겠지?
     // return Immutable.fromJS(data.toJS()); // copy에 해당하는 게 있나 살펴 봐야겠다. (performance 문제, subject도 마찬가지!)

@@ -4,7 +4,7 @@ import { md5 } from "../../libs/md5";
 import Link from "next/link";
 
 const StepElem = props => {
-  const { isFinal, text, path, order } = props;
+  const { isFinal, text, path, order, subject } = props;
   const pathdivided = path ? path.split("/") : "";
   let toPath = "";
   for (let i = 0; i <= order; i++) {
@@ -19,8 +19,10 @@ const StepElem = props => {
             href={
               !isFinal
                 ? toPath
-                  ? `/dashboard?path=${encodeSGMAStr(toPath)}&pv=${md5(toPath)}`
-                  : `/dashboard`
+                  ? `/dashboard?subject=${subject}&path=${encodeSGMAStr(
+                      toPath
+                    )}&pv=${md5(toPath)}`
+                  : `/dashboard?subject=${subject}`
                 : ""
             }
           >
@@ -39,10 +41,16 @@ const StepElem = props => {
   );
 };
 
-const Steps = ({ path }) => {
+const Steps = ({ path, subject }) => {
   const isRoot = !path;
   const rootElem = (
-    <StepElem isFinal={isRoot} text="내 문제함" icon="home" key={0} />
+    <StepElem
+      subject={subject}
+      isFinal={isRoot}
+      text={subject}
+      icon="home"
+      key={0}
+    />
   );
   const pathArr = !isRoot ? path.split("/") : [];
   const elem = isRoot
@@ -52,6 +60,7 @@ const Steps = ({ path }) => {
         ...pathArr.map((x, i) => {
           return (
             <StepElem
+              subject={subject}
               key={"stepElem:" + i}
               isFinal={i === pathArr.length - 1}
               text={x}

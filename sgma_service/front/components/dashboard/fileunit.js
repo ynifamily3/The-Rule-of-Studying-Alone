@@ -5,7 +5,7 @@ import { encodeSGMAStr } from "../../libs/path-encryptor";
 import { md5 } from "../../libs/md5";
 import Router from "next/router";
 
-const FileIcon = ({ fileName, type, path }) => {
+const FileIcon = ({ fileName, type, path, subject }) => {
   const clickHandler = useCallback(
     e => {
       if (type === "folder") {
@@ -15,6 +15,7 @@ const FileIcon = ({ fileName, type, path }) => {
         Router.push({
           pathname: "/dashboard",
           query: {
+            subject,
             path: encodeSGMAStr(path),
             pv: md5(path)
           }

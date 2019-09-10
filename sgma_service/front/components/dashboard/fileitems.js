@@ -16,23 +16,29 @@ const findPath = (docs, pathStr) => {
 };
 
 const FileItems = props => {
-  const { path } = props; // path: current path
+  const { path, subject } = props; // path: current path
   const { docs } = props.docs;
-  const currPathList = findPath(docs, path);
-  return (
-    <ul className="items">
-      {currPathList.map((x, i) => {
-        return (
-          <File
-            fileName={x.name}
-            type={x.type}
-            key={"fileElem" + i}
-            path={path ? path.concat("/").concat(x.name) : x.name} // 처음에 /생기는거 방지
-          />
-        );
-      })}
-    </ul>
-  );
+  // docs 에 length 가 있어야 진행시키도록 하자..
+  if (docs && docs.length) {
+    const currPathList = findPath(docs, path);
+    return (
+      <ul className="items">
+        {currPathList.map((x, i) => {
+          return (
+            <File
+              subject={subject}
+              fileName={x.name}
+              type={x.type}
+              key={"fileElem" + i}
+              path={path ? path.concat("/").concat(x.name) : x.name} // 처음에 /생기는거 방지
+            />
+          );
+        })}
+      </ul>
+    );
+  } else {
+    return <div>잠시만요...</div>;
+  }
 };
 
 export default FileItems;
