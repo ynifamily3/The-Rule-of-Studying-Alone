@@ -52,8 +52,8 @@ class Soup {
 	}
 }
 
-// 지식 g들로부터 도달할 수 있는 모든 지식을 반환한다.
-Soup.fetch_subinfos = function(gs) {
+// 지식 g로부터 도달할 수 있는 모든 지식을 반환한다.
+Soup.fetch_subinfos = function(g) {
 	function __fetch_subinfos(info, out, dup) {
 		info.childs.forEach(child => {
 			if(!dup[child.jsid]) {
@@ -64,29 +64,7 @@ Soup.fetch_subinfos = function(gs) {
 		});
 		return out;
 	}
-
-	let dup = {};
-	let out = [];
-	gs.forEach(g => __fetch_subinfos(g, out, dup));
-	return out;
-};
-
-// 지식들 infos에 존재하는 모든 속성의 수를 구한다.
-// DFS를 돌리므로 주의해서 사용해야 한다.
-Soup.total_attrs_count = function(infos) {
-	let cnt = 0;
-	function __total_attrs_count(info, dup) {
-		cnt += info.attrs.length;
-		info.childs.forEach(child => {
-			if(!dup[child.jsid]) {
-				dup[child.jsid] = true;
-				__total_attrs_count(child, dup);
-			}
-		});
-	}
-	let dup = {};
-	infos.forEach(info => __total_attrs_count(info, dup));
-	return cnt;
+	return __fetch_subinfos(g, [], {});
 };
 
 // 지식 material에서 임의의 속성을 선택한다.
