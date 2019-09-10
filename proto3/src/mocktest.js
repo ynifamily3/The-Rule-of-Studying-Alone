@@ -31,10 +31,15 @@ class Mocktest {
 // 최대한 비슷한 수의 문제가 출제되도록 하되
 // 정확하게 나누어 떨어지지 않는 경우엔 균등
 // 분포로 무작위로 고른다.
-Mocktest.select_test_materials = function(subinfos, n) {
+Mocktest.select_test_materials = function(roots, n) {
 	// 안전장치
 	if(n <= 0)
 		return [];
+
+	// 재료를 찾는다.
+	let subinfos = Soup.fetch_subinfos(roots).filter(info => {
+		return info.attrs.length > 0 && roots.indexOf(info) == -1;
+	});
 
 	// 초기화
 	let ratio = [];
@@ -66,10 +71,8 @@ Mocktest.select_test_materials = function(subinfos, n) {
 // Info[] 	roots 	문제 출제 범위
 // Number 	n 		문제 출제 수
 Mocktest.create_mocktest = function(roots, n) {
-	let subinfos = Soup.fetch_subinfos(roots).filter(info => {
-		return info.attrs.length > 0;
-	});
-	let domains = Mocktest.select_test_materials(subinfos, n);
+	// 문제 출제 범위 생성
+	let domains = Mocktest.select_test_materials(roots, n);
 	
 	// 지금은 25%는 T/F문제, 75%는 4지선다 문제로 낸다.
 	let quest_types = [];
@@ -97,16 +100,18 @@ Mocktest.create_mocktest = function(roots, n) {
 		// 함으로서 해결할 수 있다. 19년 9월 10일 기준 미반영
 		let new_quest = null;
 		try {
-		if(type_ptr == 0)
-			new_quest = Quest.generate_binary_quest(roots[0], domains[k]);
-		else if(type_ptr == 1) 
-			new_quest = Quest.generate_selection_quest(domains[k], 4, 1, false);
-		else if(type_ptr == 2)
-			new_quest = Quest.generate_short_quest(domains[k], 4);
-		else
-			throw new Error('Illegal Quest Type Included: ' + type_ptr);
+			if(type_ptr == 0)
+				new_quest = Quest.generate_binary_quest(roots[0], domains[k]);
+			else if(type_ptr == 1) 
+				new_quest = Quest.generate_selection_quest(domains[k], 4, 1, Math.random() > 0.5);
+			else if(type_ptr == 2)
+				new_quest = Quest.generate_short_quest(domains[k], 4);
+			else
+				throw new Error('Illegal Quest Type Included: ' + type_ptr);
 		}
 		catch(err) {
+			console.log('[Mocktest::create_mocktest] Fail to create question of')
+			console.log(domains[k]);
 			console.log(err);
 			new_quest = null;
 		}

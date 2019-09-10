@@ -132,7 +132,6 @@ Quest.generate_selection_quest = function(material, n, a, inv) {
 		if(maxv >= n - p)
 			break;
 	}
-	console.log(g);
 
 	// 정답 선택지 만들기
 	let pos = Soup.select_positive_attrs(material, p);
