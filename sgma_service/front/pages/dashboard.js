@@ -32,7 +32,13 @@ const DashBoardPage = pageProps => {
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
     }).then(({ data }) => {
-      console.log(data);
+      const { isLogin } = data;
+      if (isLogin === true) {
+        setModalIsOpen(false);
+      } else {
+        // route x
+        Router.replace("/login");
+      }
     });
 
     dispatch({
