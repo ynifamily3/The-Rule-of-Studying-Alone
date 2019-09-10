@@ -93,3 +93,6 @@ out/
 # DSstore files
 .DS_Store
 proto3/bundle.js
+doc/login_api.pptx
+doc/주제선정 UI에 대한 고찰.pptx
+proto4/bundle.js
