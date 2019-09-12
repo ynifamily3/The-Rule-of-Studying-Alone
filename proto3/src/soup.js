@@ -1,6 +1,23 @@
 const Info = require('./info');
 const Util = require('./util');
 
+/*
+	Soup를 Parser.parse_doc으로 얻어낸 이후
+	Invariant를 만족하는지 확인하려면 다음과 같이 짜시오.
+
+	(4지1답만 만들 경우)
+
+	let soup = Parser.parse_doc(MD문자열)
+	let issues = soup.validation_check({n: 4, a: 1})
+	issues.forEach(issue => {
+		// 문제점이 있는 info임
+		// null이라면, 개별 info의 문제보다 스프 전체의 문제인 경우
+		let info = issue.info;
+		
+		// what에 문제점을 문자열로 기록.
+		alert(issue.what);
+	})
+*/
 class Soup {
 	constructor() {
 		this.infos = [];
@@ -49,6 +66,34 @@ class Soup {
 			out = this._getTreeText(child, out, tab);
 		});
 		return out;
+	}
+
+	validation_check(numargs) {
+		let n = numargs.n;
+		let a = numargs.a;
+		console.assert(n !== undefined);
+		console.assert(a !== undefined);
+		let p = Math.max(n - a, a);
+
+		let issues = [];
+		let dup = {};
+		function _attr_check(node, dup, issues) {
+			// 중복방지
+			if(dup[node.jsid])
+				return;
+			dup[node.jsid] = true;
+
+			// 검사
+			if(node.attrs.length > 0 && node.attrs.length < p)
+				issues.push({
+					info: node,
+					what: `${node.names[0]}의 속성이 너무 적습니다(${node.attrs.length}개). ${p}개 이상이어야 문제를 만들 수 있습니다.`
+				});
+
+			node.childs.forEach(child => _attr_check(child, dup, issues));
+		}
+		this.roots.forEach(root => _attr_check(root, dup, issues));
+		return issues;
 	}
 }
 
