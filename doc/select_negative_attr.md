@@ -35,8 +35,8 @@ function traverse_down(Info root, Info material, Info{} check):
 				ctype := check[child.jsid]
 			if ctype is TYPE_M:
 				rtype := TYPE_M
-		check[root.jsid] := ub_type
-		return ub_type
+		check[root.jsid] := rtype
+		return rtype
 		
 function select_negative_attr(Info root, Info material):
 	Let out := []

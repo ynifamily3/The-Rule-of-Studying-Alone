@@ -18,10 +18,18 @@
 			margin-bottom: 10px;
 		}
 	</style>
-	<div style='width: 75%; margin-left: 10px; margin-right: 10px;'>
+	<div style='margin-left: 10px; margin-right: 10px;'>
 		<div  class='section'>
 			<textarea id='docs' rows='16' style='width: 100%;'></textarea><br>
 			<textarea id='tree' rows='16' style='width: 100%;' readonly></textarea>
+		</div>
+
+		<!-- 문제출제 -->
+		<hr>
+		<div class='section'>
+			<input id='mocktest' type='button' value='모의고사 생성'>
+			N = <input id='mocktest-n' type='number' value='10' size='step' style='width: 2.5em;'>
+			<div id='mocktest-out'></div>
 		</div>
 
 		<!-- 참/거짓 -->

@@ -93,3 +93,5 @@ proto3/bundle.js
 
 # ignore .DS_Store
 .DS_Store
+*.pptx
+proto4/bundle.js

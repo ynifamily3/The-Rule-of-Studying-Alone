@@ -1,23 +1,6 @@
 const Info = require('./info');
 const Util = require('./util');
 
-/*
-	Soup를 Parser.parse_doc으로 얻어낸 이후
-	Invariant를 만족하는지 확인하려면 다음과 같이 짜시오.
-
-	(4지1답만 만들 경우)
-
-	let soup = Parser.parse_doc(MD문자열)
-	let issues = soup.validation_check({n: 4, a: 1})
-	issues.forEach(issue => {
-		// 문제점이 있는 info임
-		// null이라면, 개별 info의 문제보다 스프 전체의 문제인 경우
-		let info = issue.info;
-		
-		// what에 문제점을 문자열로 기록.
-		alert(issue.what);
-	})
-*/
 class Soup {
 	constructor() {
 		this.infos = [];
@@ -67,38 +50,10 @@ class Soup {
 		});
 		return out;
 	}
-
-	validation_check(numargs) {
-		let n = numargs.n;
-		let a = numargs.a;
-		console.assert(n !== undefined);
-		console.assert(a !== undefined);
-		let p = Math.max(n - a, a);
-
-		let issues = [];
-		let dup = {};
-		function _attr_check(node, dup, issues) {
-			// 중복방지
-			if(dup[node.jsid])
-				return;
-			dup[node.jsid] = true;
-
-			// 검사
-			if(node.attrs.length > 0 && node.attrs.length < p)
-				issues.push({
-					info: node,
-					what: `${node.names[0]}의 속성이 너무 적습니다(${node.attrs.length}개). ${p}개 이상이어야 문제를 만들 수 있습니다.`
-				});
-
-			node.childs.forEach(child => _attr_check(child, dup, issues));
-		}
-		this.roots.forEach(root => _attr_check(root, dup, issues));
-		return issues;
-	}
 }
 
-// 지식 g들로부터 도달할 수 있는 모든 지식을 반환한다.
-Soup.fetch_subinfos = function(gs) {
+// 지식 g로부터 도달할 수 있는 모든 지식을 반환한다.
+Soup.fetch_subinfos = function(g) {
 	function __fetch_subinfos(info, out, dup) {
 		info.childs.forEach(child => {
 			if(!dup[child.jsid]) {
@@ -109,29 +64,7 @@ Soup.fetch_subinfos = function(gs) {
 		});
 		return out;
 	}
-
-	let dup = {};
-	let out = [];
-	gs.forEach(g => __fetch_subinfos(g, out, dup));
-	return out;
-};
-
-// 지식들 infos에 존재하는 모든 속성의 수를 구한다.
-// DFS를 돌리므로 주의해서 사용해야 한다.
-Soup.total_attrs_count = function(infos) {
-	let cnt = 0;
-	function __total_attrs_count(info, dup) {
-		cnt += info.attrs.length;
-		info.childs.forEach(child => {
-			if(!dup[child.jsid]) {
-				dup[child.jsid] = true;
-				__total_attrs_count(child, dup);
-			}
-		});
-	}
-	let dup = {};
-	infos.forEach(info => __total_attrs_count(info, dup));
-	return cnt;
+	return __fetch_subinfos(g, [], {});
 };
 
 // 지식 material에서 임의의 속성을 선택한다.

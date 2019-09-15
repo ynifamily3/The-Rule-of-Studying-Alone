@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang='ko'>
+<head>
+	<meta charset='utf-8'>
+	<title>혼공의 정석</title>
+	<link rel='stylesheet' href='./normalize.css/normalize.css'>
+	<link rel='stylesheet' href='./css/common.css'>
+</head>
+<body>
+	
+	<style>
+		/* HEADER */
+		.header {
+			height: 100px;
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.left {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-start;
+			margin-left: 50px;
+		}
+
+		.right {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-end;
+			margin-right: 50px;
+		}
+
+		/* MAIN IMAGE */
+		.main-img {
+			overflow: hidden;
+			height: 300px;
+		}
+
+		.on-img-text {
+			position: absolute;
+			font-size: 4vw;
+			color: #ffffff;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		/* INTRO TEXT */
+		.intro {
+			display: flex;
+			justify-content: center;
+			height: 200px;
+		}
+
+		.intro img {
+			align-self: center;
+			padding-left: 50px;
+			padding-right: 50px;
+		}
+
+		.intro-text {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 33%;
+			max-width: 300px;
+		}
+
+		/* COUNTERS */
+		.counters {
+			width: 100%;
+			height: 100px;
+			display: flex;
+			flex-direction: ltr;
+			justify-content: space-evenly;
+		}
+
+		.counter-elem {
+			border: 1px double white;
+			padding: 20px;
+			align-self: center;
+		}
+	</style>
+
+	<!-- 헤더 -->
+	<div class='header hongong_solid'>
+		<span class='left'>
+			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
+			<button class='hongong-button'>과목찾기</button>
+			<button class='hongong-button'>과목만들기</button>
+		</span>
+		<span class='right'>
+			<button class='hongong-button'>회원가입</button>
+			<button class='hongong-button'>로그인</button>
+		</span>
+	</div>
+
+	<!-- 이미지 div -->
+	<div class='main-img' style='position: relative;'>
+		<img src='./img/main0-dark.jpg' style='width: 100%;'>
+		<span class='on-img-text'>이제 암기 걱정은 그만!</span>
+	</div>
+
+	<!-- 인트로 div -->
+	<div class='intro'>
+		<img src='./img/arrow-right.jpg'>
+		<span class='intro-text'>
+			<span style='align-self: flex-start;'>
+				<font size='6em'>혼</font><font size='4em'>공의 </font><font size='6em'>정석</font><font size='4em'>은</font>
+			</span>
+			
+			<span style='align-self: center;'>
+				<font size='6em'>혼</font><font size='4em'>자서도 </font><font size='6em'>공</font><font size='4em'>부할 수 있는</font>
+			</span>
+			
+			<span style='align-self: flex-end;'>
+				<font size='4em'>공부 도우미 서비스입니다.</font>
+			</span>
+		</span>
+		<img src='./img/arrow-left.jpg'>
+	</div>
+
+	<!-- 있어보이는 쓸데없는 숫자가 들어가는 div -->
+	<div class='counters hongong_solid'>
+		<span class='counter-elem'><font id='counter-subjects' size='5em'>1024</font> 과목</span>
+		<span class='counter-elem'><font id='counter-attrs' size='5em'>2147483647</font> 지식</span>
+		<span class='counter-elem'><font id='counter-groups' size='5em'>644</font> 그룹</span>
+	</div>
+
+</body>
+</html>
