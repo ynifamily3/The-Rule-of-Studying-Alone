@@ -1,5 +1,6 @@
 const docRouter = require('express').Router();
 const docsRouter = require('express').Router();
+const soupRouter = require('express').Router();
 
 var fileinfo = require('../../models/file')
 var subjectinfo = require('../../models/subject')
@@ -282,13 +283,14 @@ docRouter.delete('/:subject_name',util.loginCheck,(req,res)=>{
 								await fileinfo.remove({_id:file_id})
 							}
 							await subjectinfo.remove({_id:sub._id})
-							res.json({result:"subject delete success"})
+							return res.json({result:"subject delete success"})
 						} else {
-							res.json({result:"can't find subject"})
+							return res.json({result:"can't find subject"})
 						}
 					})
+			} else {
+				return res.json({error:"user failed"})
 			}
-			res.json({error:"user failed"})
 		})
 		.catch((err)=>{
 			res.status(500).json({error:"data base error"});
@@ -347,4 +349,123 @@ docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 
 })
 
-module.exports = {docRouter,docsRouter};
+async function makeSoup(soups,connections,index,parent,f){
+
+	console.log("====================")
+	console.log("top")
+
+	console.log("f",f);
+
+	if(f.type==="folder"){
+		soups.push({names:[f.name,],attrs:[],comment:""})
+		connections.push([parent,index])
+		var parent = index;
+		index++;
+		for(file of f.files){
+			await fileinfo.findOne({_id:file})
+				.then(async (ff)=>{
+					[soups,connections,index]= await makeSoup(soups,connections,index,parent,ff);
+				})
+		}
+	} else {
+		var top = [];
+		var cursor = index;
+		
+		for(s of f.soups){
+			soups.push(s);
+			top.push(true);
+			index++;
+		}
+
+		for(c of f.connections){
+			top[c[1]]=false;
+			connections.push([c[0]+cursor,c[1]+cursor])
+		}
+		var i=0
+		for(t of top){
+			if(t){
+				connections.push([parent,i+cursor]);
+			}
+			i++;
+		}
+		
+		//console.log("soup",f.soups)
+		//console.log("connections",f.connections)
+	}
+	console.log("====================")
+
+	return [soups,connections,index]
+}
+
+soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			if(user){
+				subjectinfo.findOne({name:req.params.subject_name,owner:user._id,parent_id:null}).populate('files')//,{name:1,type:1,files:1,parent_id:1,_id:1})
+					.then(async (subject)=>{
+						if(!subject){
+							res.status(404).json({error:"subject not found"});
+						} else {
+							var soups = [];
+							var connections = [];
+							var index=1;
+						
+							soups.push({names:[subject.name,],attrs:[],comment:""})
+
+							for(f of subject.files){
+								if(!f.parent_id){
+									//if(f.type==="folder"){
+									[soups,connections,index]=await makeSoup(soups,connections,index,0,f);
+								//}
+								}
+							}
+							console.log("soup----",soups)
+							console.log("connections----",connections)
+							return res.json({test:"test"});
+						}
+					})
+			} else {
+				return res.json({error:"user failed"})
+			}
+			
+		})
+})
+
+soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
+	if(req.query.path)
+		var my_path = req.query.path = "/"+req.params.file_name
+	else
+		var my_path = "/"+req.params.file_name
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			if(user){
+				subjectinfo.findOne({name:req.params.subject_name,owner:user._id,parent_id:null}).populate('files')//,{name:1,type:1,files:1,parent_id:1,_id:1})
+					.then(async (subject)=>{
+						if(!subject){
+							return res.status(404).json({error:"subject not found"});
+						} else {
+							fileinfo.findOne({name:req.params.file_name,subject:subject._id,owner:user._id,path:my_path})
+								.then(async (file)=>{
+									if(!file){
+										res.status(404).json({error:"file not found"})
+									} else {
+										var soups = [];
+										var connections = [];
+										var index = 0;
+
+										if(file.type==="folder"){
+											[soups,connections,index]=await makeSoup(soups,connections,index,0,file);
+											}
+										}
+										console.log("soup----",soups)
+										console.log("connections----",connections)
+
+										return res.json({test:"test"});
+								})
+						}
+					})
+			}
+		})
+})
+
+module.exports = {docRouter,docsRouter,soupRouter};
