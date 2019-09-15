@@ -12,18 +12,43 @@
 			src: url('./fonts/NanumGothic.eot');
 		}
 
+		/* HEADER */
 		.header {
 			background: #262626;
 			height: 100px;
 			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
 		}
 
 		.header-bt {
 			font-family: 'NanumGothic', 'serif';
 			color: #ffffff;
-			line-height: 100px;
+			padding: 10px;
+			align-self: center;
+			border: 1px solid #262626;
 		}
 
+		.header-bt:hover {
+			border: 1px dashed white;
+		}
+
+		.left {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-start;
+			margin-left: 50px;
+		}
+
+		.right {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-end;
+			margin-right: 50px;
+		}
+
+		/* MAIN IMAGE */
 		.main-img {
 			overflow: hidden;
 			height: 300px;
@@ -39,32 +64,86 @@
 			transform: translate(-50%, -50%);
 		}
 
+		/* INTRO TEXT */
+		.intro {
+			display: flex;
+			justify-content: center;
+			height: 200px;
+		}
+
+		.intro img {
+			align-self: center;
+		}
+
 		.intro-text {
 			font-family: 'NanumGothic', 'serif';
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 33%;
+		}
+
+		/* COUNTERS */
+		.counters {
+			width: 100%;
+			height: 100px;
+			background: #262626;
+			font-family: 'NanumGothic', 'serif';
+			color: white;
+			display: flex;
+			flex-direction: ltr;
+			justify-content: space-evenly;
+		}
+
+		.counter-elem {
+			border: 1px double white;
+			padding: 20px;
+			align-self: center;
 		}
 	</style>
 
 	<div class='header'>
-		<a class='header-bt' style='padding-left: 50px;'>문제풀기</a>
-		<img src='./img/logo.jpg' style='float: right; height: 100%; padding-right: 50px;'>
-		<a class='header-bt' style='float: right; padding-right: 50px;'>회원가입</a>
-
+		<span class='left'>
+			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
+			<span class='header-bt'>과목찾기</span>
+			<span class='header-bt'>과목만들기</span>
+		</span>
+		<span class='right'>
+			<span class='header-bt'>회원가입</span>
+			<span class='header-bt'>로그인</span>
+		</span>
 	</div>
+
+	<!-- 이미지 div -->
 	<div class='main-img' style='position: relative;'>
 		<img src='./img/main0-dark.jpg' style='width: 100%;'>
 		<span class='on-img-text'>이제 암기 걱정은 그만!</span>
 	</div>
-	<div style='text-align: center; width: 50%; transform: translate(50%, 0%);height: 200px; padding-top: 25px;'>
-		<span>
+
+	<!-- 인트로 div -->
+	<div class='intro'>
+		<img src='./img/arrow-right.jpg'>
+		<span class='intro-text'>
+			<span style='align-self: flex-start;'>
+				<font size='6vw'>혼</font><font size='4vw'>공의 </font><font size='6vw'>정석</font><font size='4vw'>은</font>
+			</span>
 			
-			<span class='intro-text' style='padding-right: 200px;'><font size='6vw'>혼</font><font size='4vw'>공의 </font><font size='6vw'>정석</font><font size='4vw'>은</font></span><br>
-			<img src='./img/arrow-right.jpg' style='float: left;'>
-			<span class='intro-text'><font size='6vw'>혼</font><font size='4vw'>자서도 </font><font size='6vw'>공</font><font size='4vw'>부할 수 있는</font></span>
-			<img src='./img/arrow-left.jpg' style='float: right;'><br>
-			<span class='intro-text' style='padding-left: 200px;'><font size='4vw'>공부 도우미 서비스입니다.</font></span>
+			<span style='align-self: center;'>
+				<font size='6vw'>혼</font><font size='4vw'>자서도 </font><font size='6vw'>공</font><font size='4vw'>부할 수 있는</font>
+			</span>
 			
+			<span style='align-self: flex-end;'>
+				<font size='4vw'>공부 도우미 서비스입니다.</font>
+			</span>
 		</span>
-		
+		<img src='./img/arrow-left.jpg'>
+	</div>
+
+	<!-- 있어보이는 쓸데없는 숫자가 들어가는 div -->
+	<div class='counters'>
+		<span class='counter-elem'><font id='counter-subjects' size='6vw'>1024</font> 과목</span>
+		<span class='counter-elem'><font id='counter-attrs' size='6vw'>2147483647</font> 지식</span>
+		<span class='counter-elem'><font id='counter-groups' size='6vw'>644</font> 그룹</span>
 	</div>
 
 </body>
