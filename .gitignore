@@ -90,3 +90,6 @@ typings/
 # next build exports
 out/
 proto3/bundle.js
+
+# ignore .DS_Store
+.DS_Store
