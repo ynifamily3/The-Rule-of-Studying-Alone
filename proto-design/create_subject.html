@@ -7,7 +7,7 @@
 	<link rel='stylesheet' href='./css/common.css'>
 </head>
 <body>
-	
+	<!-- 헤더 -->
 	<style>
 		/* HEADER */
 		.header {
@@ -31,7 +31,21 @@
 			justify-content: flex-end;
 			margin-right: 50px;
 		}
+	</style>
+	<div class='header hongong_solid'>
+		<span class='left'>
+			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
+			<button class='hongong-button' id='find-subject'>과목찾기</button>
+			<button class='hongong-button' id='create-subject'>과목만들기</button>
+		</span>
+		<span class='right'>
+			<button class='hongong-button' id='join'>회원가입</button>
+			<button class='hongong-button' id='sign-in'>로그인</button>
+		</span>
+	</div>
 
+	<!-- 생성기 -->
+	<style>
 		.editor-bound {
 			display: flex;
 			flex-direction: column;
@@ -63,19 +77,6 @@
 			display: flex;
 		}
 	</style>
-
-	<div class='header hongong_solid'>
-		<span class='left'>
-			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
-			<button class='hongong-button'>과목찾기</button>
-			<button class='hongong-button'>과목만들기</button>
-		</span>
-		<span class='right'>
-			<button class='hongong-button'>회원가입</button>
-			<button class='hongong-button'>로그인</button>
-		</span>
-	</div>
-
 	<div style='margin: 25px;'>
 		<h1>과목 만들기</h1>
 		<div class='editor-bound'>

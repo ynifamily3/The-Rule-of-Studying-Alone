@@ -25,6 +25,7 @@
 	background: #262626;
 	color: white;
 	border: 1px solid #262626;
+	user-select: none;
 
 	/* Layout*/
 	padding: 5px;
@@ -39,10 +40,24 @@
 	border: 1px dashed white;
 }
 
+.hongong-button:active {
+	background: white;
+	color: #262626;
+	border: 1px dashed #262626;
+}
+
+.hongong-button:focus {
+	outline: none;
+}
+
 .hongong-textarea {
 	/* Look */
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	border-bottom: 1px solid #aaaaaa;
+}
+
+.hongong-textarea:focus {
+	outline: none;
 }

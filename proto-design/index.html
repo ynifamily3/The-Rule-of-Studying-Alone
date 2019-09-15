@@ -9,29 +9,6 @@
 <body>
 	
 	<style>
-		/* HEADER */
-		.header {
-			height: 100px;
-			width: 100%;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-around;
-		}
-
-		.left {
-			flex-grow: 1;
-			display: flex;
-			justify-content: flex-start;
-			margin-left: 50px;
-		}
-
-		.right {
-			flex-grow: 1;
-			display: flex;
-			justify-content: flex-end;
-			margin-right: 50px;
-		}
-
 		/* MAIN IMAGE */
 		.main-img {
 			overflow: hidden;
@@ -85,15 +62,39 @@
 	</style>
 
 	<!-- 헤더 -->
+	<style>
+		/* HEADER */
+		.header {
+			height: 100px;
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.left {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-start;
+			margin-left: 50px;
+		}
+
+		.right {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-end;
+			margin-right: 50px;
+		}
+	</style>
 	<div class='header hongong_solid'>
 		<span class='left'>
 			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
-			<button class='hongong-button'>과목찾기</button>
-			<button class='hongong-button'>과목만들기</button>
+			<button class='hongong-button' id='find-subject'>과목찾기</button>
+			<button class='hongong-button' id='create-subject'>과목만들기</button>
 		</span>
 		<span class='right'>
-			<button class='hongong-button'>회원가입</button>
-			<button class='hongong-button'>로그인</button>
+			<button class='hongong-button' id='join'>회원가입</button>
+			<button class='hongong-button' id='sign-in'>로그인</button>
 		</span>
 	</div>
 
