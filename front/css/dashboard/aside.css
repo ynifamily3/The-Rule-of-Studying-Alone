@@ -1,7 +1,0 @@
-.dashboardAside {
-  width: 100%;
-  height: calc(100vh - 64px);
-  padding: 8px;
-  flex: 0 0 256px;
-  background-color: beige;
-}
