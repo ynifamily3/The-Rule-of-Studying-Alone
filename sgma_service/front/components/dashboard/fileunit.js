@@ -21,10 +21,23 @@ const FileIcon = ({ fileName, type, path, subject }) => {
           }
         });
       } else {
-        alert("file clicked");
+        let pathCut = path.split("/");
+        pathCut.pop();
+        pathCut = pathCut.join("/");
+        if (pathCut.length) pathCut = "/".concat(pathCut);
+        // path 정규화 : path가 root 이면 empty string, path가 있으면 앞에 / 붙이고 뒤에 파일명 빼고
+        Router.push({
+          pathname: "/editor",
+          query: {
+            subject_name: subject,
+            path: pathCut,
+            file_name: fileName
+          }
+        });
+        // 역사
       }
     },
-    [path] // 여기에 디팬던시를 추가해야 클로저 문제가 발생하지 않는다.
+    [path, fileName, subject] // 여기에 디팬던시를 추가해야 클로저 문제가 발생하지 않는다.
   );
   return (
     <li>

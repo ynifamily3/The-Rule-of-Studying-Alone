@@ -9,7 +9,7 @@ import axios from "axios";
 
 // subjects들을 선택하는 페이지이다.
 
-const SubjectsPage = pageProps => {
+const SubjectsPage = () => {
   const dispatch = useDispatch();
   const [userName, setuserName] = useState(null);
   const [subject, setSubject] = useState("");
@@ -35,7 +35,7 @@ const SubjectsPage = pageProps => {
       }
     });
 
-    // tate rebuilding - subjects
+    // take rebuilding - subjects
   }, []);
 
   const changeAction = useCallback(e => {

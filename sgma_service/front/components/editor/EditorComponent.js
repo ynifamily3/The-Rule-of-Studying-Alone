@@ -2,6 +2,7 @@ import React from "react";
 
 import "../../css/editor/editorWrapper.css";
 import "../../css/editor/editorRichEditor.css";
+import { Breadcrumb, Icon } from "semantic-ui-react";
 import TitleEditor from "draft-js-plugins-editor";
 import {
   Editor,
@@ -27,7 +28,9 @@ const plugins = [singleLinePlugin];
 class EditorComponent extends React.Component {
   constructor(props) {
     super(props);
-    const draftRawData = markdownToDraft(testData);
+    console.log(props);
+    const draftRawData = markdownToDraft(props.data.md_text); // 이곳이 불러오는 부분이다!
+    //const draftRawData = markdownToDraft(testData);
     // console.log(draftRawData);
     this.state = {
       plugins: null,
@@ -108,10 +111,10 @@ class EditorComponent extends React.Component {
       const getPrev = (arr, n) => {
         return n === 0 ? arr[arr.length - 1] : arr[n - 1];
       };
-      console.log(shiftBlockStyles);
+      // console.log(shiftBlockStyles);
       if (e.nativeEvent.shiftKey) {
         // demote - mode
-        console.log(`with-Shift`);
+        //  console.log(`with-Shift`);
         this.onChangeContent(
           RichUtils.toggleBlockType(
             newEditorState,
@@ -124,7 +127,7 @@ class EditorComponent extends React.Component {
           )
         );
       } else {
-        console.log(RichUtils.getCurrentBlockType(newEditorState)); // unstyled
+        // console.log(RichUtils.getCurrentBlockType(newEditorState)); // unstyled
         // promote - mode
         this.onChangeContent(
           RichUtils.toggleBlockType(
@@ -148,8 +151,8 @@ class EditorComponent extends React.Component {
   }
 
   _toggleBlockType(blockType) {
-    console.log("하지마리");
-    console.log(blockType); // header-one : String
+    //console.log("하지마리");
+    // console.log(blockType); // header-one : String
     this.onChangeContent(
       RichUtils.toggleBlockType(this.state.editorStateContent, blockType)
     );
@@ -210,18 +213,7 @@ class EditorComponent extends React.Component {
           )}
         </div>
         <div className="docTitle">
-          {editorLoaded ? (
-            <TitleEditor
-              placeholder={`여기에 제목을 입력하십시오.`}
-              plugins={plugins}
-              blockRenderMap={blockRenderMap}
-              editorState={editorState}
-              onChange={this.onChange}
-              keyBindingFn={this.mapKeyToEditorCommandTitle}
-            />
-          ) : (
-            `Loading...`
-          )}
+          <b>{this.props.subject}</b>의 <b>{this.props.file}</b>문서
         </div>
         <div className={className + " docContent"} onClick={this.focus}>
           {editorLoaded ? (

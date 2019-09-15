@@ -57,6 +57,7 @@ Util.shuffle = function(arr, outplace) {
 
 /*
 	배열 arr에서 아무 원소나 반환한다.
+	시간 복잡도가 O(1)이다
 */
 Util.get_randomly = function(arr) {
 	return arr[Util.random_int(0, arr.length - 1)];
@@ -64,6 +65,7 @@ Util.get_randomly = function(arr) {
 
 /*
 	배열 arr에서 아무 원소를 n개 찍어서 반환한다.
+	시간 복잡도가 O(n)이다
 */
 Util.get_randomly_multi = function(arr, n) {
 	return Util.random_choices(0, arr.length - 1, n).map(idx => {

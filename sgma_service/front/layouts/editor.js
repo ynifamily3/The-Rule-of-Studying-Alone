@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import GnbHeader from "../components/dashboard/gnbheader";
-import Aside from "../components/dashboard/aside";
 import InsertToolbar from "../components/editor/insertToolbar"; // Editor Toolbar (floated)
 import EditorComponent from "../components/editor/EditorComponent";
 import { convertToRaw } from "draft-js";
@@ -9,10 +7,14 @@ import Modal from "react-modal";
 import { Button } from "semantic-ui-react";
 
 // import custom-made
+// import {Parser, Mocktest }from '../libs/'
 const Parser = require("../libs/md-2-tree/parser");
+const Mocktest = require("../libs/md-2-tree/mocktest");
+const Protocol = require("../libs/md-2-tree/protocol");
 
 // import test-paper
 import TestPaperComponent from "../components/quiz/paper";
+import axios from "axios";
 
 const modalStyles = {
   content: {
@@ -33,7 +35,15 @@ class EditorPage extends Component {
     this.state = {
       modalIsOpen: false
     };
+    /*
+      subject={subject_name}
+      file={file_name}
+      path={path ? path : ""}
+      data={data}
+    */
+    //console.warn(props.subject);
     this.openModal = this.openModal.bind(this);
+    this.saveDocument = this.saveDocument.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.createPDF = this.createPDF.bind(this);
@@ -57,6 +67,38 @@ class EditorPage extends Component {
     });
   }
 
+  saveDocument() {
+    const markDown = draftToMarkdown(
+      convertToRaw(
+        this.refs.editorComponent.state.editorStateContent.getCurrentContent()
+      )
+    );
+    alert("저장!");
+    const finalSoup = Parser.parse_doc(markDown);
+    const bodyData = Protocol.create_message(finalSoup, "file");
+    // console.log(bodyData);
+    // console.log(this.props);
+    axios
+      .put(
+        `${process.env.BACKEND_SERVICE_DOMAIN}/api/${process.env.BACKEND_SERVICE_API_VERSION}/doc/${this.props.subject}/${this.props.file}`,
+        {
+          type: "file",
+          path: this.props.path,
+          soups: finalSoup,
+          connections: bodyData.connections,
+          md_text: markDown
+        },
+        { withCredentials: true }
+      )
+      .then(({ data }) => {
+        console.log(data);
+        alert("저장완료");
+      })
+      .catch(e => {
+        alert("저장실패");
+      });
+  }
+
   openModal() {
     // console.log(`모달이 오픈됨`);
     // console.log(this.refs.editorComponent);
@@ -72,10 +114,12 @@ class EditorPage extends Component {
     const finalSoup = Parser.parse_doc(markDown);
     // const createdServerData = Protocol.create_message(finalSoup, "add");
     console.log(finalSoup);
+    const test = Mocktest.create_mocktest(finalSoup.roots, 5); // 만들 문제 수
+    console.log(test);
 
     this.setState({
       modalIsOpen: true,
-      finalSoup // => 이전께 불러와짐. (아마 라이브러리의 문제 같음.) 퀴즈 만드는덴 중요하지 않은 거 같으므로 일단 넘긴다.
+      finalSoup
     });
   }
 
@@ -101,14 +145,12 @@ class EditorPage extends Component {
           overflow: "hidden"
         }}
       >
-        <GnbHeader />
         <div
           id="main"
           style={{
             display: "flex"
           }}
         >
-          <Aside />
           <div
             className="editorWrapper"
             style={{
@@ -120,10 +162,13 @@ class EditorPage extends Component {
             }}
           >
             <div className="editorRoot">
-              <EditorComponent ref="editorComponent" />
+              <EditorComponent ref="editorComponent" {...this.props} />
             </div>
             <div className="insertToolbarWrapper">
-              <InsertToolbar onClick={this.openModal} />
+              <InsertToolbar
+                onClick={this.openModal}
+                onClick2={this.saveDocument}
+              />
             </div>
             <Modal
               isOpen={this.state.modalIsOpen}
