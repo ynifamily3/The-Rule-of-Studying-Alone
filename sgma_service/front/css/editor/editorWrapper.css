@@ -1,0 +1,25 @@
+.editorRoot {
+  margin-left: 10rem;
+  margin-right: 10rem;
+  font-size: 1rem;
+} /* 별 내용은 들어가지 않을 것이다. margin정도? */
+
+.editorRoot h1 {
+  font-size: 3rem;
+}
+
+.docContent {
+  /*
+  border: 1px solid #e5e5e5;
+  -webkit-box-shadow: 10px 10px 45px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 45px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 45px 0px rgba(0, 0, 0, 0.75);
+  */
+  margin-top: 3rem;
+  min-height: 100vh;
+}
+
+.editorWrapper .docContent :global(.public-DraftEditor-content) {
+  overflow: scroll-y;
+  min-height: 3000px; /* 여기 또는 다른 곳에 오버플로우 스크롤 만들어야 함... */
+}

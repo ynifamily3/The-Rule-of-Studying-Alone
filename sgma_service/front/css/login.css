@@ -1,0 +1,98 @@
+.center-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 80vh;
+}
+
+#login-wrapper {
+  width: 500px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login .control-group {
+  margin-bottom: 5px;
+}
+
+.login label.control-label {
+  display: none;
+}
+
+.login input.input-large {
+  margin: 5px 0;
+  padding: 0 10px;
+  font-size: 17px;
+  line-height: 20px;
+  height: 40px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+}
+
+.login .login-submit-container {
+  width: 100%;
+  height: 40px;
+  display: flex;
+}
+
+.login .login-submit-container button {
+  width: 100%;
+  height: 100%;
+}
+
+.thirdparty-line {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 12px 0 12px;
+}
+
+.thirdparty-line span {
+  position: relative;
+  display: inline-block;
+}
+.thirdparty-line span:before {
+  right: 100%;
+}
+
+.thirdparty-line span:after,
+.thirdparty-line span:before {
+  width: 500px;
+  content: "";
+  height: 1px;
+  background-color: rgb(224, 225, 226);
+  position: absolute;
+  top: 50%;
+  margin-right: 25px;
+  margin-left: 25px;
+}
+
+.thirdparty-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#help-links {
+  list-style: none;
+  text-align: center;
+  margin-top: 1.5em;
+  line-height: 2em;
+}

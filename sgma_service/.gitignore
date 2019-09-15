@@ -89,9 +89,10 @@ typings/
 
 # next build exports
 out/
+next/.next/
+
+#passport secret
+back/passport/real_secret.js
 
 # DSstore files
 .DS_Store
-proto3/bundle.js
-*.pptx
-proto4/bundle.js
