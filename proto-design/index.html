@@ -4,34 +4,18 @@
 	<meta charset='utf-8'>
 	<title>혼공의 정석</title>
 	<link rel='stylesheet' href='./normalize.css/normalize.css'>
+	<link rel='stylesheet' href='./css/common.css'>
 </head>
 <body>
+	
 	<style>
-		@font-face {
-			font-family: 'NanumGothic';
-			src: url('./fonts/NanumGothic.eot');
-		}
-
 		/* HEADER */
 		.header {
-			background: #262626;
 			height: 100px;
 			width: 100%;
 			display: flex;
 			flex-direction: row;
 			justify-content: space-around;
-		}
-
-		.header-bt {
-			font-family: 'NanumGothic', 'serif';
-			color: #ffffff;
-			padding: 10px;
-			align-self: center;
-			border: 1px solid #262626;
-		}
-
-		.header-bt:hover {
-			border: 1px dashed white;
 		}
 
 		.left {
@@ -56,7 +40,6 @@
 
 		.on-img-text {
 			position: absolute;
-			font-family: 'NanumGothic', 'serif';
 			font-size: 4vw;
 			color: #ffffff;
 			top: 50%;
@@ -73,23 +56,22 @@
 
 		.intro img {
 			align-self: center;
+			padding-left: 50px;
+			padding-right: 50px;
 		}
 
 		.intro-text {
-			font-family: 'NanumGothic', 'serif';
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			width: 33%;
+			max-width: 300px;
 		}
 
 		/* COUNTERS */
 		.counters {
 			width: 100%;
 			height: 100px;
-			background: #262626;
-			font-family: 'NanumGothic', 'serif';
-			color: white;
 			display: flex;
 			flex-direction: ltr;
 			justify-content: space-evenly;
@@ -102,15 +84,16 @@
 		}
 	</style>
 
-	<div class='header'>
+	<!-- 헤더 -->
+	<div class='header hongong_solid'>
 		<span class='left'>
 			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
-			<span class='header-bt'>과목찾기</span>
-			<span class='header-bt'>과목만들기</span>
+			<button class='hongong-button'>과목찾기</button>
+			<button class='hongong-button'>과목만들기</button>
 		</span>
 		<span class='right'>
-			<span class='header-bt'>회원가입</span>
-			<span class='header-bt'>로그인</span>
+			<button class='hongong-button'>회원가입</button>
+			<button class='hongong-button'>로그인</button>
 		</span>
 	</div>
 
@@ -125,25 +108,25 @@
 		<img src='./img/arrow-right.jpg'>
 		<span class='intro-text'>
 			<span style='align-self: flex-start;'>
-				<font size='6vw'>혼</font><font size='4vw'>공의 </font><font size='6vw'>정석</font><font size='4vw'>은</font>
+				<font size='6em'>혼</font><font size='4em'>공의 </font><font size='6em'>정석</font><font size='4em'>은</font>
 			</span>
 			
 			<span style='align-self: center;'>
-				<font size='6vw'>혼</font><font size='4vw'>자서도 </font><font size='6vw'>공</font><font size='4vw'>부할 수 있는</font>
+				<font size='6em'>혼</font><font size='4em'>자서도 </font><font size='6em'>공</font><font size='4em'>부할 수 있는</font>
 			</span>
 			
 			<span style='align-self: flex-end;'>
-				<font size='4vw'>공부 도우미 서비스입니다.</font>
+				<font size='4em'>공부 도우미 서비스입니다.</font>
 			</span>
 		</span>
 		<img src='./img/arrow-left.jpg'>
 	</div>
 
 	<!-- 있어보이는 쓸데없는 숫자가 들어가는 div -->
-	<div class='counters'>
-		<span class='counter-elem'><font id='counter-subjects' size='6vw'>1024</font> 과목</span>
-		<span class='counter-elem'><font id='counter-attrs' size='6vw'>2147483647</font> 지식</span>
-		<span class='counter-elem'><font id='counter-groups' size='6vw'>644</font> 그룹</span>
+	<div class='counters hongong_solid'>
+		<span class='counter-elem'><font id='counter-subjects' size='5em'>1024</font> 과목</span>
+		<span class='counter-elem'><font id='counter-attrs' size='5em'>2147483647</font> 지식</span>
+		<span class='counter-elem'><font id='counter-groups' size='5em'>644</font> 그룹</span>
 	</div>
 
 </body>
