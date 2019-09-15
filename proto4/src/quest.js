@@ -39,7 +39,7 @@ class Quest {
 	/*
 		type은 {'binary', 'selection', 'short'} 중 하나일 것
 	*/
-	constructor(type, statement, choices, answers, materials) {
+	constructor(type, statement, choices, answers) {
 		console.assert(type);
 		console.assert(statement);
 		console.assert(choices instanceof Array);
@@ -48,7 +48,6 @@ class Quest {
 		this.statement = statement;
 		this.choices = choices;
 		this.answers = answers;
-		this.materials = materials;
 	}
 }
 
@@ -59,11 +58,11 @@ Quest.evaluate = function(quest, response) {
 Quest.evaluator = {};
 
 // 참/거짓 유형 문제 생성
-Quest.generate_binary_quest = function(g, material) {
-	// let subinfos = Soup.fetch_subinfos([g]).filter(info => {
-	// 	return info.attrs.length > 0;
-	// });
-	// let material = Util.get_randomly(subinfos);
+Quest.generate_binary_quest = function(g) {
+	let subinfos = Soup.fetch_subinfos(g).filter(info => {
+		return info.attrs.length > 0;
+	});
+	let material = Util.get_randomly(subinfos);
 	let ans = null;
 	let fact = null;
 	if(Math.random() > 0.5) {
@@ -79,9 +78,9 @@ Quest.generate_binary_quest = function(g, material) {
 		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
-	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.\n`
+	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.<br>`
 		+`${material.names[0]}은(는) ${fact}`
-		,['T', 'F'], [ans], material);
+		,['T', 'F'], [ans]);
 };
 
 // 참거짓 채점기
@@ -95,43 +94,16 @@ Quest.evaluator['binary'] = function(quest, response) {
 };
 
 // n지선다 유형 문제 생성
-// material은 반드시 root가 아니어야 한다. root면 무조건 에러난다.
-// 문제 생성에 실패할 경우 에러가 발생한다.
-//
-// material의 속성의 수는 a (inv가 true이면 n - a)개 이상이어야 한다.
-// material: 문제를 출제할 지식
+// g: 문제를 출제할 지식
 // n: 선택지의 수
 // a: 정답의 수
 // inv: 옳은/옳지 않은
-Quest.generate_selection_quest = function(material, n, a, inv) {
+Quest.generate_selection_quest = function(g, n, a, inv) {
 	let p = inv ? n - a : a;
-
-	// 부정 명제를 가져올 범위를 찾는다. 직접
-	// 명제의 수를 세기 때문에 최악의 경우 O(n^2)
-	// 의 시간 복잡도를 갖지만, n이 1000 미만이라 괜찮을듯.
-	// 그래도 최적화가 필요해 보인다
-	let g = material;
-	while(g.parents.length > 0) {
-		// 원리:
-		// 자신의 부모 아래의 모든 명제의 수에서 자신의 명제 수를 뺀
-		// 것이 선택할 수 있는 부정 명제의 수다.
-		// 그렇다면 이 수가 가장 큰 부모를 찾아서, 필요한 부정 명제의
-		// 수를 넘을 때까지 거슬러 올라가면 된다.
-		let maxv = -1;
-		let maxp = null;
-		g.parents.forEach(parent => {
-			let newv = Soup.total_attrs_count([parent]) - g.attrs.length;
-			if(maxv < newv) {
-				maxv = newv;
-				maxp = parent;
-			}
-		});
-		if(maxp == null)
-			break;
-		g = maxp;
-		if(maxv >= n - p)
-			break;
-	}
+	let subinfos = Soup.fetch_subinfos(g);
+	let material = Util.get_randomly(subinfos.filter(info => {
+		return info.attrs.length >= p;
+	}));
 
 	// 정답 선택지 만들기
 	let pos = Soup.select_positive_attrs(material, p);
@@ -144,11 +116,11 @@ Quest.generate_selection_quest = function(material, n, a, inv) {
 	let answers = null;
 	if(inv)
 		answers = neg.map(attr => {
-			return `${choices.indexOf(attr)}`;
+			return choices.indexOf(attr);
 		});
 	else
 		answers = pos.map(attr => {
-			return `${choices.indexOf(attr)}`;
+			return choices.indexOf(attr);
 		});
 	let name = Util.get_randomly(material.names);
 
@@ -156,7 +128,7 @@ Quest.generate_selection_quest = function(material, n, a, inv) {
 	let logic_label = inv ? '옳지 않은 것' : '옳은 것';
 	return new Quest('selection', 
 		`다음 중 ${name}에 대한 설명으로 ${logic_label}을 고르시오.`,
-		choices, answers, material);
+		choices, answers);
 };
 
 // n지선다 채점기
@@ -173,17 +145,21 @@ Quest.evaluator['selection'] = function(quest, response) {
 };
 
 // 단답식 유형 문제 생성
-Quest.generate_short_quest = function(material, n) {
+Quest.generate_short_quest = function(g, n) {
+	let material = Util.get_randomly(Soup.fetch_subinfos(g).filter(info => {
+		return info.attrs.length > 0;
+	}));
+
 	// 속성이 n개보다 적을 경우, n을 조절해줘서 util.js가
 	// 뻑나지 않도록 한다.
 	if(material.attrs.length < n)
 		n = material.attrs.length;
 	let attrs = Soup.select_positive_attrs(material, n);
-	let stmt = '다음이 설명하는 것을 적으시오.';
+	let stmt = '다음이 설명하는 것을 적으시오.<br>';
 	attrs.forEach(attr => {
-		stmt += '\n * ' + attr;
+		stmt += ' * ' + attr + '<br>';
 	});
-	return new Quest('short', stmt, [], material.names, material);
+	return new Quest('short', stmt, [], material.names);
 };
 
 // 단답식 채점기

@@ -20,6 +20,8 @@ const FileIcon = ({ fileName, type, path, subject }) => {
             pv: md5(path)
           }
         });
+      } else {
+        alert("file clicked");
       }
     },
     [path] // 여기에 디팬던시를 추가해야 클로저 문제가 발생하지 않는다.

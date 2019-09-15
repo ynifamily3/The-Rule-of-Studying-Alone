@@ -11,6 +11,11 @@ const StepElem = props => {
     toPath = toPath.concat(pathdivided[i]);
     if (i !== order) toPath = toPath.concat("/");
   }
+  /*
+  `/dashboard?subject=${subject}&path=${encodeSGMAStr(
+                      toPath
+                    )}&pv=${md5(toPath)}`
+  */
   return (
     <>
       <Breadcrumb.Section>
@@ -19,10 +24,20 @@ const StepElem = props => {
             href={
               !isFinal
                 ? toPath
-                  ? `/dashboard?subject=${subject}&path=${encodeSGMAStr(
-                      toPath
-                    )}&pv=${md5(toPath)}`
-                  : `/dashboard?subject=${subject}`
+                  ? {
+                      pathname: "/dashboard",
+                      query: {
+                        subject,
+                        path: encodeSGMAStr(toPath),
+                        pv: md5(toPath)
+                      }
+                    }
+                  : {
+                      pathname: "/dashboard",
+                      query: {
+                        subject
+                      }
+                    }
                 : ""
             }
           >

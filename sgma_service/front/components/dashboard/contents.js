@@ -5,7 +5,7 @@ import FileItems from "./fileitems";
 import Steps from "./steps";
 import { useSelector, useDispatch } from "react-redux";
 import Router, { useRouter } from "next/router";
-import { ADD_FOLDER } from "../../reducers/docs";
+import { ADD_FOLDER, ADD_FILE } from "../../reducers/docs";
 
 const DashboardContentComponents = props => {
   // 여기서 docs를 redux-data 가져와서 props 같이 쓰면 좋을 것 같다.
@@ -49,6 +49,20 @@ const DashboardContentComponents = props => {
     }
   };
 
+  const newFileClick = e => {
+    const input = prompt(`새로운 문서 이름 입력 : `, "");
+    if (input) {
+      dispatch({
+        type: ADD_FILE,
+        data: {
+          subject_name: props.subject,
+          path: props.path ? "/".concat(props.path) : "",
+          file_name: input.trim()
+        }
+      });
+    }
+  };
+
   return (
     <article className="contents">
       <div className="functions">
@@ -57,7 +71,7 @@ const DashboardContentComponents = props => {
         </span>
         <span className="group1">
           <Button.Group basic>
-            <Button>새 과목</Button>
+            <Button onClick={newFileClick}>새 과목</Button>
             <Button>PDF로 만들기</Button>
             <Button>삭제</Button>
           </Button.Group>

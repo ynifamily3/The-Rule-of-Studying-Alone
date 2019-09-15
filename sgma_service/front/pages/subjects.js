@@ -76,7 +76,7 @@ const SubjectsPage = pageProps => {
       <Form>
         <legend>
           로그인 정보 :
-          {userName === null ? "Loading" : !!userName ? userName : "손님"}{" "}
+          {userName === null ? "Loading" : !!userName ? userName : "손님"}
         </legend>
         <Input type="text" onChange={changeAction} value={subject} />
         <br />
