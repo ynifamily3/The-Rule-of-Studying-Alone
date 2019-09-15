@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang='ko'>
+<head>
+	<meta charset='utf-8'>
+	<title>혼공의 정석</title>
+	<link rel='stylesheet' href='./normalize.css/normalize.css'>
+	<link rel='stylesheet' href='./css/common.css'>
+</head>
+<body>
+	
+	<style>
+		/* HEADER */
+		.header {
+			height: 100px;
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.left {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-start;
+			margin-left: 50px;
+		}
+
+		.right {
+			flex-grow: 1;
+			display: flex;
+			justify-content: flex-end;
+			margin-right: 50px;
+		}
+
+		.editor-bound {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			border: 1px solid gray;
+			padding: 15px;
+		}
+
+		.editor-tags {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-content: center;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+
+		.editor-tag-elem {
+			background: #feda5f;
+			border: none;
+			border-radius: 0.3em;
+			padding-top: 0.2em;
+			padding-left: 0.5em;
+			padding-right: 0.5em;
+			margin-right: 0.8em;
+			height: 1.2em;
+			font-size: 0.8em;
+			text-align: bottom;
+			display: flex;
+		}
+	</style>
+
+	<div class='header hongong_solid'>
+		<span class='left'>
+			<img src='./img/logo-small.png' style='width: 177px; height: 100px;'>
+			<button class='hongong-button'>과목찾기</button>
+			<button class='hongong-button'>과목만들기</button>
+		</span>
+		<span class='right'>
+			<button class='hongong-button'>회원가입</button>
+			<button class='hongong-button'>로그인</button>
+		</span>
+	</div>
+
+	<div style='margin: 25px;'>
+		<h1>과목 만들기</h1>
+		<div class='editor-bound'>
+			<!-- 과목명 -->
+			<div>
+			<font size='5em'><a>과목명 </a><input type='textarea' class='hongong-textarea' id='subject-name' /></font></div>
+			
+			<!-- 태그 -->
+			<div class='editor-tags'>
+				<span class='editor-tag-elem'>#기출</span>
+				<span class='editor-tag-elem'>#리시프</span>
+			</div>
+
+			<!-- 세부내용 -->
+			<div>
+				<a>분류 </a><input type='textarea' class='hongong-textarea' id='category' /><br>
+				<a>소속 </a><input type='textarea' class='hongong-textarea' id='foundation' /><br>
+				<a>내용 </a><input type='textarea' class='hongong-textarea' id='description' />
+			</div>
+
+			<!-- 확인 취소 버튼 -->
+			<div style='display: flex; padding-top: 10px;'>
+				<font size='1em'>
+				<button class='hongong-button' id='confirm'>확인</button>
+				<button class='hongong-button' id='cancle'>취소</button>
+				</font>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
