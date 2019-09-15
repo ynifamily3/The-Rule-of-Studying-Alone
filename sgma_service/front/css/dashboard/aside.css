@@ -1,0 +1,48 @@
+.dashboardAside {
+  width: 100%;
+  display: flex;
+  height: calc(100vh - 64px);
+  flex: 0 0 256px;
+  flex-direction: column;
+}
+
+.dashboardAside i.backrevertBlue {
+  background-color: rgba(232, 240, 254, 0.4) !important;
+}
+
+.dashboardAside .makeNew {
+  margin: 15px auto;
+}
+
+.dashboardAside hr {
+  border: 0.5px solid #dadce0;
+  line-height: 0;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.dashboardAside li {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  border: solid transparent;
+  border-width: 1px 1px 1px 0;
+  border-radius: 0 66px 66px 0;
+  align-items: center;
+  padding-left: 35px;
+}
+
+.dashboardAside li.current {
+  color: #1967d2;
+  background-color: #e8f0fe;
+  cursor: default;
+}
+
+.dashboardAside li:not(.current):not(.capacity):hover {
+  background-color: rgb(245, 245, 245);
+  cursor: pointer;
+}
+
+.dashboardAside i.padlr {
+  padding: 0 10px;
+}

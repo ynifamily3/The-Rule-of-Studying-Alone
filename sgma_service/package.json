@@ -1,0 +1,69 @@
+{
+  "name": "super-great-memorize-assistant",
+  "version": "0.1.0",
+  "description": "교양 시험을 필기하고, 자동 문제 생성을 통해 여러분의 암기 시험을 도와드립니다.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "next ./front",
+    "build": "next build ./front",
+    "start": "node server.js",
+    "front": "next start ./front"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Phryxia",
+    "email": "put-your@email.com",
+    "url": "https://put-your-url.com"
+  },
+  "contributors": [
+    {
+      "name": "Jongkeun Choi",
+      "email": "ynifamily3@gmail.com",
+      "url": "https://miel.dev"
+    },
+    {
+      "name": "put-your-name",
+      "email": "put-your@email.com",
+      "url": "https://put-your-url.com"
+    }
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "dotenv-webpack": "^1.7.0",
+    "draft-js": "^0.11.0",
+    "draft-js-plugins-editor": "^2.1.1",
+    "draft-js-single-line-plugin": "^2.0.5",
+    "express": "^4.17.1",
+    "html2canvas": "^1.0.0-rc.3",
+    "immutable": "^4.0.0-rc.12",
+    "isomorphic-unfetch": "^3.0.0",
+    "jspdf": "^1.5.3",
+    "markdown-draft-js": "^1.7.0",
+    "mongoose": "^5.6.11",
+    "next": "^8.1.0",
+    "next-progressbar": "^1.0.0",
+    "next-redux-wrapper": "^3.0.0-alpha.3",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-naver": "^1.0.6",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-modal": "^3.9.1",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.4",
+    "redux-saga": "^1.0.5",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.87.2"
+  },
+  "devDependencies": {
+    "webpackbar": "^3.2.0"
+  }
+}
