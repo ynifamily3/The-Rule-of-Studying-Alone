@@ -4,20 +4,21 @@ export const initialState = Immutable.fromJS({
   docs: []
 });
 
-/* 우선 구현 영역 */
 export const FETCH_DOCS = "FETCH_DOCS";
 export const FETCH_DOCS_SUCCESS = "FETCH_DOCS_SUCCESS";
 export const FETCH_DOCS_FAILURE = "FETCH_DOCS_FAILURE";
 
-/* 조금 있다 구현해야 할 영역 */
 export const ADD_FOLDER = "ADD_FOLDER";
+export const ADD_FOLDER_SUCCESS = "ADD_FOLDER_SUCCESS";
+export const ADD_FOLDER_FAILURE = "ADD_FOLDER_FAILURE";
+
 export const ADD_FILE = "ADD_FILE";
 export const MOVE_FILE = "MOVE_FILE";
 export const RENAME_FOLDER = "RENAME_FOLDER";
 export const RENAME_FILE = "RENAME_FILE";
 export const DELETE_FOLDER = "DELETE_FOLDER";
 export const DELETE_FILE = "DELETE_FILE";
-
+/*
 export const fetchDocs = {
   type: FETCH_DOCS
 };
@@ -39,6 +40,7 @@ export const addFile = {
   type: ADD_FILE,
   data: { folder_name: "folder_name_default", file_name: "file_name_default" }
 };
+*/
 
 const reducer = (state = initialState.toJS(), action) => {
   const { type, data } = action;
@@ -52,6 +54,7 @@ const reducer = (state = initialState.toJS(), action) => {
     // return Immutable.fromJS(data.toJS()); // copy에 해당하는 게 있나 살펴 봐야겠다. (performance 문제, subject도 마찬가지!)
 
     /* 밑 부분 싸그리 Immutable 과  호환되도록 수정해야 함 */
+    /*
     case ADD_FOLDER:
       return {
         ...state,
@@ -72,8 +75,60 @@ const reducer = (state = initialState.toJS(), action) => {
           }
         ]
       }; // 가독성을 좋게 하기 위해서는 이뮤터블 js를 써야 할 필요가 있다!! => 곧 수정하러갈게 기다려
+      */
+    case ADD_FOLDER:
+      return Immutable.fromJS(state);
+    case ADD_FOLDER_FAILURE:
+      console.log("폴더 추가 실패...!!");
+      return Immutable.fromJS(state);
+    case ADD_FOLDER_SUCCESS:
+      console.warn("폴더추가 성공");
+      // state 를 찍어보면 Immutable 형태던데?
+      // console.warn(state);
+      // console.warn(data);
+      /*
+        {
+          folder_name: "세부역사14"
+          path: "/역사"
+          subject_name: "리눅스시스템프로그래밍"
+        }
+      */
+      // console.log(state.toJS()); // {docs: [Array]}
+      const rawState = state.toJS(); // {docs:[]}
+      // find like drill with data.path === "" or data.path === "/~"
+      if (data.path === "" || data.path === "/") {
+        rawState.docs.push({
+          type: "folder",
+          name: data["folder_name"],
+          docs: []
+        });
+      } else {
+        // drill find
+        const d = data.path.split("/").splice(1); // ['path','data','paths']
+
+        let pointer = rawState; // { docs : [] }
+        //console.log(pointer);
+
+        for (let i = 0; i < d.length; i++) {
+          pointer =
+            pointer.docs[
+              pointer.docs.findIndex(elem => {
+                return elem.type === "folder" && d[i] === elem.name;
+              })
+            ];
+        }
+        console.log(pointer);
+        pointer.docs.push({
+          type: "folder",
+          name: data["folder_name"],
+          docs: []
+        });
+      }
+      //console.log(data);
+      //console.warn(rawState);
+      return Immutable.fromJS(rawState); // state는 이미 Immutable 객체임.
     default:
-      return { ...state };
+      return Immutable.fromJS(state);
   }
 };
 

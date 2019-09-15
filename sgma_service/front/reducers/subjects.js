@@ -50,7 +50,6 @@ const reducer = (state = initialState.toJS(), action) => {
       return Immutable.fromJS(state);
 
     case ADD_SUBJECT_SUCCESS:
-      // subject_name의 중복 체크 안함. 해야됨. (혹은 서버 단에서 거부하면 failure action으로 내려온다.)
       const rawData = data.toJS();
       return state.updateIn(["subjects"], docs =>
         docs.push(

@@ -47,8 +47,6 @@ const DashBoardPage = pageProps => {
         subject_name: subject
       }
     });
-    // console.log(docs); // 이거 자꾸 갱신되나?
-    // useeffect once until refresh 필요할 것 같다 (19.09.10.)
   }, []);
 
   return (
@@ -100,24 +98,5 @@ DashBoardPage.getInitialProps = async ({ res, query }) => {
 
   return {};
 };
-
-/*
-굳이 밑과 같은 식으로 확인할 필요 없이, 그냥 상태만으로 신뢰해도 된다. (퍼포먼스 차원)
-DashBoardPage.getInitialProps = async ctx => {
-  // 로그인 여부를 cookie로 확인해야 한다. (디버깅으로 무조건 true)
-  const isLogin = true;
-  if (!isLogin) {
-    if (ctx && ctx.req) {
-      // ssr
-      ctx.res.writeHead(302, { Location: `/login` });
-      ctx.res.end();
-    } else {
-      // csr
-      // const router = useRouter();
-      Router.push(`/login`);
-    }
-  }
-};
-*/
 
 export default DashBoardPage;

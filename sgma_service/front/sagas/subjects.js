@@ -43,9 +43,12 @@ async function addSubjectAPI({ subject_name }) {
 }
 
 async function fetchSubjectAPI() {
-  const result = await axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/docs`, {
-    withCredentials: true
-  }).then(({ data }) => {
+  const result = await axios(
+    `${process.env.BACKEND_SERVICE_DOMAIN}/api/${process.env.BACKEND_SERVICE_API_VERSION}/docs`,
+    {
+      withCredentials: true
+    }
+  ).then(({ data }) => {
     if (data.isLogin === false) {
       return 0; // fail
     } else {

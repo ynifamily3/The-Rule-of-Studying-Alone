@@ -19,8 +19,8 @@ const FileItems = props => {
   const { path, subject } = props; // path: current path
   const { docs } = props.docs;
   // docs 에 length 가 있어야 진행시키도록 하자..
-  if (docs && docs.length) {
-    const currPathList = findPath(docs, path);
+  if (docs) {
+    const currPathList = docs.length ? findPath(docs, path) : [];
     return (
       <ul className="items">
         {currPathList.map((x, i) => {
@@ -37,7 +37,8 @@ const FileItems = props => {
       </ul>
     );
   } else {
-    return <div>잠시만요...</div>;
+    // cannot reach
+    return <div>문서 목록을 가져오는 중입니다.</div>;
   }
 };
 
