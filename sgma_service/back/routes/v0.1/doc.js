@@ -358,8 +358,12 @@ async function makeSoup(soups,connections,index,parent,f){
 
 	if(f.type==="folder"){
 		soups.push({names:[f.name,],attrs:[],comment:""})
-		connections.push([parent,index])
-		var parent = index;
+		if(parent!==-1)
+		{
+			connections.push([parent,index])
+		}
+			parent = index;
+
 		index++;
 		for(file of f.files){
 			await fileinfo.findOne({_id:file})
@@ -382,11 +386,14 @@ async function makeSoup(soups,connections,index,parent,f){
 			connections.push([c[0]+cursor,c[1]+cursor])
 		}
 		var i=0
-		for(t of top){
-			if(t){
-				connections.push([parent,i+cursor]);
+		if(parent!==-1)
+		{
+			for(t of top){
+				if(t){
+					connections.push([parent,i+cursor]);
+				}
+				i++;
 			}
-			i++;
 		}
 		
 		//console.log("soup",f.soups)
@@ -432,10 +439,13 @@ soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
 })
 
 soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
+	console.log("rr",req.query.path)
 	if(req.query.path)
-		var my_path = req.query.path = "/"+req.params.file_name
+		var my_path = req.query.path + "/"+req.params.file_name;
 	else
-		var my_path = "/"+req.params.file_name
+		var my_path = "/"+req.params.file_name;
+
+	console.log("my_path",my_path)
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
 			if(user){
@@ -454,13 +464,15 @@ soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 										var index = 0;
 
 										if(file.type==="folder"){
-											[soups,connections,index]=await makeSoup(soups,connections,index,0,file);
-											}
+											[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
+										} else {
+											[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
 										}
-										console.log("soup----",soups)
-										console.log("connections----",connections)
+									}
+									console.log("soup----",soups)
+									console.log("connections----",connections)
 
-										return res.json({test:"test"});
+									return res.json({test:"test"});
 								})
 						}
 					})

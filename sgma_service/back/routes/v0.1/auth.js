@@ -40,6 +40,7 @@ router.get('/logout',(req,res)=>{
 	//임시 로그아웃
 	res.clearCookie('user');
 	res.redirect('/');
+	//res.send("<script>window.opener.testCb('success'); self.close(); </script>");
 })
 
 router.get('/naver',isAuthenticated,passport.authenticate('naver',{failureRedirect,}),login)
