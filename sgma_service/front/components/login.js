@@ -63,7 +63,27 @@ const LoginComponent = props => {
   };
 
   const loginWithFacebook = async e => {
-    alert("페북");
+    setModalIsOpen(true);
+
+    const popUpWindow = window.open(
+      "",
+      "",
+      "width=600px,height=500px,left=500px,top=100px",
+      false
+    );
+    const htmlContent = `
+      <div>
+        <script>window.opener.testCb('success')</script>
+        Success
+      </div>
+    `;
+    popUpWindow.target = "_blank";
+    popUpWindow.document.write(htmlContent);
+    window.testCb = function(message) {
+      console.log(message);
+      popUpWindow.close();
+      setModalIsOpen(false);
+    };
   };
 
   const loginWithGoogle = async e => {

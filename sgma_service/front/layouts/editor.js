@@ -73,7 +73,6 @@ class EditorPage extends Component {
         this.refs.editorComponent.state.editorStateContent.getCurrentContent()
       )
     );
-    alert("저장!");
     const finalSoup = Parser.parse_doc(markDown);
     const bodyData = Protocol.create_message(finalSoup, "file");
     // console.log(bodyData);
@@ -91,8 +90,10 @@ class EditorPage extends Component {
         { withCredentials: true }
       )
       .then(({ data }) => {
+        this.refs.insertToolbar.setState({
+          loading: false // ref 활용하여 자식 컴포넌트의 state 조작
+        });
         console.log(data);
-        alert("저장완료");
       })
       .catch(e => {
         alert("저장실패");
@@ -166,6 +167,7 @@ class EditorPage extends Component {
             </div>
             <div className="insertToolbarWrapper">
               <InsertToolbar
+                ref="insertToolbar"
                 onClick={this.openModal}
                 onClick2={this.saveDocument}
               />
