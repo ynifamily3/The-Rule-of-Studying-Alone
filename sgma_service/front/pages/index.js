@@ -39,7 +39,8 @@ const IndexPage = ctx => {
         return loginTest;
       })
       .catch(e => {
-        alert("서버 통신 중 오류 발생!!\n페이지를 새로 고침 해 주세요");
+        console.log("서버 통신 중 오류 발생!!\n페이지를 새로 고침 해 주세요");
+        //setIsLoaded(true);
       });
   }, []);
 
@@ -178,42 +179,44 @@ const IndexPage = ctx => {
             <img src="/static/img/arrow-right.jpg" />
             <span className="intro-text">
               <span style={{ alignSelf: "flex-start" }}>
-                <font size="6em">혼</font>
-                <font size="4em">공의 </font>
-                <font size="6em">정석</font>
-                <font size="4em">은</font>
+                <span style={{ fontSize: "6em" }}>혼</span>
+                <span style={{ fontSize: "4em" }}>공의 </span>
+                <span style={{ fontSize: "6em" }}>정석</span>
+                <span style={{ fontSize: "4em" }}>은</span>
               </span>
 
               <span style={{ alignSelf: "center" }}>
-                <font size="6em">혼</font>
-                <font size="4em">자서도 </font>
-                <font size="6em">공</font>
-                <font size="4em">부할 수 있는</font>
+                <span style={{ fontSize: "6em" }}>혼</span>
+                <span style={{ fontSize: "4em" }}>자서도 </span>
+                <span style={{ fontSize: "6em" }}>공</span>
+                <span style={{ fontSize: "4em" }}>부할 수 있는</span>
               </span>
 
               <span style={{ alignSelf: "flex-end" }}>
-                <font size="4em">공부 도우미 서비스입니다.</font>
+                <span style={{ fontSize: "4em" }}>
+                  공부 도우미 서비스입니다.
+                </span>
               </span>
             </span>
             <img src="/static/img/arrow-left.jpg" />
           </div>
           <div className="counters hongong_solid">
             <span className="counter-elem">
-              <font id="counter-subjects" size="5em">
+              <span id="counter-subjects" style={{ fontSize: "5em" }}>
                 1024
-              </font>{" "}
+              </span>{" "}
               과목
             </span>
             <span className="counter-elem">
-              <font id="counter-attrs" size="5em">
+              <span id="counter-attrs" style={{ fontSize: "5em" }}>
                 2147483647
-              </font>{" "}
+              </span>{" "}
               지식
             </span>
             <span className="counter-elem">
-              <font id="counter-groups" size="5em">
+              <span id="counter-groups" style={{ fontSize: "5em" }}>
                 644
-              </font>{" "}
+              </span>{" "}
               그룹
             </span>
           </div>
