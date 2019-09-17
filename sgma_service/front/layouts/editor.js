@@ -3,8 +3,8 @@ import InsertToolbar from "../components/editor/insertToolbar"; // Editor Toolba
 import EditorComponent from "../components/editor/EditorComponent";
 import { convertToRaw } from "draft-js";
 import { draftToMarkdown } from "../libs/markdown-draft-js";
-import Modal from "react-modal";
-import { Button } from "semantic-ui-react";
+// import Modal from "react-modal"; => 안 씀.
+import { Button, Header, Icon, Image, Modal } from "semantic-ui-react";
 
 // import custom-made
 // import {Parser, Mocktest }from '../libs/'
@@ -15,19 +15,6 @@ const Protocol = require("../libs/md-2-tree/protocol");
 // import test-paper
 import TestPaperComponent from "../components/quiz/paper";
 import axios from "axios";
-
-const modalStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    width: "480px",
-    height: "640px"
-  }
-};
 
 class EditorPage extends Component {
   constructor(props) {
@@ -47,10 +34,21 @@ class EditorPage extends Component {
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.createPDF = this.createPDF.bind(this);
+    this.refreshProblems = this.refreshProblems.bind(this);
   }
 
   componentDidMount() {
-    Modal.setAppElement("#contentWrapper");
+    //Modal.setAppElement("#contentWrapper");
+  }
+
+  refreshProblems() {
+    // 문제 새로고침
+    // this.openModal();
+    const test = Mocktest.create_mocktest(this.state.recyclingData, 5);
+    this.setState({
+      finalSoup: test
+    });
+    // scroll to top
   }
 
   createPDF() {
@@ -114,13 +112,12 @@ class EditorPage extends Component {
     */
     const finalSoup = Parser.parse_doc(markDown);
     // const createdServerData = Protocol.create_message(finalSoup, "add");
-    console.log(finalSoup);
     const test = Mocktest.create_mocktest(finalSoup.roots, 5); // 만들 문제 수
-    console.log(test);
 
     this.setState({
       modalIsOpen: true,
-      finalSoup
+      recyclingData: finalSoup.roots,
+      finalSoup: test // 이 부분이 수정됨. 목(모의고사)테스트만 필요하다.
     });
   }
 
@@ -173,42 +170,38 @@ class EditorPage extends Component {
               />
             </div>
             <Modal
-              isOpen={this.state.modalIsOpen}
-              onAfterOpen={this.afterOpenModal}
-              /*onRequestClose={this.closeModal}*/
-              style={modalStyles}
-              contentLabel="Example Modal"
+              size="small"
+              open={this.state.modalIsOpen}
+              closeOnEscape={true}
+              closeOnDimmerClick={false}
+              onClose={this.closeModal}
             >
-              <div id="paper">
-                <h2
-                  className="problemArea"
-                  ref={subtitle => (this.subtitle = subtitle)}
-                  style={{ textAlign: "center" }}
-                >
-                  ❤️문제지❤️
-                </h2>
-                <div className="problemBox">
-                  {this.state.finalSoup ? (
-                    <TestPaperComponent
-                      soup={this.state.finalSoup}
-                      problems={5}
-                    />
-                  ) : (
-                    "문제지를 불러오는 중입니다."
-                  )}{" "}
+              <Modal.Header>문제 풀어보기</Modal.Header>
+              <Modal.Actions>
+                <div style={{textAlign:'center'}}>
+                  <Button color='orange' onClick={this.refreshProblems}><Icon name='refresh'/>새로운 문제 가져오기</Button>
+                  <Button secondary onClick={this.createPDF}>PDF로 내보내기</Button>
+                  <Button primary onClick={this.closeModal}>종료하기</Button>
                 </div>
-              </div>
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5em"
-                }}
-              >
-                <Button.Group>
-                  <Button onClick={this.createPDF}>PDF로 내보내기</Button>
-                  <Button onClick={this.closeModal}>종료하기</Button>
-                </Button.Group>
-              </div>
+              </Modal.Actions>
+              <Modal.Content>
+                <Modal.Description>
+                  <div className="problemBox">
+                  {this.state.finalSoup && this.state.modalIsOpen ? ( // 조건을 추가 (modalisopen)하여 닫힐때 재렌더링 되지 않도록 한다.
+                    <TestPaperComponent problemData={this.state.finalSoup} />
+                  ) : (
+                    "문제지를 불러오는 중입니다."
+                  )}
+                  </div>
+                </Modal.Description>
+              </Modal.Content>
+              <Modal.Actions>
+                <div style={{textAlign:'center'}}>
+                  <Button color='orange' onClick={this.refreshProblems}><Icon name='refresh'/>새로운 문제 가져오기</Button>
+                  <Button secondary onClick={this.createPDF}>PDF로 내보내기</Button>
+                  <Button primary onClick={this.closeModal}>종료하기</Button>
+                </div>
+              </Modal.Actions>
             </Modal>
           </div>
         </div>

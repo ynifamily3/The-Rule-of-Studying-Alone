@@ -5,35 +5,29 @@ import ShortQuiz from "./shortquiz";
 import { Segment, Form } from "semantic-ui-react";
 
 const QuizBox = props => {
-  const { statement, answers, choices } = props.quest;
-  const { type } = props;
-  let selectionComponent;
+  const { statement, answers, choices, type } = props.quest;
+  let willRender;
   switch (type) {
-    case 0:
-      selectionComponent = <TFQuiz answers={answers} choices={choices} />;
+    case "binary":
+      willRender = <TFQuiz answers={answers} choices={choices} />;
       break;
-    case 1:
-      selectionComponent = (
-        <SelectionQuiz answers={answers} choices={choices} />
-      );
+    case "selection":
+      willRender = <SelectionQuiz answers={answers} choices={choices} />;
       break;
+    case "short":
+      willRender = <ShortQuiz answers={answers} choices={choices} />;
     default:
-      selectionComponent = <ShortQuiz answers={answers} choices={choices} />;
+      willRender = <ShortQuiz answers={answers} choices={choices} />;
       break;
   }
   return (
     <Segment raised>
       <div className="problem-title">
-        {statement.split("<br>").map((line, i) => {
-          return (
-            <span key={i + Math.random()}>
-              {line}
-              <br />
-            </span>
-          );
+        {statement.split("\n").map((line, i) => {
+          return <p key={i + Math.random()}>{line}</p>;
         })}
       </div>
-      <Form.Field>{selectionComponent}</Form.Field>
+      <Form.Field>{willRender}</Form.Field>
     </Segment>
   );
 };

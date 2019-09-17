@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { decodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
 import { FETCH_DOCS, CLEAR_DOCS } from "../reducers/docs";
+import { LOG_IN_SUCCESS } from "../reducers/userinfo";
 // import CustomModal from "../components/modal/custommodal";
 import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
 
@@ -27,6 +28,10 @@ const DashBoardPage = pageProps => {
     }).then(({ data }) => {
       const { isLogin, user } = data;
       if (isLogin === true) {
+        dispatch({
+          type: LOG_IN_SUCCESS,
+          data
+        }); // 로그인 정보 직접 주입
         dispatch({
           type: FETCH_DOCS,
           data: {
