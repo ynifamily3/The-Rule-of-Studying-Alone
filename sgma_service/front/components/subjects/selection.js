@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { List } from "semantic-ui-react";
+import { List, Segment } from "semantic-ui-react";
 // import axios from "axios";
 
 const SelectionComponent = props => {
@@ -11,7 +11,7 @@ const SelectionComponent = props => {
     : useSelector(state => state.subjects).toJS().subjects; // reducer -> index.js -> rootReducer -> userinfo
 
   return (
-    <List>
+    <List style={{marginBottom:'20px', width:'810px'}}>
       {subjectList.map((x, i) => {
         return (
           <List.Item key={"subject_name-".concat(i)}>
@@ -21,7 +21,7 @@ const SelectionComponent = props => {
                 query: { subject: x["subject_name"] }
               }}
             >
-              <a>{x["subject_name"]}</a>
+              <a><Segment>{x["subject_name"]}</Segment></a>
             </Link>
           </List.Item>
         );

@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { ADD_SUBJECT, FETCH_SUBJECT } from "../reducers/subjects";
 import SelectionComponent from "../components/subjects/selection";
 import axios from "axios";
-import Link from 'next/link'
+import Link from "next/link";
 
 // css-loader works
 import "../css/main/common.css";
@@ -78,9 +78,6 @@ const SubjectsPage = () => {
       />
       <style jsx global>
         {`
-          body {
-            line-height: initial;
-          }
           .header {
             height: 100px;
             width: 100%;
@@ -102,100 +99,125 @@ const SubjectsPage = () => {
             justify-content: flex-end;
             margin-right: 50px;
           }
-
           .editor-bound {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             border: 1px solid gray;
             padding: 15px;
+            width: 50%;
+            min-width: 512px;
           }
 
-          .editor-tags {
+          .editor-bound > div {
             display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-content: center;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            align-content: stretch;
           }
 
-          .editor-tag-elem {
-            background: #feda5f;
-            border: none;
-            border-radius: 0.3em;
-            padding-top: 0.2em;
-            padding-left: 0.5em;
-            padding-right: 0.5em;
-            margin-right: 0.8em;
-            height: 1.2em;
-            font-size: 0.8em;
-            text-align: bottom;
-            display: flex;
+          .editor-bound > div > input {
+            margin-left: 10px;
+            width: 90%;
           }
         `}
       </style>
       <div className="header hongong_solid">
         <span className="left">
-		<Link href="/"><a><img
-                src="/static/img/logo-small.png"
-                style={{ width: 177, height: 100 }}
-              /></a></Link>
-          <button className="hongong-button">과목찾기</button>
-          <button className="hongong-button">과목만들기</button>
+          <Link href="/"><a><img
+            src="/static/img/logo-small.png"
+            style={{ width: 177, height: 100 }}
+          /></a></Link>
+          <button className="hongong-button" id="find-subject">
+            과목찾기
+          </button>
+          <button className="hongong-button" id="create-subject">
+            과목만들기
+          </button>
         </span>
         <span className="right">
-          <button className="hongong-button">회원가입</button>
-          <button className="hongong-button">로그인</button>
+          <button className="hongong-button" id="join">
+            회원가입
+          </button>
+          <button className="hongong-button" id="sign-in">
+            로그인
+          </button>
         </span>
       </div>
-
-      <div style={{ margin: "25px" }}>
+      <div style={{ margin: 25 }}>
         <h1>과목 만들기</h1>
         <div className="editor-bound">
-          <div>
-            <font size="5em">
-              <a>과목명 </a>
-              <input
-                type="textarea"
-                className="hongong-textarea"
-                id="subject-name"
-              />
-            </font>
+          {/* 과목명 */}
+          <div style={{ display: "flex", alignContent: "stretch" }}>
+            <b>과목</b>
+            <input
+              type="text"
+              className="hongong-textarea"
+              id="subject-name"
+              onChange={changeAction}
+              value={subject}
+            />
           </div>
+          {/* 태그 */}
           <div className="editor-tags">
-            <span className="editor-tag-elem">#기출</span>
-            <span className="editor-tag-elem">#리시프</span>
+            <b>태그</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="tags"
+              readOnly
+            />
+          </div>
+          {/* 세부내용 */}
+          <div>
+            <b>분류</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="category"
+              readOnly
+            />
           </div>
           <div>
-            <a>분류 </a>
-            <input type="textarea" className="hongong-textarea" id="category" />
-            <br />
-            <a>소속 </a>
+            <b>소속</b>
             <input
               type="textarea"
               className="hongong-textarea"
               id="foundation"
+              readOnly
             />
-            <br />
-            <a>내용 </a>
+          </div>
+          <div>
+            <b>내용</b>
             <input
               type="textarea"
               className="hongong-textarea"
               id="description"
+              readOnly
             />
           </div>
-          <div style={{ display: "flex", paddingTop: "10px" }}>
-            <font size="1em">
-              <button className="hongong-button" id="confirm">
+          {/* 확인 취소 버튼 */}
+          <div style={{ display: "flex", paddingTop: 10 }}>
+            <span style={{ fontSize: "1em" }}>
+              <button
+                className="hongong-button"
+                id="confirm"
+                onClick={takeAction}
+              >
                 확인
               </button>
-              <button className="hongong-button" id="cancle">
-                취소
-              </button>
-            </font>
+              <Link href="/">
+                <a>
+                  <button className="hongong-button" id="cancle">
+                    취소
+                  </button>
+                </a>
+              </Link>
+            </span>
           </div>
         </div>
+      </div>
+      <div style={{ margin: "0 25px" }}>
+	  <h1>내 과목들</h1>
+        <SelectionComponent isLogin={isLogin} />
       </div>
     </Page>
   );
