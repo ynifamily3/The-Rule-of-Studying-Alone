@@ -1,10 +1,12 @@
 const docRouter = require('express').Router();
 const docsRouter = require('express').Router();
 const soupRouter = require('express').Router();
+const searchRouter = require('express').Router();
 
 var fileinfo = require('../../models/file')
 var subjectinfo = require('../../models/subject')
 const util = require('./util');
+const Ranker = require('../../util/ranker');
 
 const makeSubject = (res,subject,owner)=>{
 
@@ -297,20 +299,6 @@ docRouter.delete('/:subject_name',util.loginCheck,(req,res)=>{
 		})
 
 });
-/*
-const folderDelete = (subject,folder) => {
-	//console.log("folderDelete")
-	for(f of folder.files){
-		if(f.type=='folder')
-		{
-			folderDelete(subject,f)
-		} 
-		fileinfo.remove({_id:f._id});
-
-	}
-	return
-};
-*/
 
 docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 	console.log("subject",req.params.subject_name)
@@ -358,6 +346,7 @@ async function makeSoup(soups,connections,index,parent,f){
 
 	if(f.type==="folder"){
 		soups.push({names:[f.name,],attrs:[],comment:""})
+		//soups.push({names:[f.name,],type:f.type,path:f.path})
 		if(parent!==-1)
 		{
 			connections.push([parent,index])
@@ -377,6 +366,7 @@ async function makeSoup(soups,connections,index,parent,f){
 		
 		for(s of f.soups){
 			soups.push(s);
+			//soups.push({names:s.names,type:f.type,path:f.path})
 			top.push(true);
 			index++;
 		}
@@ -428,7 +418,7 @@ soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
 							}
 							console.log("soup----",soups)
 							console.log("connections----",connections)
-							return res.json({test:"test"});
+							return res.json({soups:soups,connections:connections});
 						}
 					})
 			} else {
@@ -466,13 +456,14 @@ soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 										if(file.type==="folder"){
 											[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
 										} else {
-											[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
+											//[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
+											soups=file.soups;
+											connections = file.connections;
 										}
 									}
 									console.log("soup----",soups)
 									console.log("connections----",connections)
-
-									return res.json({test:"test"});
+									return res.json({soups:soups,connections:connections});
 								})
 						}
 					})
@@ -480,4 +471,22 @@ soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 		})
 })
 
-module.exports = {docRouter,docsRouter,soupRouter};
+searchRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
+	console.log("search")
+
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			subjectinfo.find({owner:user._id},{name:1,_id:0})
+				.then((subs)=>{
+					var result = Ranker.find_top_k_match(req.params.subject_name,subs,subs.length);
+
+					console.log(result);
+					return res.json({result:result})
+					
+					//return res.json({test:"test"})
+				})
+		})
+
+})
+
+module.exports = {docRouter,docsRouter,soupRouter,searchRouter};

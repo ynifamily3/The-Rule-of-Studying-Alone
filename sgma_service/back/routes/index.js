@@ -20,11 +20,11 @@ var whitelist = ['https://yasm.miel.dev',
 	
 router.all('/*',(req,res,next)=>{
 	//var origin = req.headers.origin;
-	if(whitelist.indexOf(req.headers.origin)>-1)
-	{
+	//if(whitelist.indexOf(req.headers.origin)>-1)
+	//{
 		console.log("origin",req.headers.origin);
 		res.header('Access-Control-Allow-Origin', req.headers.origin);
-	}
+	//}
 	
 	//res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
 	
