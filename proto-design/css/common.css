@@ -1,17 +1,33 @@
 @font-face {
 	font-family: 'NanumGothic';
 	font-style: normal;
+	font-weight: normal;
 	src: url('../fonts/NanumGothic-Regular.woff') format('woff');
 }
 
 @font-face {
 	font-family: 'NanumGothic';
-	font-style: bold;
+	font-style: normal;
+	font-weight: bold;
 	src: url('../fonts/NanumGothic-Bold.woff') format('woff');
 }
 
+@font-face {
+	font-family: 'NanumMyeongjo';
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/NanumMyeongjo-Regular.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'NanumMyeongjo';
+	font-style: normal;
+	font-weight: bold;
+	src: url('../fonts/NanumMyeongjo-Bold.woff') format('woff');
+}
+
 * {
-	font-family: 'NanumGothic', 'serif';
+	font-family: 'NanumGothic', serif;
 }
 
 .hongong_solid {
