@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { ADD_SUBJECT, FETCH_SUBJECT } from "../reducers/subjects";
 import SelectionComponent from "../components/subjects/selection";
 import axios from "axios";
+import Link from 'next/link'
 
 // css-loader works
 import "../css/main/common.css";
@@ -136,10 +137,10 @@ const SubjectsPage = () => {
       </style>
       <div className="header hongong_solid">
         <span className="left">
-          <img
-            src="/static/img/logo-small.png"
-            style={{ width: "177px", height: "100px" }}
-          />
+		<Link href="/"><a><img
+                src="/static/img/logo-small.png"
+                style={{ width: 177, height: 100 }}
+              /></a></Link>
           <button className="hongong-button">과목찾기</button>
           <button className="hongong-button">과목만들기</button>
         </span>

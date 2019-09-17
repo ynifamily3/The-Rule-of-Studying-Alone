@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { LOG_IN_FAILURE, LOG_IN_SUCCESS, LOG_OUT } from "../reducers/userinfo";
 // import CustomModal from "../components/modal/custommodal";
 import axios from "axios";
+import Link from "next/link";
 
 // css-loader works
 import "../css/main/common.css";
@@ -19,6 +20,7 @@ const IndexPage = ctx => {
   const [user, setUser] = useState({ isLogin: false });
 
   useEffect(() => {
+    // alert('useEffect')
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
     })
@@ -141,80 +143,98 @@ const IndexPage = ctx => {
           </style>
           <div className="header hongong_solid">
             <span className="left">
-              <img
-                src="/static/img/logo-small.png"
-                style={{ width: "177px", height: "100px" }}
-              />
+              <a href="/">
+                <img
+                  src="/static/img/logo-small.png"
+                  style={{ width: 177, height: 100 }}
+                />
+              </a>
+              {/* 강제 새로고침 */}
               {user.isLogin && (
-                <button className="hongong-button" onClick={findSubjectClick}>
+                <button
+                  onClick={findSubjectClick}
+                  className="hongong-button"
+                  id="find-subject"
+                >
                   과목찾기
                 </button>
               )}
               {user.isLogin && (
-                <button className="hongong-button">과목만들기</button>
+                <button onClick={findSubjectClick} className="hongong-button" id="create-subject">
+                  과목만들기
+                </button>
               )}
             </span>
             <span className="right">
               {!user.isLogin && (
-                <button className="hongong-button">회원가입</button>
-              )}
-              {!user.isLogin && (
-                <button className="hongong-button" onClick={loginClick}>
-                  로그인
+                <button className="hongong-button" id="join">
+                  회원가입
                 </button>
               )}
-              {user.isLogin && (
-                <button className="hongong-button" onClick={logoutClick}>
-                  로그아웃 ({user.user.nickname})
+              {!user.isLogin ? (
+                <button
+                  onClick={loginClick}
+                  className="hongong-button"
+                  id="sign-in"
+                >
+                  로그인
+                </button>
+              ) : (
+                <button
+                  onClick={logoutClick}
+                  className="hongong-button"
+                  id="sign-in"
+                >
+                  로그아웃 ( {user.user.nickname} )
                 </button>
               )}
             </span>
           </div>
+          {/* 이미지 div */}
           <div className="main-img" style={{ position: "relative" }}>
             <img src="/static/img/main0-dark.jpg" style={{ width: "100%" }} />
             <span className="on-img-text">이제 암기 걱정은 그만!</span>
           </div>
-
+          {/* 인트로 div */}
           <div className="intro">
             <img src="/static/img/arrow-right.jpg" />
             <span className="intro-text">
-              <span style={{ alignSelf: "flex-start" }}>
-                <span style={{ fontSize: "6em" }}>혼</span>
-                <span style={{ fontSize: "4em" }}>공의 </span>
-                <span style={{ fontSize: "6em" }}>정석</span>
-                <span style={{ fontSize: "4em" }}>은</span>
+              <span style={{ alignSelf: "flex-start", height: "3em" }}>
+                <span style={{ fontSize: "3em" }}>혼공</span>
+                <span style={{ fontSize: "1.5em" }}>의 </span>
+                <span style={{ fontSize: "3em" }}>정석</span>
+                <span style={{ fontSize: "1.5em" }}>은</span>
               </span>
-
-              <span style={{ alignSelf: "center" }}>
-                <span style={{ fontSize: "6em" }}>혼</span>
-                <span style={{ fontSize: "4em" }}>자서도 </span>
-                <span style={{ fontSize: "6em" }}>공</span>
-                <span style={{ fontSize: "4em" }}>부할 수 있는</span>
+              <span style={{ alignSelf: "center", height: "3em" }}>
+                <span style={{ fontSize: "3em" }}>혼</span>
+                <span style={{ fontSize: "1.5em" }}>자서도 </span>
+                <span style={{ fontSize: "3em" }}>공</span>
+                <span style={{ fontSize: "1.5em" }}>부할 수 있는</span>
               </span>
-
               <span style={{ alignSelf: "flex-end" }}>
-                <span style={{ fontSize: "4em" }}>
+                <span style={{ fontSize: "1.5em" }}>
                   공부 도우미 서비스입니다.
                 </span>
               </span>
             </span>
             <img src="/static/img/arrow-left.jpg" />
           </div>
+          {/* 있어보이는 쓸데없는 숫자가 들어가는 div */}
           <div className="counters hongong_solid">
             <span className="counter-elem">
-              <span id="counter-subjects" style={{ fontSize: "5em" }}>
+              <span id="counter-subjects" style={{ fontSize: "2em" }}>
                 1024
               </span>{" "}
               과목
             </span>
             <span className="counter-elem">
-              <span id="counter-attrs" style={{ fontSize: "5em" }}>
+              <span id="counter-attrs" style={{ fontSize: "2em" }}>
                 2147483647
               </span>{" "}
               지식
             </span>
             <span className="counter-elem">
-              <span id="counter-groups" style={{ fontSize: "5em" }}>
+              <span id="counter-groups" style={{ fontSize: "2em" }}>
                 644
               </span>{" "}
               그룹

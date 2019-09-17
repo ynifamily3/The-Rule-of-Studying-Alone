@@ -87,7 +87,8 @@ const LoginComponent = props => {
   };
 
   const loginWithGoogle = async e => {
-    alert("구글");
+    setModalIsOpen(true);
+    window.location.href = `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/google`;
   };
 
   // 로그인 여부에 따라서 컴포넌트 분기
