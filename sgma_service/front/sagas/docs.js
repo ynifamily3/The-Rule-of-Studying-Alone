@@ -99,7 +99,7 @@ function* fetchDocs(action) {
     // console.log(result);
     yield put({
       type: FETCH_DOCS_SUCCESS,
-      data: Map(result) // Map? List?
+      data: Map({...result, subject: action.data['subject_name']}) // subject를 추적할 필요가 있다고 보고 수정함.
     });
   }
 }

@@ -1,8 +1,11 @@
 import Immutable from "immutable";
 
 export const initialState = Immutable.fromJS({
-  docs: []
+  docs: [],
+  subject: '' // docs의 subject
 });
+
+export const CLEAR_DOCS = "CLEAR_DOCS";
 
 export const FETCH_DOCS = "FETCH_DOCS";
 export const FETCH_DOCS_SUCCESS = "FETCH_DOCS_SUCCESS";
@@ -48,12 +51,14 @@ export const addFile = {
 const reducer = (state = initialState.toJS(), action) => {
   const { type, data } = action;
   switch (type) {
+    case CLEAR_DOCS:
+      return initialState;
     case FETCH_DOCS:
       return Immutable.fromJS(state);
     case FETCH_DOCS_FAILURE: // 실패인 경우 에러 코드를 집어넣는게 좋을 것 같기도... 아예 비어 있으니 뭔가 이상함.
       return Immutable.fromJS({ error: "failed to fetch docs" });
     case FETCH_DOCS_SUCCESS:
-      return data; // 문제 없겠지?
+      return data; //data 문제 없겠지?
     // return Immutable.fromJS(data.toJS()); // copy에 해당하는 게 있나 살펴 봐야겠다. (performance 문제, subject도 마찬가지!)
     case ADD_FILE:
       return state; // Immutable.fromJS(state) 안해도 됨... 이미 state는 그거구나.. (근데 했던 이유가 있는거같은데 일단존버)

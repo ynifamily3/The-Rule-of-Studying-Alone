@@ -12,9 +12,10 @@ const DashboardContentComponents = props => {
   // const [docs, setDocs] = useState([]);
   const dispatch = useDispatch();
   const router = useRouter();
-  const docsDefault = useSelector(state => state.docs);
-  const docs = docsDefault.toJS ? docsDefault.toJS() : { loading: true };
-  //console.log(docs); // 처음에는 [] 라서 toJS가 없어서 에러가 생겼었음.
+  //const docsDefault = useSelector(state => state.docs); // 여기랑 pages 의 dashboard랑 미묘한 타이밍이 존재
+  // 따라서 props 로 전달해주는게 맞는거같다. 셀렉터보단, 여기를 수정할 예정
+  const docsDefault = props.docsDefault;
+  const docs = docsDefault ? docsDefault.toJS() : { loading: true };
   if (docs.error) {
     // 리다이렉트 유도
     alert(docs.error);

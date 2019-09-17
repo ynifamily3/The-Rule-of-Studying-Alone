@@ -6,52 +6,56 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { decodeSGMAStr } from "../libs/path-encryptor";
 import { md5 } from "../libs/md5";
-import { FETCH_DOCS } from "../reducers/docs";
-import CustomModal from "../components/modal/custommodal";
-import axios from "axios";
+import { FETCH_DOCS, CLEAR_DOCS } from "../reducers/docs";
+// import CustomModal from "../components/modal/custommodal";
+import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
 
-{
-  /* 2019 09 09 수정. 로딩 완료 후, useEffect으로 api 서버와 통신 하도록 구현할 것 */
-}
+import axios from "axios";
+import { LOG_IN } from "../reducers/userinfo";
+
 const DashBoardPage = pageProps => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector(state => state.userinfo);
-  // const docs = useSelector(state => state.docs);
-  // 이 부분을 이제 fetch 액션을 통해서 하도록 해야 함.
+  const docsDefault = useSelector(state => state.docs); // docs 루트에 하나 더 둬야겠다.
   const { path, subject } = router.query;
-  const [isLogin, setIsLogin] = useState(false); // loading true, false
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const onChangeModalIsOpen = e => {
-    setModalIsOpen(false);
-  };
+  const [isLoaded, setIsLoaded] = useState(false); // loading true, false
 
   useEffect(() => {
-    setModalIsOpen(true);
-    // 9/10 수정할 사항 : 리덕스 액션으로 보낼 것!!
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
     }).then(({ data }) => {
-      const { isLogin } = data;
+      const { isLogin, user } = data;
       if (isLogin === true) {
-        setModalIsOpen(false);
+        dispatch({
+          type: FETCH_DOCS,
+          data: {
+            subject_name: subject
+          }
+        });
       } else {
         // route x
         Router.replace("/login");
       }
     });
-
-    dispatch({
-      type: FETCH_DOCS,
-      data: {
-        subject_name: subject
-      }
-    });
   }, []);
 
+  useEffect(() => {
+    //alert('독스가 수정됨!')
+    // 현재 서브젝트랑 일치하면 보내주멸 될 듯
+    // 처음 렌더링, 로그인 완료 후 렌더링, 페치 후 렌더링 => 하나로 통합하기 위한 추적 시스템
+    const { subject, error } = docsDefault.toJS();
+    if (error) {
+      alert("에러 발생!! 첫화면으로 돌아갑니다.");
+      router.back();
+    }
+    if (subject === router.query.subject) {
+      setIsLoaded(true);
+    }
+  }, [docsDefault]); // docsDefault의 변화만을 추적한다.
   return (
     <Page>
-      <CustomModal
+      {/*<CustomModal
         open={modalIsOpen}
         closeOnEscape={false}
         // esc로 탈출 불가
@@ -59,8 +63,19 @@ const DashBoardPage = pageProps => {
         // 외부클릭으로 탈출 불가
         onClose={onChangeModalIsOpen}
         message={"로그인 정보 취득 중..."}
-      />
-      <DashBoard subject={subject} user={user} path={decodeSGMAStr(path)} />
+      />*/}
+      {isLoaded ? (
+        <DashBoard
+          docsDefault={docsDefault}
+          subject={subject}
+          user={user}
+          path={decodeSGMAStr(path)}
+        />
+      ) : (
+        <Dimmer active inverted>
+          <Loader inverted>문서 목록을 불러오는 중입니다...</Loader>
+        </Dimmer>
+      )}
     </Page>
   );
 };
