@@ -35,6 +35,7 @@ const editorPage = () => {
       Router.back();
     } else {
       // if else 구조가 아닌 그냥 작성하면 밑에 코드도 다 실행됨..
+      
       axios(
         `${process.env.BACKEND_SERVICE_DOMAIN}/api/${
           process.env.BACKEND_SERVICE_API_VERSION
@@ -45,6 +46,7 @@ const editorPage = () => {
           if (data.hasOwnProperty("isLogin") && data.isLogin === false) {
             Router.replace("/login");
           } else {
+            //console.log(data.md_text)
             setData(data);
           }
         })

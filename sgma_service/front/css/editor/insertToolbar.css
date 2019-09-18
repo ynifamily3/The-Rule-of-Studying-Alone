@@ -1,19 +1,16 @@
 .insertToolbar {
-  display: flex;
-  /*background: #1b2733;*/
-  border: 1px solid orange;
-  border-radius: 8px;
-  bottom: 0;
-  box-shadow: 0 8px 16px rgba(27, 39, 51, 0.08);
-  left: 50%;
-  opacity: 1;
-  padding: 6px 8px;
-  position: fixed;
-  text-align: center;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
-  z-index: 28;
-  /*pointer-events: none;*/
-  color: #ffffff;
-  /*transition: transform 150ms ease-in-out, opacity 100ms ease-in-out;*/
+    display: flex;
+    background-color: white;
+    top: 20px;
+    box-shadow: 0 8px 16px rgba(27, 39, 51, 0.08);
+    right: 9%;
+    opacity: 1;
+    padding: 6px 8px;
+    position: fixed;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 28;
+    /*pointer-events: none;*/
+    color: #ffffff;
+    border: 1px solid #ddd;
 }

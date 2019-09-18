@@ -10,6 +10,7 @@ import Router from "next/router";
 
 // This is a bit of a hack to ensure styles reload on client side route changes.
 // See: https://github.com/zeit/next-plugins/issues/282#issuecomment-480740246
+/*
 if (process.env.NODE_ENV !== "production") {
   Router.events.on("routeChangeComplete", () => {
     const path = "/_next/static/css/styles.chunk.css";
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV !== "production") {
     chunksNodes[0].href = `${path}?${timestamp}`;
   });
 }
+*/
 
 // store == state + action + reducer
 
