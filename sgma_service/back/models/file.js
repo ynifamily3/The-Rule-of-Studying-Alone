@@ -28,7 +28,7 @@ const fileSchema = new Schema({
 		required:true,
 	},
 	files:[{type:mongoose.Schema.Types.ObjectId,ref:'file'}],
-	soups:{
+	infos:{
 		type:Array,
 		default:[]
 	},

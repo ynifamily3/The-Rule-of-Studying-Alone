@@ -67,7 +67,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 	fileinfo.findOne({name:file_name,subject:sub._id,owner:owner,path:my_path})
 		.then((file)=>{
 			console.log("file",file);
-			console.log("soup0---------",body.infos)
+			console.log("soup0---------",body.soups)
 			if(!file){
 				console.log("파일 생성")
 				let newFile = new fileinfo({
@@ -98,7 +98,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 			} else {//중복 파일 시
 				console.log("파일 덮어씌우기");
 				fileinfo.updateOne({_id:file._id},{$set:{
-					infos:body.infos,
+					soups:body.soups,
 					connections:body.connections,
 					md_text:body.md_text,
 					type:body.type
@@ -223,7 +223,7 @@ docRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 		
 });
 
-/*
+
 docRouter.post('/',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
@@ -239,7 +239,7 @@ docRouter.post('/',util.loginCheck,(req,res)=>{
 			res.status(500).json({error:"data base error"});
 		})
 });
-*/
+
 docRouter.put('/:subject_name',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
@@ -337,7 +337,7 @@ docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 
 })
 
-async function makeSoup(infos,connections,index,parent,f){
+async function makeSoup(soups,connections,index,parent,f){
 
 	console.log("====================")
 	console.log("top")
@@ -345,8 +345,8 @@ async function makeSoup(infos,connections,index,parent,f){
 	console.log("f",f);
 
 	if(f.type==="folder"){
-		infos.push({names:[f.name,],attrs:[],comment:""})
-		//infos.push({names:[f.name,],type:f.type,path:f.path})
+		soups.push({names:[f.name,],attrs:[],comment:""})
+		//soups.push({names:[f.name,],type:f.type,path:f.path})
 		if(parent!==-1)
 		{
 			connections.push([parent,index])
@@ -357,16 +357,16 @@ async function makeSoup(infos,connections,index,parent,f){
 		for(file of f.files){
 			await fileinfo.findOne({_id:file})
 				.then(async (ff)=>{
-					[infos,connections,index]= await makeSoup(infos,connections,index,parent,ff);
+					[soups,connections,index]= await makeSoup(soups,connections,index,parent,ff);
 				})
 		}
 	} else {
 		var top = [];
 		var cursor = index;
 		
-		for(s of f.infos){
-			infos.push(s);
-			//infos.push({names:s.names,type:f.type,path:f.path})
+		for(s of f.soups){
+			soups.push(s);
+			//soups.push({names:s.names,type:f.type,path:f.path})
 			top.push(true);
 			index++;
 		}
@@ -391,7 +391,7 @@ async function makeSoup(infos,connections,index,parent,f){
 	}
 	console.log("====================")
 
-	return [infos,connections,index]
+	return [soups,connections,index]
 }
 
 soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
@@ -403,22 +403,22 @@ soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
 						if(!subject){
 							res.status(404).json({error:"subject not found"});
 						} else {
-							var infos = [];
+							var soups = [];
 							var connections = [];
 							var index=1;
 						
-							infos.push({names:[subject.name,],attrs:[],comment:""})
+							soups.push({names:[subject.name,],attrs:[],comment:""})
 
 							for(f of subject.files){
 								if(!f.parent_id){
 									//if(f.type==="folder"){
-									[infos,connections,index]=await makeSoup(infos,connections,index,0,f);
+									[soups,connections,index]=await makeSoup(soups,connections,index,0,f);
 								//}
 								}
 							}
-							console.log("soup----",infos)
+							console.log("soup----",soups)
 							console.log("connections----",connections)
-							return res.json({infos:infos,connections:connections});
+							return res.json({soups:soups,connections:connections});
 						}
 					})
 			} else {
@@ -449,21 +449,21 @@ soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 									if(!file){
 										res.status(404).json({error:"file not found"})
 									} else {
-										var infos = [];
+										var soups = [];
 										var connections = [];
 										var index = 0;
 
 										if(file.type==="folder"){
-											[infos,connections,index]=await makeSoup(infos,connections,0,-1,file);
+											[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
 										} else {
-											//[infos,connections,index]=await makeSoup(infos,connections,0,-1,file);
-											infos=file.infos;
+											//[soups,connections,index]=await makeSoup(soups,connections,0,-1,file);
+											soups=file.soups;
 											connections = file.connections;
 										}
 									}
-									console.log("soup----",infos)
+									console.log("soup----",soups)
 									console.log("connections----",connections)
-									return res.json({infos:infos,connections:connections});
+									return res.json({soups:soups,connections:connections});
 								})
 						}
 					})
