@@ -22,7 +22,8 @@ export default props => {
         height: "100vh",
         margin: "0 auto",
         textAlign: "left",
-        overflow: "hidden"
+        overflow: "hidden",
+        flexDirection: "column"
       }}
     >
       <GnbHeader user={props.user} subjects={subjects} />
@@ -32,7 +33,6 @@ export default props => {
           display: "flex"
         }}
       >
-        <Aside />
         <Contents
           docsDefault={props.docsDefault}
           subject={props.subject}

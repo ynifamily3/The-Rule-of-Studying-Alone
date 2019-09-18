@@ -40,7 +40,7 @@ const FileIcon = ({ fileName, type, path, subject }) => {
     [path, fileName, subject] // 여기에 디팬던시를 추가해야 클로저 문제가 발생하지 않는다.
   );
   return (
-    <li>
+    <li style={{cursor: 'pointer'}}>
       <div className="itemHeader">
         <span
           style={{
@@ -48,7 +48,7 @@ const FileIcon = ({ fileName, type, path, subject }) => {
             alignItems: "center"
           }}
         >
-          <Checkbox size="small" />
+          <Checkbox size="small" checked={false} />
         </span>
         <span>
           <Icon name="star outline" />
@@ -59,7 +59,7 @@ const FileIcon = ({ fileName, type, path, subject }) => {
           {type === "folder" ? (
             <Icon name="folder" size="huge" />
           ) : (
-            <Icon name="file alternate" size="huge" />
+            <Icon name="tasks" size="huge" />
           )}
         </Item>
         <div className="fileName">{fileName}</div>

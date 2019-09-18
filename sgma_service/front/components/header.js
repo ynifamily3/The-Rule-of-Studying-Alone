@@ -13,6 +13,7 @@ export default () => (
         href="https://fonts.googleapis.com/css?family=Noto+Sans+KR|Roboto&display=swap"
         rel="stylesheet"
       />
+      
       <meta charSet="utf-8" />
     </Head>
   </div>

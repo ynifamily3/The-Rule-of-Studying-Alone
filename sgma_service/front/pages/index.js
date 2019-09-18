@@ -8,8 +8,6 @@ import { LOG_IN_FAILURE, LOG_IN_SUCCESS, LOG_OUT } from "../reducers/userinfo";
 import axios from "axios";
 import Link from "next/link";
 
-// css-loader works
-import "../css/main/common.css";
 import { Router, useRouter } from "next/router";
 
 const IndexPage = ctx => {
@@ -67,6 +65,54 @@ const IndexPage = ctx => {
         <div>
           <style jsx global>
             {`
+            @font-face {
+              font-family: 'NanumGothic';
+              font-style: normal;
+              src: url('/static/fonts/NanumGothic-Regular.woff') format('woff');
+            }
+            
+            @font-face {
+              font-family: 'NanumGothic';
+              font-style: bold;
+              src: url('/static/fonts/NanumGothic-Bold.woff') format('woff');
+            }
+            
+            * {
+              font-family: 'NanumGothic', 'serif';
+            }
+            
+            .hongong_solid {
+              /* Look */
+              background: #262626;
+              color: white;
+            }
+            
+            .hongong-button {
+              /* Look */
+              background: #262626;
+              color: white;
+              border: 1px solid #262626;
+            
+              /* Layout*/
+              padding: 5px;
+              padding-left: 10px;
+              padding-right: 10px;
+              align-self: center;
+              margin-right: 10px;
+            }
+            
+            .hongong-button:hover {
+              /* Look */
+              border: 1px dashed white;
+            }
+            
+            .hongong-textarea {
+              /* Look */
+              border-top: none;
+              border-left: none;
+              border-right: none;
+              border-bottom: 1px solid #aaaaaa;
+            }
               .header {
                 height: 100px;
                 width: 100%;
@@ -156,34 +202,24 @@ const IndexPage = ctx => {
                   className="hongong-button"
                   id="find-subject"
                 >
-                  과목찾기
-                </button>
-              )}
-              {user.isLogin && (
-                <button onClick={findSubjectClick} className="hongong-button" id="create-subject">
-                  과목만들기
+                  과목 찾기 &amp; 만들기
                 </button>
               )}
             </span>
             <span className="right">
-              {!user.isLogin && (
-                <button className="hongong-button" id="join">
-                  회원가입
-                </button>
-              )}
               {!user.isLogin ? (
                 <button
                   onClick={loginClick}
                   className="hongong-button"
                   id="sign-in"
                 >
-                  로그인
+                  회원가입 및 로그인
                 </button>
               ) : (
                 <button
                   onClick={logoutClick}
                   className="hongong-button"
-                  id="sign-in"
+                  id="sign-out"
                 >
                   로그아웃 ( {user.user.nickname} )
                 </button>

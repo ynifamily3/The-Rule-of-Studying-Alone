@@ -28,7 +28,6 @@ const plugins = [singleLinePlugin];
 class EditorComponent extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     const draftRawData = markdownToDraft(props.data.md_text); // 이곳이 불러오는 부분이다!
     //const draftRawData = markdownToDraft(testData);
     // console.log(draftRawData);
@@ -95,15 +94,15 @@ class EditorComponent extends React.Component {
       const newEditorState = RichUtils.onTab(
         e,
         this.state.editorStateContent,
-        4 /* maxDepth */
+        0 // 지식 -> 낙서로 이동하는 hold (????) /* maxDepth */
       );
-      // console.log(BLOCK_TYPES.map(({ style }) => style));
+      //console.log(BLOCK_TYPES.map(({ style }) => style));
       /*
       ["header-one", "header-two", "header-three", "header-four", "header-five", "unordered-list-item", "blockquote"] (7)
       */
       const shiftBlockStyles = BLOCK_TYPES.map(({ style }) => style).slice(
         0,
-        5
+        7
       );
       const getNext = (arr, n) => {
         return n === arr.length - 1 ? arr[0] : arr[n + 1];
@@ -290,13 +289,14 @@ class StyleButton extends React.Component {
 }
 
 const BLOCK_TYPES = [
-  { label: "주제 (1수준)", style: "header-one" },
-  { label: "주제 (2수준)", style: "header-two" },
-  { label: "주제 (3수준)", style: "header-three" },
-  { label: "주제 (4수준)", style: "header-four" },
-  { label: "주제 (5수준)", style: "header-five" },
+  { label: "대단원", style: "header-one" },
+  { label: "중단원", style: "header-two" },
+  { label: "소단원 - 1", style: "header-three" },
+  { label: "소단원 - 2", style: "header-four" },
+  { label: "소단원 - 3", style: "header-five" },
   { label: "지식", style: "unordered-list-item" },
-  { label: "주석", style: "blockquote" }
+  { label: "낙서 (메모용)", style: "blockquote" }
+  /*{label: "낙서", style: "unstyled"}*/
 ];
 
 const BlockStyleControls = props => {
@@ -324,10 +324,10 @@ const BlockStyleControls = props => {
 };
 
 var INLINE_STYLES = [
-  { label: "진하게", style: "BOLD" },
+  /*{ label: "진하게", style: "BOLD" },
   { label: "기울임", style: "ITALIC" },
   { label: "밑줄", style: "UNDERLINE" },
-  { label: "전각으로", style: "CODE" }
+  { label: "전각으로", style: "CODE" }*/
 ];
 
 const InlineStyleControls = props => {

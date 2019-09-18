@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../../css/dashboard/contents.css";
-import { Checkbox, Button } from "semantic-ui-react";
+import { Checkbox, Button, Icon } from "semantic-ui-react";
 import FileItems from "./fileitems";
 import Steps from "./steps";
 import { useSelector, useDispatch } from "react-redux";
@@ -66,22 +66,6 @@ const DashboardContentComponents = props => {
 
   return (
     <article className="contents">
-      <div className="functions">
-        <span className="box">
-          <Checkbox size="small" />
-        </span>
-        <span className="group1">
-          <Button.Group basic>
-            <Button onClick={newFileClick}>새 과목</Button>
-            <Button>PDF로 만들기</Button>
-            <Button>삭제</Button>
-          </Button.Group>
-        </span>
-        <Button basic onClick={newFolderClick}>
-          새 폴더
-        </Button>
-        <Button basic>공유</Button>
-      </div>
       <div
         className="pathViewArea"
         style={{ paddingLeft: "10px", marginBottom: "8px" }}
@@ -89,6 +73,26 @@ const DashboardContentComponents = props => {
         <Steps subject={props.subject} path={props.path} />
         {/* path indicator */}
       </div>
+      <div className="functions">
+        {/*<span className="box">
+          <Checkbox size="small" />
+  </span>*/}
+        <span className="group1">
+          <Button.Group basic>
+            <Button onClick={newFileClick}>
+              <Icon name="edit outline" />새 과목
+            </Button>
+            <Button basic onClick={newFolderClick}>
+              <Icon name="folder open outline" />새 폴더
+            </Button>
+          </Button.Group>
+        </span>
+        <Button color="red" basic onClick={newFolderClick}>
+          <Icon name="trash alternate outline" />
+          삭제
+        </Button>
+      </div>
+
       <div className="workingArea">
         <FileItems subject={props.subject} docs={docs} path={props.path} />
       </div>

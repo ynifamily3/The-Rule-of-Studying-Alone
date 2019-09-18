@@ -33,8 +33,8 @@ class InsertToolbarComponent extends Component {
         <Dimmer active={this.state.loading} inverted>
           <Loader />
         </Dimmer>
-        <Button.Group basic color="orange">
-          <Button onClick={this.clickHandler(0)}>문제 생성하기</Button>
+        <Button.Group basic>
+          <Button onClick={this.clickHandler(0)}>현재 내용으로 문제 풀어보기</Button>
           <Button onClick={this.clickHandler(1)}>작성 내용 저장하기</Button>
         </Button.Group>
       </div>
