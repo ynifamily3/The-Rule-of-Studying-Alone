@@ -93,11 +93,20 @@ function debug_parse_doc(docstr) {
 	console.log(soup);
 	dom.value = soup.get_tree();
 
-	let issues = soup.validation_check({n: 4, a: 1});
-	issues.forEach(issue => {
-		alert(issue.what);
-		console.log(issue.what);
-	});
+	// 토폴로지 테스트
+	let msg = Protocol.create_message(soup, 'file');
+	console.log(msg);
+
+	let newsoup = Protocol.parse_message(msg);
+	console.log(newsoup);
+
+	dom.value += newsoup.get_tree();
+
+	// let issues = soup.validation_check({n: 4, a: 1});
+	// issues.forEach(issue => {
+	// 	alert(issue.what);
+	// 	console.log(issue.what);
+	// });
 }
 
 // 모의고사 생성!
