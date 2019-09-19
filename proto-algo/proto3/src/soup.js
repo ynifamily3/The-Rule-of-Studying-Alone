@@ -27,6 +27,7 @@ class Soup {
 	create_info(names, attrs) {
 		let temp = new Info(names, attrs);
 		this.infos.push(temp);
+		this.roots.push(temp);
 		return temp;
 	}
 
@@ -42,6 +43,13 @@ class Soup {
 
 		parent.childs.push(child);
 		child.parents.push(parent);
+
+		// remove
+		let cidx = this.roots.indexOf(child);
+		if(cidx >= 0) {
+			this.roots = this.roots.slice(0, cidx)
+				.concat(this.roots.slice(cidx + 1));
+		}
 		return true;
 	}
 

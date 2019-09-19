@@ -128,16 +128,16 @@ Parser.cook = function(tokens) {
 		if(epos == tokens.length) {
 		// 맨 마지막 경우
 			let temp = Parser.assemble(soup, tokens, spos, epos);
-			if(temp)
-				soup.roots.push(temp);
+			// if(temp)
+			// 	soup.roots.push(temp);
 			spos = epos;
 		}
 		else if(tokens[epos][1] == '<제목n>' && tokens[epos][2] <= level) {
 		// 현재 토큰의 뎁스보다 더 깊은 녀석은 자식이다
 			level = tokens[epos][2];
 			let temp = Parser.assemble(soup, tokens, spos, epos);
-			if(temp)
-				soup.roots.push(temp);
+			// if(temp)
+			// 	soup.roots.push(temp);
 			spos = epos;
 		}
 		++epos;
