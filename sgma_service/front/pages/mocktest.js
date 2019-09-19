@@ -20,16 +20,12 @@ import Immutable from "immutable";
 
 const MocktestPage = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  //const user = useSelector(state => state.userinfo);
-  //const docsDefault = useSelector(state => state.docs); // docs 루트에 하나 더 둬야겠다.
-  const { subject, path, file } = router.query; // 주제명, 패쓰, 파일명
+  const { subject, path, file, numOfProblem } = router.query; // 주제명, 패쓰, 파일명
   const [isLoaded, setIsLoaded] = useState(false);
   const [userSelected, setUserSelected] = useState(Immutable.List([]));
 
   const handleFn = (index, value) => {
     setUserSelected(userSelected.set(index, value));
-    // 비동기
   };
 
   useEffect(() => {
@@ -43,7 +39,7 @@ const MocktestPage = () => {
         `${process.env.BACKEND_SERVICE_DOMAIN}/api/${process.env.BACKEND_SERVICE_API_VERSION}/soup/${subject}`,
         { withCredentials: true }
       ).then(({ data }) => {
-        console.log(data); // isLogin / error handling
+        // console.log(data); // isLogin / error handling
         if (data.hasOwnProperty("isLogin") && data.isLogin === false) {
           alert("로그인이 필요합니다.");
           router.replace("/login");
@@ -51,22 +47,25 @@ const MocktestPage = () => {
           alert(data.error);
         } else {
           const soup = Protocol.parse_message(data);
-          const quest = Mocktest.create_mocktest(soup.roots, 5).quests.reduce(
+          const nP = numOfProblem ? (numOfProblem * 1 <= 20 && numOfProblem * 1 > 0) ? numOfProblem * 1 : 5 : 5;
+          const quest = Mocktest.create_mocktest(soup.roots, nP).quests.reduce(
             (a, b) => {
-              if (b) a.push(b); // null 대응
+              b && a.push(b); // null 대응
               return a;
             },
             []
           );
-          console.log(soup);
+          // console.log(soup);
           console.log(quest);
           setIsLoaded(quest); // 로딩 완료
         }
       });
-    } else if (file) {
-      // subject + file (folder)
+    } else if (file && !path) {
+      // 파일은 있고 패스가 없는 경우 (루트에 있는 요소중 찾기)
+    } else if (!file && path) {
+      // 패스는 있고 파일은 없는 경우 (invalid)
     } else {
-      //
+      // 패스, 파일 둘다 있는 경우
     }
   }, []);
 
@@ -231,7 +230,7 @@ const MocktestPage = () => {
             </span>
           </div>
           <div>
-          {userSelected.toJS().join(", ")}
+            {userSelected.size ? `[ ${userSelected.toJS().join(", ")} ]` : '[ ]'}
           </div>
           {/* 제목 밑에 밑줄 */}
           <div style={{ borderBottom: "1px solid black", width: "90%" }} />
@@ -240,53 +239,83 @@ const MocktestPage = () => {
             {/* 왼쪽 서브 */}
             <span
               className="mocktest-sub"
-              style={{ width: "50%", borderRight: "1px solid black" }}
-            >
-              {/* 개별 문제 */}
-              {/* 참/거짓 문제 */}
-              <TFQuiz
-                index={0}
-                handleFn={handleFn}
-                statement="최초의 컴파일러은(는) 원래는 k개의 심볼을 볼 수 있는 LR(k) Parser부터
-          연구를 시작했으나, k &gt; 1에 대하여 LR(1) Parser로 변환할 수 있음이
-          증명되었다. 일반적으로 LR Parser는 LR(1) Parser를 의미한다."
-              />
-              {/* 4지선다 문제 */}
-              <SelQuiz
-                index={1}
-                handleFn={handleFn}
-                statement="다음 중 Earley Parser에 대한 설명으로 옳지 않은 것을 고르시오."
-                choices={[
-                  " LR(k) 문법은 시간 복잡도 O(N)만에 파싱할 수 있다.",
-                  "모든 자유문맥언어(Context Free Language)를 시간 복잡도 O(N^3)만에 파싱할 수 있다.",
-                  "테이블을 사용하는 방법과 재귀 상향식 구현법(Recursive Ascent)이 있다.",
-                  "1970000000년대에 제이 얼리(Jay Earley)가 고안했다."
-                ]}
-              />
+              style={{ width: "50%", borderRight: "1px solid black" }}>
+              {
+                isLoaded.slice(0, Math.floor(isLoaded.length / 2)).map((quest, idx) => {
+                  switch (quest.type) {
+                    case 'binary':
+                      return <TFQuiz
+                        key={idx}
+                        index={idx}
+                        handleFn={handleFn}
+                        statement={quest.statement} />
+                    case 'selection':
+                      return <SelQuiz
+                        key={idx}
+                        index={idx}
+
+                        handleFn={handleFn}
+                        statement={quest.statement}
+                        choices={quest.choices}
+                      />
+                    case 'short':
+                      return <ShortQuiz
+                        key={idx}
+                        index={idx}
+                        handleFn={handleFn}
+                        statement={quest.statement}
+                      />
+                    default:
+                      return <div key={idx}>....</div>;
+                  }
+                })
+              }
             </span>
             {/* 오른쪽 서브 */}
             <span className="mocktest-sub" style={{ width: "50%" }}>
-              {/* 단답형 문제 */}
-              <ShortQuiz 
-              index={2}
-              handleFn={handleFn}
-              statement={`* 문법을 입력받아 파싱 알고리즘이 사용할 파서를 만들어내는 프로그램이다.
-                * 보통 입력으로 Extended Backus-Naur Form(EBNF) 문법을 받으며, 다양한 프로그래밍 언어로 파서를 출력할 수 있다.
-                * 대표적인 CFGd Parser Generator로 ANTLR가 있다.
-                * 예컨데 테이블을 사용하는 LR 파서의 경우, 파싱 테이블이 필요하다. 이를 기계적으로 생성하는 프로그램을 의미한다.`}
-              />
+              {
+                isLoaded.slice(Math.floor(isLoaded.length / 2), isLoaded.length).map((quest, idx) => {
+                  const newIdx = idx + Math.floor(isLoaded.length / 2);
+                  switch (quest.type) {
+                    case 'binary':
+                      return <TFQuiz
+                        key={newIdx}
+                        index={newIdx}
+                        handleFn={handleFn}
+                        statement={quest.statement} />
+                    case 'selection':
+                      return <SelQuiz
+                        key={newIdx}
+                        index={newIdx}
+
+                        handleFn={handleFn}
+                        statement={quest.statement}
+                        choices={quest.choices}
+                      />
+                    case 'short':
+                      return <ShortQuiz
+                        key={newIdx}
+                        index={newIdx}
+                        handleFn={handleFn}
+                        statement={quest.statement}
+                      />
+                    default:
+                      return <div key={newIdx}>....</div>;
+                  }
+                })
+              }
             </span>
           </div>
         </div>
       ) : (
-        <div style={{ height: "100vh" }}>
-          <Dimmer active inverted>
-            <Loader inverted>
-              <span style={{ fontWeight: "bold" }}>문제 생성 중 ...</span>
-            </Loader>
-          </Dimmer>
-        </div>
-      )}
+          <div style={{ height: "100vh" }}>
+            <Dimmer active inverted>
+              <Loader inverted>
+                <span style={{ fontWeight: "bold" }}>문제 생성 중 ...</span>
+              </Loader>
+            </Dimmer>
+          </div>
+        )}
     </Page>
   );
 };

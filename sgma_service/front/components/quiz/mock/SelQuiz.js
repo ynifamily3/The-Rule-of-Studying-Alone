@@ -1,7 +1,12 @@
+import React, { useState } from 'react'
+import { Radio } from 'semantic-ui-react'
+
 const SelQuiz = props => {
   const { statement, index, handleFn, choices } = props;
-  const handleChange = e => {
-    handleFn(index, e.target.value);
+  const [checkedValue, setCheckedValue] = useState('');
+  const handleChange = (e, { value }) => {
+    setCheckedValue(value);
+    handleFn(index, value);
   };
   return (
     <div className="mocktest-quest">
@@ -14,18 +19,15 @@ const SelQuiz = props => {
         <br />
         {choices.map((x, i) => {
           return (
-            <label htmlFor={"sel" + i} style={{ padding: ".5em 0", width:'100%' }} key={"sel-" + index + "-" + i}>
-              <span>
-                <input
-                  type="radio"
-                  id={"sel" + i}
+              <span style={{ padding: ".5em 0", width: '100%' }} key={"sel-" + index + "-" + i}>
+                <Radio
                   name={"sel" + index}
-                  value={i}
+                  value={i.toString()}
+                  checked={i.toString() === checkedValue}
                   onChange={handleChange}
-                />{" "}
-                {x}
+                  label={x}
+                />
               </span>
-            </label>
           );
         })}
       </span>

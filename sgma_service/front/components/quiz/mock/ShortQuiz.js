@@ -1,4 +1,5 @@
-/* 단답식 */
+import React from 'react'
+import { Input } from 'semantic-ui-react'
 
 const ShortQuiz = props => {
   const { statement, index, handleFn } = props;
@@ -26,15 +27,13 @@ const ShortQuiz = props => {
           })}
         </span>
         <br />
-        <span>
-          정답:{" "}
-          <input
-            id={"short" + index}
+        <span style={{width: '100%'}}>
+          <Input id={"short" + index}
+            fluid
+            autoComplete={'off'}
             name={"short" + index}
             onChange={handleChange}
-            type="text"
-            className="hongong-textarea"
-          />
+            placeholder='정답 입력...' />
         </span>
         <br />
       </span>

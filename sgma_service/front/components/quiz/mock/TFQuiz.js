@@ -1,8 +1,12 @@
+import React, { useState } from 'react'
+import { Radio } from 'semantic-ui-react'
+
 const TFQuiz = props => {
   const { statement, index, handleFn } = props;
-  const handleChange = e => {
-    // alert(e.target.value);
-    handleFn(index, e.target.value);
+  const [checkedValue, setCheckedValue] = useState('');
+  const handleChange = (e, { value }) => {
+    setCheckedValue(value);
+    handleFn(index, value);
   };
   return (
     <div className="mocktest-quest">
@@ -16,25 +20,23 @@ const TFQuiz = props => {
         <span className="mocktest-stmt">{statement}</span>
         <br />
         <span>
-          <input
-            id={"tf0" + index}
+          <Radio
+            label='[ 참 ]'
             name={"tf" + index}
-            type="radio"
-            value="T"
+            value='T'
+            checked={'T' === checkedValue}
             onChange={handleChange}
           />
-          <label htmlFor={"tf0" + index}>&nbsp;[ 참 ]</label>
         </span>
         <br />
         <span>
-          <input
-            id={"tf1" + index}
+          <Radio
+            label='[ 거짓 ]'
             name={"tf" + index}
-            type="radio"
-            value="F"
+            value='F'
+            checked={'F' === checkedValue}
             onChange={handleChange}
           />
-          <label htmlFor={"tf1" + index}>&nbsp;[ 거짓 ]</label>
         </span>
       </span>
     </div>
