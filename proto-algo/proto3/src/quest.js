@@ -1,6 +1,7 @@
 const Info = require('./info');
 const Soup = require('./soup');
 const Util = require('./util');
+const Queue = require('./queue');
 
 /*
 	Quest 쓰는 방법
@@ -31,6 +32,11 @@ const Util = require('./util');
 	5. 단답형 문제
 	Quest Quest.generate_short_quest(Info g, int n);
 		n: 주어지는 정보 수
+
+	6. n지선다 문제 Attr to Name형
+	Quest Quest.generate_selection2_quest(Info g, int n, int a)
+		n: 선택지 수
+		a: 골라야 하는 답의 수
 
 	이 이외의 함수는 건드렸을 때 책임 안짐
 */
@@ -195,6 +201,76 @@ Quest.evaluator['short'] = function(quest, response) {
 		if(quest.answers[i] == response[i])
 			return true;
 	return false;
+};
+
+// n지선다 유형 II 문제 생성
+// 속성을 주고 이름을 고르는 것
+// material은 반드시 root가 아니어야 한다. root면 무조건 에러난다.
+// 문제 생성에 실패할 경우 에러가 발생한다.
+//
+// 그래프에 n개 이상의 지식이 존재해야 한다.
+// material: 문제를 출제할 지식
+// n: 선택지의 수
+Quest.generate_selection2_quest = function(material, n) {
+	// 다른 지식의 이름을 가져올 범위를 찾는다.
+	let g = material;
+	let q = new Queue();
+
+	// 정답 선택지 만들기
+	let pos = material;
+
+	let stmt = '다음이 설명하는 것으로 알맞은 것을 고르시오.';
+	pos.attrs.forEach(attr => {
+		stmt += '\n * ' + attr;
+	});
+
+	// 오답 선택지 찾기
+	// 자기 자식을 전부 discard 시키기
+	let history = {};
+	let neg_infos = [];
+	Soup.for_each_childs_pre([material], root => {
+		history[root.jsid] = 1;
+	});
+	material.parents.forEach(parent => {
+		q.push(parent);
+	});
+	while(!q.empty() && neg_infos.length < n - 1) {
+		// 부모를 뽑아서 그 자식들을 neg_infos에 집어넣는다.
+		let current = q.pop();
+		if(history[current.jsid])
+			continue;
+		history[current.jsid] = 1;
+
+		// for every child except history[id] > 0
+		current.childs.forEach(child => {
+			if(history[child.jsid])
+				return;
+			if(neg_infos.length >= n - 1)
+				return;
+			neg_infos.push(child);
+			q.push(child);
+		})
+		if(neg_infos.length >= n - 1)
+			break;
+		current.parents.forEach(parent => {
+			if(history[parent.jsid])
+				return;
+			q.push(parent);
+		});
+	}
+	if(neg_infos.length < n - 1)
+		throw new Error('[Quest::generate_selection2_quest] Fail to make quest as there are not enough infos');
+
+	// 선택지 합치기
+	neg_infos.push(pos)
+	Util.shuffle(neg_infos, false);
+	let choices = neg_infos.map(info => {
+		return Util.get_randomly(info.names);
+	});
+	let answers = [`${neg_infos.indexOf(material)}`];
+
+	// 표현
+	return new Quest('selection2', stmt, choices, answers, material);
 };
 
 module.exports = Quest;

@@ -37,7 +37,7 @@ function create_tfquest_dom(quest) {
 
 // 4지선다 문제를 위한 DOM을 만들어 반환한다.
 function create_selection_dom(quest) {
-	console.assert(quest.type == 'selection');
+	console.assert(quest.type == 'selection' || quest.type == 'selection2');
 
 	let dom = document.createElement('div');
 	dom.className = 'section';
@@ -133,7 +133,7 @@ document.getElementById('mocktest').onclick = function() {
 		out_dom.appendChild(document.createElement('hr'));
 		if(quest.type == 'binary')
 			out_dom.appendChild(create_tfquest_dom(quest));
-		else if(quest.type == 'selection')
+		else if(quest.type == 'selection' || quest.type == 'selection2')
 			out_dom.appendChild(create_selection_dom(quest));
 		else if(quest.type == 'short')
 			out_dom.appendChild(create_short_dom(quest));

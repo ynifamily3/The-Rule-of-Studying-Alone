@@ -95,3 +95,4 @@ out/
 proto3/bundle.js
 *.pptx
 proto4/bundle.js
+proto-algo/proto3/bundle.js
