@@ -17,7 +17,7 @@ function create_tfquest_dom(quest) {
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	let radio_t = document.createElement('input');
@@ -38,13 +38,13 @@ function create_tfquest_dom(quest) {
 
 // 4지선다 문제를 위한 DOM을 만들어 반환한다.
 function create_selection_dom(quest) {
-	console.assert(quest.type == 'selection');
+	console.assert(quest.type == 'selection' || quest.type == 'selection2');
 
 	let dom = document.createElement('div');
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	for(let i = 0; i < quest.choices.length; ++i) {
@@ -67,7 +67,7 @@ function create_short_dom(quest) {
 	dom.className = 'section'
 	
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 	dom.appendChild(document.createElement('br'));
 
@@ -134,7 +134,7 @@ document.getElementById('mocktest').onclick = function() {
 		out_dom.appendChild(document.createElement('hr'));
 		if(quest.type == 'binary')
 			out_dom.appendChild(create_tfquest_dom(quest));
-		else if(quest.type == 'selection')
+		else if(quest.type == 'selection' || quest.type == 'selection2')
 			out_dom.appendChild(create_selection_dom(quest));
 		else if(quest.type == 'short')
 			out_dom.appendChild(create_short_dom(quest));
@@ -237,7 +237,7 @@ document.getElementById('submit').onclick = function(evt) {
 	xhr.setRequestHeader('content-type', 'application/json; charset=utf-8');
 	xhr.send(JSON.stringify(cooked_json));
 };
-},{"./src/mocktest":4,"./src/parser":5,"./src/protocol":6,"./src/quest":7,"./src/soup":8,"./src/util":9}],2:[function(require,module,exports){
+},{"./src/mocktest":4,"./src/parser":5,"./src/protocol":6,"./src/quest":7,"./src/soup":9,"./src/util":10}],2:[function(require,module,exports){
 const Util = {};
 
 /*
@@ -285,7 +285,7 @@ Util.shuffle = function(arr, outplace) {
 	if(outplace)
 		arr = arr.slice();
 	let temp, idx1, idx2;
-	for(let i = 0; i < arr.length; ++i) {
+	for(let i = 0; i < 4 * arr.length; ++i) {
 		idx1 = Util.random_int(0, arr.length - 1);
 		idx2 = Util.random_int(0, arr.length - 1);
 		temp = arr[idx1];
@@ -447,11 +447,14 @@ Mocktest.create_mocktest = function(roots, n) {
 	// 문제 출제 범위 생성
 	let domains = Mocktest.select_test_materials(roots, n);
 	
-	// 지금은 25%는 T/F문제, 75%는 4지선다 문제로 낸다.
 	let quest_types = [];
-	quest_types[0] = Math.floor(n / 3.0);
-	quest_types[1] = Math.floor(n / 3.0);
-	quest_types[2] = n - quest_types[0] - quest_types[1];
+	quest_types[0] = Math.floor(n / 4.0);
+	quest_types[1] = Math.floor(n / 4.0);
+	quest_types[2] = Math.floor(n / 4.0);
+	quest_types[3] = n 
+		- quest_types[0]
+		- quest_types[1]
+		- quest_types[2];
 
 	// 각 유형별로 문제를 만든다.
 	let quests = [];
@@ -479,6 +482,8 @@ Mocktest.create_mocktest = function(roots, n) {
 				new_quest = Quest.generate_selection_quest(domains[k], 4, 1, Math.random() > 0.5);
 			else if(type_ptr == 2)
 				new_quest = Quest.generate_short_quest(domains[k], 4);
+			else if(type_ptr == 3)
+				new_quest = Quest.generate_selection2_quest(domains[k], 4);
 			else
 				throw new Error('Illegal Quest Type Included: ' + type_ptr);
 		}
@@ -495,7 +500,7 @@ Mocktest.create_mocktest = function(roots, n) {
 }
 
 module.exports = Mocktest;
-},{"./Util":2,"./info":3,"./quest":7,"./soup":8}],5:[function(require,module,exports){
+},{"./Util":2,"./info":3,"./quest":7,"./soup":9}],5:[function(require,module,exports){
 const Info = require('./info');
 const Soup = require('./soup');
 const Parser = {};
@@ -626,12 +631,16 @@ Parser.cook = function(tokens) {
 		if(epos == tokens.length) {
 		// 맨 마지막 경우
 			let temp = Parser.assemble(soup, tokens, spos, epos);
+			// if(temp)
+			// 	soup.roots.push(temp);
 			spos = epos;
 		}
 		else if(tokens[epos][1] == '<제목n>' && tokens[epos][2] <= level) {
 		// 현재 토큰의 뎁스보다 더 깊은 녀석은 자식이다
 			level = tokens[epos][2];
 			let temp = Parser.assemble(soup, tokens, spos, epos);
+			// if(temp)
+			// 	soup.roots.push(temp);
 			spos = epos;
 		}
 		++epos;
@@ -686,7 +695,7 @@ Parser.assemble = function(soup, tokens, spos, epos) {
 	이 코드의 내용은 abstraction.md를 잘 읽고 건드려야 한다.
 */
 module.exports = Parser;
-},{"./info":3,"./soup":8}],6:[function(require,module,exports){
+},{"./info":3,"./soup":9}],6:[function(require,module,exports){
 const Info = require('./info');
 const Soup = require('./soup');
 
@@ -740,29 +749,20 @@ const Protocol = {
 		});
 
 		// Topology Reset
-		// let is_root = msg.infos.map(info => { return true; });
 		msg.connections.forEach(pair => {
-			// is_root[pair[1]] = false;
 			soup.append(soup.infos[pair[0]], soup.infos[pair[1]]);
 		});
-
-		// Find Root
-		// let cnt = 0;
-		// is_root.forEach(rootism => {
-		// 	if(rootism)
-		// 		soup.roots.push(soup.infos[cnt]);
-		// 	++cnt;
-		// });
 
 		return soup;
 	}
 };
 
 module.exports = Protocol;
-},{"./info":3,"./soup":8}],7:[function(require,module,exports){
+},{"./info":3,"./soup":9}],7:[function(require,module,exports){
 const Info = require('./info');
 const Soup = require('./soup');
 const Util = require('./util');
+const Queue = require('./queue');
 
 /*
 	Quest 쓰는 방법
@@ -794,6 +794,11 @@ const Util = require('./util');
 	Quest Quest.generate_short_quest(Info g, int n);
 		n: 주어지는 정보 수
 
+	6. n지선다 문제 Attr to Name형
+	Quest Quest.generate_selection2_quest(Info g, int n, int a)
+		n: 선택지 수
+		a: 골라야 하는 답의 수
+
 	이 이외의 함수는 건드렸을 때 책임 안짐
 */
 
@@ -801,12 +806,17 @@ class Quest {
 	/*
 		type은 {'binary', 'selection', 'short'} 중 하나일 것
 	*/
-	constructor(type, statement, choices, answers, materials) {
+	constructor(type, title, statement, choices, answers, materials) {
 		console.assert(type);
-		console.assert(statement);
-		console.assert(choices instanceof Array);
-		console.assert(answers instanceof Array);
+		console.assert(title);
+		console.assert(Array.isArray(choices));
+		console.assert(Array.isArray(answers));
+		if(!Array.isArray(answers)) {
+			console.log('babo');
+			console.log(answers);
+		}
 		this.type = type;
+		this.title = title;
 		this.statement = statement;
 		this.choices = choices;
 		this.answers = answers;
@@ -841,9 +851,9 @@ Quest.generate_binary_quest = function(g, material) {
 		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
-	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.\n`
-		+`${material.names[0]}은(는) ${fact}`
-		,['T', 'F'], [ans], material);
+	return new Quest('binary', '다음 문장의 참/거짓을 판별하시오.',
+		`${material.names[0]}은(는) ${fact}`,
+		['T', 'F'], [ans], material);
 };
 
 // 참거짓 채점기
@@ -918,7 +928,7 @@ Quest.generate_selection_quest = function(material, n, a, inv) {
 	let logic_label = inv ? '옳지 않은 것' : '옳은 것';
 	return new Quest('selection', 
 		`다음 중 ${name}에 대한 설명으로 ${logic_label}을 고르시오.`,
-		choices, answers, material);
+		null, choices, answers, material);
 };
 
 // n지선다 채점기
@@ -941,11 +951,12 @@ Quest.generate_short_quest = function(material, n) {
 	if(material.attrs.length < n)
 		n = material.attrs.length;
 	let attrs = Soup.select_positive_attrs(material, n);
-	let stmt = '다음이 설명하는 것을 적으시오.';
+	let title = '다음이 설명하는 것을 적으시오.';
+	let stmt = '';
 	attrs.forEach(attr => {
 		stmt += '\n * ' + attr;
 	});
-	return new Quest('short', stmt, [], material.names, material);
+	return new Quest('short', title, stmt, [], material.names, material);
 };
 
 // 단답식 채점기
@@ -959,8 +970,133 @@ Quest.evaluator['short'] = function(quest, response) {
 	return false;
 };
 
+// n지선다 유형 II 문제 생성
+// 속성을 주고 이름을 고르는 것
+// material은 반드시 root가 아니어야 한다. root면 무조건 에러난다.
+// 문제 생성에 실패할 경우 에러가 발생한다.
+//
+// 그래프에 n개 이상의 지식이 존재해야 한다.
+// material: 문제를 출제할 지식
+// n: 선택지의 수
+Quest.generate_selection2_quest = function(material, n) {
+	// 다른 지식의 이름을 가져올 범위를 찾는다.
+	let g = material;
+	let q = new Queue();
+
+	// 정답 선택지 만들기
+	let pos = material;
+
+	let title = '다음이 설명하는 것으로 알맞은 것을 고르시오.';
+	let stmt = '';
+	pos.attrs.forEach(attr => {
+		stmt += '\n * ' + attr;
+	});
+
+	// 오답 선택지 찾기
+	// 자기 자식을 전부 discard 시키기
+	let history = {};
+	let neg_infos = [];
+	Soup.for_each_childs_pre([material], root => {
+		history[root.jsid] = 1;
+	});
+	material.parents.forEach(parent => {
+		q.push(parent);
+	});
+	while(!q.empty() && neg_infos.length < n - 1) {
+		// 부모를 뽑아서 그 자식들을 neg_infos에 집어넣는다.
+		let current = q.pop();
+		if(history[current.jsid])
+			continue;
+		history[current.jsid] = 1;
+
+		// for every child except history[id] > 0
+		current.childs.forEach(child => {
+			if(history[child.jsid])
+				return;
+			if(neg_infos.length >= n - 1)
+				return;
+			neg_infos.push(child);
+			q.push(child);
+		})
+		if(neg_infos.length >= n - 1)
+			break;
+		current.parents.forEach(parent => {
+			if(history[parent.jsid])
+				return;
+			q.push(parent);
+		});
+	}
+	if(neg_infos.length < n - 1)
+		throw new Error('[Quest::generate_selection2_quest] Fail to make quest as there are not enough infos');
+
+	// 선택지 합치기
+	neg_infos.push(pos)
+	Util.shuffle(neg_infos, false);
+	let choices = neg_infos.map(info => {
+		return Util.get_randomly(info.names);
+	});
+	let answers = [`${neg_infos.indexOf(material)}`];
+
+	// 표현
+	return new Quest('selection2', title, stmt, choices, answers, material);
+};
+
 module.exports = Quest;
-},{"./info":3,"./soup":8,"./util":9}],8:[function(require,module,exports){
+},{"./info":3,"./queue":8,"./soup":9,"./util":10}],8:[function(require,module,exports){
+class Queue {
+	constructor() {
+		this.first = null;
+		this.last = null;
+		this.size = 0;
+	}
+
+	push(value) {
+		if(this.first == null) {
+			this.first = this.last = {
+				value,
+				next: null
+			};
+		}
+		else {
+			this.last = this.last.next = {
+				value,
+				next: null
+			};
+		}
+		++this.size;
+		return value;
+	}
+
+	pop() {
+		if(!this.first)
+			return null;
+		let out = this.first.value;
+		this.first = this.first.next;
+		if(this.first == null)
+			this.last = null;
+		--this.size;
+		return out;
+	}
+
+	front() {
+		if(this.empty())
+			return null;
+		return this.first.value;
+	}
+
+	back() {
+		if(this.empty())
+			return null;
+		return this.last.value;
+	}
+
+	empty() {
+		return this.first == null;
+	}
+};
+
+module.exports = Queue;
+},{}],9:[function(require,module,exports){
 const Info = require('./info');
 const Util = require('./util');
 
@@ -1125,6 +1261,92 @@ Soup.select_negative_attrs = function(root, material, n) {
 	console.assert(typeof(n) == 'number');
 
 	// 클로저
+	// let check = new Map();
+	// let refs = new Map();
+
+	// // 내부 함수 원리는 select_negative_attr.md 참고 바람
+	// // Info root
+	// function discard_subinfos(root) {
+	// 	check.set(root.jsid, Soup.TYPE_I);
+	// 	root.childs.forEach(child => {
+	// 		let ctype = check.get(child.jsid);
+	// 		if(ctype === undefined || ctype == Soup.TYPE_O)
+	// 			discard_subinfos(child);
+	// 	});
+	// }
+
+	// // Info root 		출제범위 상한선
+	// // Info material 	출제주제
+	// // 반환값은 root가 material로 가는 경로를 가진 경우 TYPE_M
+	// // 그렇지 않은 경우 TYPE_O
+	// function traverse_down(root, material) {
+	// 	if(root == material) {
+	// 		discard_subinfos(material);
+	// 		check.set(root.jsid, Soup.TYPE_M);
+	// 		return Soup.TYPE_M;
+	// 	}
+	// 	else {
+	// 		let rtype = Soup.TYPE_O;
+	// 		root.childs.forEach(child => {
+	// 			let ctype = check.get(child.jsid);
+	// 			if(ctype === undefined)
+	// 				ctype = traverse_down(child, material);
+	// 			if(ctype == Soup.TYPE_M)
+	// 				rtype = Soup.TYPE_M;
+	// 		});
+	// 		check.set(root.jsid, rtype);
+
+	// 		// 알고리즘 특성상 jsid를 키로 갖는 map을 순환
+	// 		// 해야하는데, 어차피 반환하지도 않을 TYPE_M이나
+	// 		// TYPE_I는 굳이 저장할 필요가 없으므로 재낀다
+	// 		if(rtype == Soup.TYPE_O)
+	// 			refs.set(root.jsid, root);
+	// 		return rtype;
+	// 	}
+	// }
+
+	// // 정말로 사용할 수 있는 애들만 추림
+	// // refs에는 과거에 TYPE_O였지만 나중에 TYPE_M으로 바뀐
+	// // 것들이 존재할 수 있기 때문에 마지막 체크를 한 번 더 해
+	// // 줘야함
+	// let out = [];
+	// traverse_down(root, material);
+	// refs.forEach((val, key) => {
+	// 	if(check.get(key) == Soup.TYPE_O)
+	// 		out.push(val);
+	// });
+	let out = Soup.select_negative_infos(root, material, n);
+
+	// 1개짜리와 n개짜리를 처리하는데 복잡도가 달라지기 때문에
+	// 특별히 구분해준다.
+	// Util.get_randomly의 반환형은 배열이 아니기 때문에
+	// 호환성을 위해 배열로 만들어준다.
+	if(n == 1) {
+		return [Util.get_randomly(out.reduce((accm, info) => {
+			// if(is_subject_to(info, material))
+			// 	return accm.concat(info.attrs);
+			// else
+			// 	return accm;
+			return accm.concat(info.attrs);
+		}, []))];
+	}
+	else {
+		return Util.get_randomly_multi(out.reduce((accm, info) => {
+			// if(is_subject_to(info, material))
+			// 	return accm.concat(info.attrs);
+			// else
+			// 	return accm;
+			return accm.concat(info.attrs);
+		}, []), n);
+	}
+};
+
+Soup.select_negative_infos = function(root, material, n) {
+	console.assert(root instanceof Info);
+	console.assert(material instanceof Info);
+	console.assert(typeof(n) == 'number');
+
+	// 클로저
 	let check = new Map();
 	let refs = new Map();
 
@@ -1180,29 +1402,37 @@ Soup.select_negative_attrs = function(root, material, n) {
 			out.push(val);
 	});
 
-	// 1개짜리와 n개짜리를 처리하는데 복잡도가 달라지기 때문에
-	// 특별히 구분해준다.
-	// Util.get_randomly의 반환형은 배열이 아니기 때문에
-	// 호환성을 위해 배열로 만들어준다.
-	if(n == 1) {
-		return [Util.get_randomly(out.reduce((accm, info) => {
-			// if(is_subject_to(info, material))
-			// 	return accm.concat(info.attrs);
-			// else
-			// 	return accm;
-			return accm.concat(info.attrs);
-		}, []))];
-	}
-	else {
-		return Util.get_randomly_multi(out.reduce((accm, info) => {
-			// if(is_subject_to(info, material))
-			// 	return accm.concat(info.attrs);
-			// else
-			// 	return accm;
-			return accm.concat(info.attrs);
-		}, []), n);
-	}
+	return out;
 };
+
+/**
+	전위탐색으로 roots의 자식들을 탐색한다.
+	같은 root는 root.childs에 적재된 순서대로 탐색한다.
+
+	consummer는 해당 root와 공통인 comm이 있다.
+	comm.visited[jsid]로 방문 여부를 확인할 수 있다.
+
+	visited = 1이면 방문을 한 상태
+	visited = 2이면 탐색이 끝난 상태
+*/
+Soup.for_each_childs_pre = function(roots, consummer) {
+	let comm = {
+		visited: {}
+	};
+	function _for_each_childs(root, comm) {
+		if(comm.visited[root.jsid])
+			return;
+		comm.visited[root.jsid] = 1;
+		consummer(root, comm);
+		root.childs.forEach(child => {
+			_for_each_childs(child, comm);
+		});
+		comm.visited[root.jsid] = 2;
+	}
+	roots.forEach(root => {
+		_for_each_childs(root, comm);
+	});
+}
 
 Soup.TYPE_I = 1;
 Soup.TYPE_M = 2;
@@ -1223,6 +1453,6 @@ Soup.TYPE_O = 3;
 // };
 
 module.exports = Soup;
-},{"./info":3,"./util":9}],9:[function(require,module,exports){
+},{"./info":3,"./util":10}],10:[function(require,module,exports){
 arguments[4][2][0].apply(exports,arguments)
 },{"dup":2}]},{},[1]);
