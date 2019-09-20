@@ -16,7 +16,7 @@ function create_tfquest_dom(quest) {
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	let radio_t = document.createElement('input');
@@ -43,7 +43,7 @@ function create_selection_dom(quest) {
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	for(let i = 0; i < quest.choices.length; ++i) {
@@ -66,7 +66,7 @@ function create_short_dom(quest) {
 	dom.className = 'section'
 	
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 	dom.appendChild(document.createElement('br'));
 

@@ -45,12 +45,17 @@ class Quest {
 	/*
 		type은 {'binary', 'selection', 'short'} 중 하나일 것
 	*/
-	constructor(type, statement, choices, answers, materials) {
+	constructor(type, title, statement, choices, answers, materials) {
 		console.assert(type);
-		console.assert(statement);
-		console.assert(choices instanceof Array);
-		console.assert(answers instanceof Array);
+		console.assert(title);
+		console.assert(Array.isArray(choices));
+		console.assert(Array.isArray(answers));
+		if(!Array.isArray(answers)) {
+			console.log('babo');
+			console.log(answers);
+		}
 		this.type = type;
+		this.title = title;
 		this.statement = statement;
 		this.choices = choices;
 		this.answers = answers;
@@ -85,9 +90,9 @@ Quest.generate_binary_quest = function(g, material) {
 		fact = Soup.select_negative_attrs(g, material, 1);
 	}
 	let name = Util.get_randomly(material.names);
-	return new Quest('binary', `다음 문장의 참/거짓을 판별하시오.\n`
-		+`${material.names[0]}은(는) ${fact}`
-		,['T', 'F'], [ans], material);
+	return new Quest('binary', '다음 문장의 참/거짓을 판별하시오.',
+		`${material.names[0]}은(는) ${fact}`,
+		['T', 'F'], [ans], material);
 };
 
 // 참거짓 채점기
@@ -162,7 +167,7 @@ Quest.generate_selection_quest = function(material, n, a, inv) {
 	let logic_label = inv ? '옳지 않은 것' : '옳은 것';
 	return new Quest('selection', 
 		`다음 중 ${name}에 대한 설명으로 ${logic_label}을 고르시오.`,
-		choices, answers, material);
+		null, choices, answers, material);
 };
 
 // n지선다 채점기
@@ -185,11 +190,12 @@ Quest.generate_short_quest = function(material, n) {
 	if(material.attrs.length < n)
 		n = material.attrs.length;
 	let attrs = Soup.select_positive_attrs(material, n);
-	let stmt = '다음이 설명하는 것을 적으시오.';
+	let title = '다음이 설명하는 것을 적으시오.';
+	let stmt = '';
 	attrs.forEach(attr => {
 		stmt += '\n * ' + attr;
 	});
-	return new Quest('short', stmt, [], material.names, material);
+	return new Quest('short', title, stmt, [], material.names, material);
 };
 
 // 단답식 채점기
@@ -219,7 +225,8 @@ Quest.generate_selection2_quest = function(material, n) {
 	// 정답 선택지 만들기
 	let pos = material;
 
-	let stmt = '다음이 설명하는 것으로 알맞은 것을 고르시오.';
+	let title = '다음이 설명하는 것으로 알맞은 것을 고르시오.';
+	let stmt = '';
 	pos.attrs.forEach(attr => {
 		stmt += '\n * ' + attr;
 	});
@@ -270,7 +277,7 @@ Quest.generate_selection2_quest = function(material, n) {
 	let answers = [`${neg_infos.indexOf(material)}`];
 
 	// 표현
-	return new Quest('selection2', stmt, choices, answers, material);
+	return new Quest('selection2', title, stmt, choices, answers, material);
 };
 
 module.exports = Quest;
