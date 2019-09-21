@@ -1,9 +1,12 @@
 const docRouter = require('express').Router();
 const docsRouter = require('express').Router();
+const soupRouter = require('express').Router();
+const searchRouter = require('express').Router();
 
 var fileinfo = require('../../models/file')
 var subjectinfo = require('../../models/subject')
 const util = require('./util');
+const Ranker = require('../../util/ranker');
 
 const makeSubject = (res,subject,owner)=>{
 
@@ -64,7 +67,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 	fileinfo.findOne({name:file_name,subject:sub._id,owner:owner,path:my_path})
 		.then((file)=>{
 			console.log("file",file);
-			console.log("soup0---------",body.soups)
+			console.log("soup0---------",body.infos)
 			if(!file){
 				console.log("파일 생성")
 				let newFile = new fileinfo({
@@ -72,7 +75,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 					subject:sub._id,
 					owner:owner,
 					path:my_path,
-					soups:body.soups,
+					infos:body.infos,
 					connections:body.connections,
 					md_text:body.md_text,
 					type:body.type
@@ -95,7 +98,7 @@ const makeFile = (res,parent,sub,owner,file_name,body) =>{
 			} else {//중복 파일 시
 				console.log("파일 덮어씌우기");
 				fileinfo.updateOne({_id:file._id},{$set:{
-					soups:body.soups,
+					infos:body.infos,
 					connections:body.connections,
 					md_text:body.md_text,
 					type:body.type
@@ -220,7 +223,7 @@ docRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 		
 });
 
-
+/*
 docRouter.post('/',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
@@ -236,7 +239,7 @@ docRouter.post('/',util.loginCheck,(req,res)=>{
 			res.status(500).json({error:"data base error"});
 		})
 });
-
+*/
 docRouter.put('/:subject_name',util.loginCheck,(req,res)=>{
 	util.decodeCookie(req.cookies.user)
 		.then((user)=>{
@@ -282,33 +285,20 @@ docRouter.delete('/:subject_name',util.loginCheck,(req,res)=>{
 								await fileinfo.remove({_id:file_id})
 							}
 							await subjectinfo.remove({_id:sub._id})
-							res.json({result:"subject delete success"})
+							return res.json({result:"subject delete success"})
 						} else {
-							res.json({result:"can't find subject"})
+							return res.json({result:"can't find subject"})
 						}
 					})
+			} else {
+				return res.json({error:"user failed"})
 			}
-			res.json({error:"user failed"})
 		})
 		.catch((err)=>{
 			res.status(500).json({error:"data base error"});
 		})
 
 });
-/*
-const folderDelete = (subject,folder) => {
-	//console.log("folderDelete")
-	for(f of folder.files){
-		if(f.type=='folder')
-		{
-			folderDelete(subject,f)
-		} 
-		fileinfo.remove({_id:f._id});
-
-	}
-	return
-};
-*/
 
 docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 	console.log("subject",req.params.subject_name)
@@ -347,4 +337,156 @@ docRouter.delete('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
 
 })
 
-module.exports = {docRouter,docsRouter};
+async function makeSoup(infos,connections,index,parent,f){
+
+	console.log("====================")
+	console.log("top")
+
+	console.log("f",f);
+
+	if(f.type==="folder"){
+		infos.push({names:[f.name,],attrs:[],comment:""})
+		//infos.push({names:[f.name,],type:f.type,path:f.path})
+		if(parent!==-1)
+		{
+			connections.push([parent,index])
+		}
+			parent = index;
+
+		index++;
+		for(file of f.files){
+			await fileinfo.findOne({_id:file})
+				.then(async (ff)=>{
+					[infos,connections,index]= await makeSoup(infos,connections,index,parent,ff);
+				})
+		}
+	} else {
+		var top = [];
+		var cursor = index;
+		
+		for(s of f.infos){
+			infos.push(s);
+			//infos.push({names:s.names,type:f.type,path:f.path})
+			top.push(true);
+			index++;
+		}
+
+		for(c of f.connections){
+			top[c[1]]=false;
+			connections.push([c[0]+cursor,c[1]+cursor])
+		}
+		var i=0
+		if(parent!==-1)
+		{
+			for(t of top){
+				if(t){
+					connections.push([parent,i+cursor]);
+				}
+				i++;
+			}
+		}
+		
+		//console.log("soup",f.soups)
+		//console.log("connections",f.connections)
+	}
+	console.log("====================")
+
+	return [infos,connections,index]
+}
+
+soupRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			if(user){
+				subjectinfo.findOne({name:req.params.subject_name,owner:user._id,parent_id:null}).populate('files')//,{name:1,type:1,files:1,parent_id:1,_id:1})
+					.then(async (subject)=>{
+						if(!subject){
+							res.status(404).json({error:"subject not found"});
+						} else {
+							var infos = [];
+							var connections = [];
+							var index=1;
+						
+							infos.push({names:[subject.name,],attrs:[],comment:""})
+
+							for(f of subject.files){
+								if(!f.parent_id){
+									//if(f.type==="folder"){
+									[infos,connections,index]=await makeSoup(infos,connections,index,0,f);
+								//}
+								}
+							}
+							console.log("soup----",infos)
+							console.log("connections----",connections)
+							return res.json({infos:infos,connections:connections});
+						}
+					})
+			} else {
+				return res.json({error:"user failed"})
+			}
+			
+		})
+})
+
+soupRouter.get('/:subject_name/:file_name',util.loginCheck,(req,res)=>{
+	console.log("rr",req.query.path)
+	if(req.query.path)
+		var my_path = req.query.path + "/"+req.params.file_name;
+	else
+		var my_path = "/"+req.params.file_name;
+
+	console.log("my_path",my_path)
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			if(user){
+				subjectinfo.findOne({name:req.params.subject_name,owner:user._id,parent_id:null}).populate('files')//,{name:1,type:1,files:1,parent_id:1,_id:1})
+					.then(async (subject)=>{
+						if(!subject){
+							return res.status(404).json({error:"subject not found"});
+						} else {
+							fileinfo.findOne({name:req.params.file_name,subject:subject._id,owner:user._id,path:my_path})
+								.then(async (file)=>{
+									if(!file){
+										res.status(404).json({error:"file not found"})
+									} else {
+										var infos = [];
+										var connections = [];
+										var index = 0;
+
+										if(file.type==="folder"){
+											[infos,connections,index]=await makeSoup(infos,connections,0,-1,file);
+										} else {
+											//[infos,connections,index]=await makeSoup(infos,connections,0,-1,file);
+											infos=file.infos;
+											connections = file.connections;
+										}
+									}
+									console.log("soup----",infos)
+									console.log("connections----",connections)
+									return res.json({infos:infos,connections:connections});
+								})
+						}
+					})
+			}
+		})
+})
+
+searchRouter.get('/:subject_name',util.loginCheck,(req,res)=>{
+	console.log("search")
+
+	util.decodeCookie(req.cookies.user)
+		.then((user)=>{
+			subjectinfo.find({owner:user._id},{name:1,_id:0})
+				.then((subs)=>{
+					var result = Ranker.find_top_k_match(req.params.subject_name,subs,subs.length);
+
+					console.log(result);
+					return res.json({result:result})
+					
+					//return res.json({test:"test"})
+				})
+		})
+
+})
+
+module.exports = {docRouter,docsRouter,soupRouter,searchRouter};

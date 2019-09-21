@@ -7,5 +7,5 @@ exports.start = (app)=>{
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({extended:true}));
 	//app.use('/api/auth',require('./routes/auth'));
-	app.use('/api/userinfo',require('./routes/userinfo'));
+	//app.use('/api/userinfo',require('./routes/userinfo'));
 }

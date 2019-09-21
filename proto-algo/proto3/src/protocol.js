@@ -1,4 +1,5 @@
 const Info = require('./info');
+const Soup = require('./soup');
 
 const Protocol = {
 	// info의 하위지식을 comm에 직렬화한다.
@@ -8,12 +9,10 @@ const Protocol = {
 		info.childs.forEach(child => {
 			if(comm.idxmap[child.jsid] === undefined)
 				Protocol.__pack(child, comm);
-			if(comm.out.type == 'add') {
-				comm.out.connections.push([
-					comm.idxmap[info.jsid],
-					comm.idxmap[child.jsid]
-				]);
-			}
+			comm.out.connections.push([
+				comm.idxmap[info.jsid],
+				comm.idxmap[child.jsid]
+			]);
 		});
 	},
 
@@ -38,6 +37,25 @@ const Protocol = {
 				Protocol.__pack(root, comm);
 		});
 		return comm.out;
+	},
+
+	/*
+		TopologyMessage msg를 다시 Soup로 반환한다.
+		서버에서 들어온 것을 조립해준다.
+	*/
+	parse_message(msg) {
+		let soup = new Soup();
+		msg.infos.forEach(pre_info => {
+			soup.create_info(pre_info.names, pre_info.attrs).
+				comment = pre_info.comment;
+		});
+
+		// Topology Reset
+		msg.connections.forEach(pair => {
+			soup.append(soup.infos[pair[0]], soup.infos[pair[1]]);
+		});
+
+		return soup;
 	}
 };
 

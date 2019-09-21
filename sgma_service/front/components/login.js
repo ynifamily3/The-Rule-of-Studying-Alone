@@ -57,26 +57,38 @@ const LoginComponent = props => {
   // {`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver}
 
   const loginWithNaver = async e => {
-    // alert("네이버");
-    setModalIsOpen(true); // 로딩 모달 띄우기 (필요한가?) 어차피 리로딩 되는데 ㅡㅡ;;
-    /*
-    const requestLoginJson = await fetch(
-      `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`
-    ); // 이걸 페이지 이동형으로 바꾸어야 한다.
-    const responseLoginResult = await requestLoginJson.text();
-    console.log(responseLoginResult);
-    setModalIsOpen(false);
-    */
-    router.replace(`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`);
-    // 필연적으로 리로딩 된다.
+    setModalIsOpen(true);
+    window.location.href = `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`;
+    // router.replace(`${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/naver`); => deprecated. 외부 링크는 window.location.href로 대체
   };
 
   const loginWithFacebook = async e => {
-    alert("페북");
+    setModalIsOpen(true);
+
+    const popUpWindow = window.open(
+      "",
+      "",
+      "width=600px,height=500px,left=500px,top=100px",
+      false
+    );
+    const htmlContent = `
+      <div>
+        <script>window.opener.testCb('success')</script>
+        Success
+      </div>
+    `;
+    popUpWindow.target = "_blank";
+    popUpWindow.document.write(htmlContent);
+    window.testCb = function(message) {
+      console.log(message);
+      popUpWindow.close();
+      setModalIsOpen(false);
+    };
   };
 
   const loginWithGoogle = async e => {
-    alert("구글");
+    setModalIsOpen(true);
+    window.location.href = `${process.env.BACKEND_SERVICE_DOMAIN}/api/auth/google`;
   };
 
   // 로그인 여부에 따라서 컴포넌트 분기

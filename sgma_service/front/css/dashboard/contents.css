@@ -68,6 +68,8 @@
 
 .contents .workingArea {
   overflow-y: scroll;
+  width: 100%;
+  height: 100vh;
 }
 
 .contents .items {

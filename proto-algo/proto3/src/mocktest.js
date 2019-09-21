@@ -74,11 +74,14 @@ Mocktest.create_mocktest = function(roots, n) {
 	// 문제 출제 범위 생성
 	let domains = Mocktest.select_test_materials(roots, n);
 	
-	// 지금은 25%는 T/F문제, 75%는 4지선다 문제로 낸다.
 	let quest_types = [];
-	quest_types[0] = Math.floor(n / 3.0);
-	quest_types[1] = Math.floor(n / 3.0);
-	quest_types[2] = n - quest_types[0] - quest_types[1];
+	quest_types[0] = Math.floor(n / 4.0);
+	quest_types[1] = Math.floor(n / 4.0);
+	quest_types[2] = Math.floor(n / 4.0);
+	quest_types[3] = n 
+		- quest_types[0]
+		- quest_types[1]
+		- quest_types[2];
 
 	// 각 유형별로 문제를 만든다.
 	let quests = [];
@@ -106,6 +109,8 @@ Mocktest.create_mocktest = function(roots, n) {
 				new_quest = Quest.generate_selection_quest(domains[k], 4, 1, Math.random() > 0.5);
 			else if(type_ptr == 2)
 				new_quest = Quest.generate_short_quest(domains[k], 4);
+			else if(type_ptr == 3)
+				new_quest = Quest.generate_selection2_quest(domains[k], 4);
 			else
 				throw new Error('Illegal Quest Type Included: ' + type_ptr);
 		}

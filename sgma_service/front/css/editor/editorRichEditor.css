@@ -4,6 +4,8 @@
   font-family: "Georgia", serif;
   font-size: 14px;
   padding: 15px;
+  position: fixed;
+  top: 1rem;
 }
 
 .RichEditor-editor {
@@ -27,21 +29,18 @@
   display: none;
 }
 
-.RichEditor-editor .RichEditor-blockquote span :before {
-  content: "// ";
-}
+
 
 .RichEditor-editor .RichEditor-blockquote {
-  /* 주석 스타일 116 151 93
-  border-left: 5px solid #eee;
-  color: #666;
-  font-family: "Hoefler Text", "Georgia", serif;
-  font-style: italic;
+  /* 낙서 */
+  color: rgb(255, 201, 144);
   margin: 16px 0;
-  padding: 10px 20px;
-  */
-  color: rgb(116, 151, 93);
-  margin: 16px 0;
+  padding: 0 40px;
+}
+
+.RichEditor-editor .RichEditor-blockquote span :before {
+  float: right;
+  content: "// ";
 }
 
 .RichEditor-editor .public-DraftStyleDefault-pre {
@@ -52,7 +51,7 @@
 }
 
 .RichEditor-controls {
-  font-family: "Helvetica", sans-serif;
+  font-family: "NanumGothic", "Helvetica", sans-serif;
   font-size: 14px;
   margin-bottom: 5px;
   user-select: none;
@@ -67,43 +66,128 @@
 }
 
 .RichEditor-activeButton {
-  color: #5890ff;
+  color: #2f2f2f;
+  font-weight: bold;
 }
 
 .RichEditor-editor .RichEditor-header-one {
   /* 1수준 주제 */
-  /*border-left: 5px solid #eee;*/
+  border-bottom: 1px solid #dedede;
   font-size: 30px;
-  color: rgb(107, 107, 107);
-  margin: 16px 0;
+  color: black;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 96%;
 }
 .RichEditor-editor .RichEditor-header-one span :before {
-  content: "> ";
+   content: "대단원";
+   color: #efefef;
+   float:right;
 }
 
 .RichEditor-editor .RichEditor-header-two {
-  /* 1수준 주제 */
+  /* 2수준 주제 */
   /*border-left: 5px solid #eee;*/
-  color: rgb(107, 107, 107);
-  margin: 16px 0;
+  border-bottom: 1px solid #dedede;
+  font-size: 25px;
+  color: black;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 96%;
 }
 .RichEditor-editor .RichEditor-header-two span :before {
-  content: ">> ";
+  content: "중단원";
+  color: #efefef;
+  float:right;
 }
 
 .RichEditor-editor .RichEditor-header-three {
-  /* 1수준 주제 */
-  /*border-left: 5px solid #eee;*/
+  /* 3수준 주제 */
+  font-size: 20px;
+  border-bottom: 1px solid #dedede;
   color: rgb(107, 107, 107);
-  margin: 16px 0;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 96%;
 }
 
 .RichEditor-editor .RichEditor-header-three span :before {
-  content: ">>> ";
+  content: "소단원 - 1";
+  color: #efefef;
+  float:right;
+}
+
+.RichEditor-editor .RichEditor-header-four {
+  /* 4수준 주제 */
+  font-size: 18px;
+  border-bottom: 1px solid #dedede;
+  color: rgb(107, 107, 107);
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 96%;
+}
+
+.RichEditor-editor .RichEditor-header-four span :before {
+  content: "소단원- 2";
+  color: #efefef;
+  float:right;
+}
+
+.RichEditor-editor .RichEditor-header-five {
+  /* 5수준 주제 */
+  font-size: 15px;
+  border-bottom: 1px solid #dedede;
+  color: rgb(107, 107, 107);
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 96%;
+}
+
+.RichEditor-editor .RichEditor-header-five span :before {
+  content: "소단원 -3";
+  color: #efefef;
+  float:right;
 }
 
 .RichEditor-editor .RichEditor-unordered-list-item {
   /* 지식 */
   list-style: none;
-  color: skyblue;
+  padding: 20px 20px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dddddd;
+  width: 95%;
+  color: #2f2f2f;
+}
+.RichEditor-editor .RichEditor-unordered-list-item span :before {
+  content: '지식';
+  float:right;
+  color: #efefef;
+}
+
+.docTitle {
+  padding-left: 10px;
+  padding-top: 10px;
+  color: #2f2f2f;
 }

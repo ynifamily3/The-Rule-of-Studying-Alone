@@ -16,7 +16,7 @@ function create_tfquest_dom(quest) {
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	let radio_t = document.createElement('input');
@@ -37,13 +37,13 @@ function create_tfquest_dom(quest) {
 
 // 4지선다 문제를 위한 DOM을 만들어 반환한다.
 function create_selection_dom(quest) {
-	console.assert(quest.type == 'selection');
+	console.assert(quest.type == 'selection' || quest.type == 'selection2');
 
 	let dom = document.createElement('div');
 	dom.className = 'section';
 
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 
 	for(let i = 0; i < quest.choices.length; ++i) {
@@ -66,7 +66,7 @@ function create_short_dom(quest) {
 	dom.className = 'section'
 	
 	let stmt = document.createElement('p');
-	stmt.innerText = quest.statement;
+	stmt.innerText = `[${quest.title}]${quest.statement}`;
 	dom.appendChild(stmt);
 	dom.appendChild(document.createElement('br'));
 
@@ -93,11 +93,20 @@ function debug_parse_doc(docstr) {
 	console.log(soup);
 	dom.value = soup.get_tree();
 
-	let issues = soup.validation_check({n: 4, a: 1});
-	issues.forEach(issue => {
-		alert(issue.what);
-		console.log(issue.what);
-	});
+	// 토폴로지 테스트
+	let msg = Protocol.create_message(soup, 'file');
+	console.log(msg);
+
+	let newsoup = Protocol.parse_message(msg);
+	console.log(newsoup);
+
+	dom.value += newsoup.get_tree();
+
+	// let issues = soup.validation_check({n: 4, a: 1});
+	// issues.forEach(issue => {
+	// 	alert(issue.what);
+	// 	console.log(issue.what);
+	// });
 }
 
 // 모의고사 생성!
@@ -124,7 +133,7 @@ document.getElementById('mocktest').onclick = function() {
 		out_dom.appendChild(document.createElement('hr'));
 		if(quest.type == 'binary')
 			out_dom.appendChild(create_tfquest_dom(quest));
-		else if(quest.type == 'selection')
+		else if(quest.type == 'selection' || quest.type == 'selection2')
 			out_dom.appendChild(create_selection_dom(quest));
 		else if(quest.type == 'short')
 			out_dom.appendChild(create_short_dom(quest));

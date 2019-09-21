@@ -16,7 +16,10 @@ module.exports = withCSS(
         use: {
           loader: "url-loader",
           options: {
-            limit: 100000
+            limit: 100000,
+            publicPath: '/_next/static/',
+            outputPath: 'static/',
+            name: '[name].[ext]',
           }
         }
       });

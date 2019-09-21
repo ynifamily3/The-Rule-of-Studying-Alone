@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../../css/dashboard/contents.css";
-import { Checkbox, Button } from "semantic-ui-react";
+import { Checkbox, Button, Icon } from "semantic-ui-react";
 import FileItems from "./fileitems";
 import Steps from "./steps";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,9 +12,10 @@ const DashboardContentComponents = props => {
   // const [docs, setDocs] = useState([]);
   const dispatch = useDispatch();
   const router = useRouter();
-  const docsDefault = useSelector(state => state.docs);
-  const docs = docsDefault.toJS ? docsDefault.toJS() : { loading: true };
-  //console.log(docs); // 처음에는 [] 라서 toJS가 없어서 에러가 생겼었음.
+  //const docsDefault = useSelector(state => state.docs); // 여기랑 pages 의 dashboard랑 미묘한 타이밍이 존재
+  // 따라서 props 로 전달해주는게 맞는거같다. 셀렉터보단, 여기를 수정할 예정
+  const docsDefault = props.docsDefault;
+  const docs = docsDefault ? docsDefault.toJS() : { loading: true };
   if (docs.error) {
     // 리다이렉트 유도
     alert(docs.error);
@@ -49,6 +50,22 @@ const DashboardContentComponents = props => {
     }
   };
 
+  const gotoMockTest = e => {
+    let path = props.path;
+    let pathCut = path.split("/");
+    let file = pathCut.pop();
+    pathCut = pathCut.join("/");
+    if (pathCut.length) pathCut = "/".concat(pathCut);
+    Router.push({
+      pathname: "/mocktest",
+      query: {
+        subject: props.subject,
+        path: pathCut,
+        file: file
+      }
+    });
+  };
+
   const newFileClick = e => {
     const input = prompt(`새로운 문서 이름 입력 : `, "");
     if (input) {
@@ -65,22 +82,6 @@ const DashboardContentComponents = props => {
 
   return (
     <article className="contents">
-      <div className="functions">
-        <span className="box">
-          <Checkbox size="small" />
-        </span>
-        <span className="group1">
-          <Button.Group basic>
-            <Button onClick={newFileClick}>새 과목</Button>
-            <Button>PDF로 만들기</Button>
-            <Button>삭제</Button>
-          </Button.Group>
-        </span>
-        <Button basic onClick={newFolderClick}>
-          새 폴더
-        </Button>
-        <Button basic>공유</Button>
-      </div>
       <div
         className="pathViewArea"
         style={{ paddingLeft: "10px", marginBottom: "8px" }}
@@ -88,6 +89,28 @@ const DashboardContentComponents = props => {
         <Steps subject={props.subject} path={props.path} />
         {/* path indicator */}
       </div>
+      <div className="functions">
+        {/*<span className="box">
+          <Checkbox size="small" />
+  </span>*/}
+        <span className="group1">
+          <Button.Group>
+            <Button color="grey" basic onClick={newFileClick}>
+              <Icon name="edit outline" />새 과목
+            </Button>
+            <Button color="grey" basic onClick={newFolderClick}>
+              <Icon name="folder open outline" />새 폴더
+            </Button>
+          </Button.Group>
+        </span>
+        <Button.Group>
+          <Button color="black" basic onClick={gotoMockTest}>
+            <Icon name="pencil alternate" />
+            현재 폴더 내 문제 풀어보기
+          </Button>
+        </Button.Group>
+      </div>
+
       <div className="workingArea">
         <FileItems subject={props.subject} docs={docs} path={props.path} />
       </div>

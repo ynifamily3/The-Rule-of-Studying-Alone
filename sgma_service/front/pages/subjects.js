@@ -6,10 +6,14 @@ import { useDispatch } from "react-redux";
 import { ADD_SUBJECT, FETCH_SUBJECT } from "../reducers/subjects";
 import SelectionComponent from "../components/subjects/selection";
 import axios from "axios";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+import { LOG_IN_SUCCESS } from "../reducers/userinfo";
 
 // subjects들을 선택하는 페이지이다.
 
-const SubjectsPage = pageProps => {
+const SubjectsPage = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [userName, setuserName] = useState(null);
   const [subject, setSubject] = useState("");
@@ -25,17 +29,23 @@ const SubjectsPage = pageProps => {
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
     }).then(({ data }) => {
-      dispatch({
-        type: FETCH_SUBJECT
-      });
-      setModalIsOpen(false);
       if (data.isLogin) {
+        setModalIsOpen(false);
         setIsLogin(true);
         setuserName(data.user.nickname);
+        dispatch({
+          type: LOG_IN_SUCCESS,
+          data
+        })
+        dispatch({
+          type: FETCH_SUBJECT
+        });
+      } else {
+        router.replace("/login");
       }
     });
 
-    // tate rebuilding - subjects
+    // take rebuilding - subjects
   }, []);
 
   const changeAction = useCallback(e => {
@@ -69,23 +79,196 @@ const SubjectsPage = pageProps => {
         closeOnDimmerClick={false}
         // 외부클릭으로 탈출 불가
         onClose={onChangeModalIsOpen}
-        message={"서버와 통신 중입니다..."}
+        message={"잠시만 기다려주세요..."}
         dimmer={"inverted"}
       />
-      <div>무엇을 공부하시겠습니까?</div>
-      <Form>
-        <legend>
-          로그인 정보 :
-          {userName === null ? "Loading" : !!userName ? userName : "손님"}
-        </legend>
-        <Input type="text" onChange={changeAction} value={subject} />
-        <br />
-        <br />
-        <Button basic color="blue" onClick={takeAction}>
-          과목 생성하기
-        </Button>
-      </Form>
-      <SelectionComponent isLogin={isLogin} />
+      <style jsx global>
+        {`
+          @font-face {
+            font-family: "NanumGothic";
+            font-style: normal;
+            src: url("/static/fonts/NanumGothic-Regular.woff") format("woff");
+          }
+
+          @font-face {
+            font-family: "NanumGothic";
+            font-style: bold;
+            src: url("/static/fonts/NanumGothic-Bold.woff") format("woff");
+          }
+
+          * {
+            font-family: "NanumGothic", "serif";
+          }
+
+          .hongong_solid {
+            /* Look */
+            background: #262626;
+            color: white;
+          }
+
+          .hongong-button {
+            /* Look */
+            background: #262626;
+            color: white;
+            border: 1px solid #262626;
+
+            /* Layout*/
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            align-self: center;
+            margin-right: 10px;
+          }
+
+          .hongong-button:hover {
+            /* Look */
+            border: 1px dashed white;
+          }
+
+          .hongong-textarea {
+            /* Look */
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid #aaaaaa;
+          }
+          .header {
+            height: 100px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+          }
+
+          .left {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-start;
+            margin-left: 50px;
+          }
+
+          .right {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 50px;
+          }
+          .editor-bound {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            border: 1px solid gray;
+            padding: 15px;
+            width: 50%;
+            min-width: 512px;
+          }
+
+          .editor-bound > div {
+            display: flex;
+            align-content: stretch;
+          }
+
+          .editor-bound > div > input {
+            margin-left: 10px;
+            width: 90%;
+          }
+        `}
+      </style>
+      <div className="header hongong_solid">
+        <span className="left">
+          <Link href="/">
+            <a>
+              <img
+                src="/static/img/logo-small.png"
+                style={{ width: 177, height: 100 }}
+              />
+            </a>
+          </Link>
+        </span>
+        <span className="right">
+          <button className="hongong-button" id="sign-out">
+            {userName ? `로그아웃 ( ${userName} )` : ""}
+          </button>
+        </span>
+      </div>
+      <div style={{ margin: 25 }}>
+        <h1>과목 생성하기</h1>
+        <div className="editor-bound">
+          {/* 과목명 */}
+          <div style={{ display: "flex", alignContent: "stretch" }}>
+            <b>과목</b>
+            <input
+              type="text"
+              className="hongong-textarea"
+              id="subject-name"
+              onChange={changeAction}
+              value={subject}
+              autoComplete="off"
+            />
+          </div>
+          {/* 태그 */}
+          <div className="editor-tags">
+            <b>태그</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="tags"
+              readOnly
+            />
+          </div>
+          {/* 세부내용 */}
+          <div>
+            <b>분류</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="category"
+              readOnly
+            />
+          </div>
+          <div>
+            <b>소속</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="foundation"
+              readOnly
+            />
+          </div>
+          <div>
+            <b>내용</b>
+            <input
+              type="textarea"
+              className="hongong-textarea"
+              id="description"
+              readOnly
+            />
+          </div>
+          {/* 확인 취소 버튼 */}
+          <div style={{ display: "flex", paddingTop: 10 }}>
+            <span style={{ fontSize: "1em" }}>
+              <button
+                className="hongong-button"
+                id="confirm"
+                onClick={takeAction}
+              >
+                확인
+              </button>
+              <Link href="/">
+                <a>
+                  <button className="hongong-button" id="cancle">
+                    취소
+                  </button>
+                </a>
+              </Link>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div style={{ margin: "0 25px" }}>
+        <h1>현재 제공되는 과목들</h1>
+        <SelectionComponent isLogin={isLogin} />
+      </div>
     </Page>
   );
 };
