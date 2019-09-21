@@ -50,6 +50,22 @@ const DashboardContentComponents = props => {
     }
   };
 
+  const gotoMockTest = e => {
+    let path = props.path;
+    let pathCut = path.split("/");
+    let file = pathCut.pop();
+    pathCut = pathCut.join("/");
+    if (pathCut.length) pathCut = "/".concat(pathCut);
+    Router.push({
+      pathname: "/mocktest",
+      query: {
+        subject: props.subject,
+        path: pathCut,
+        file: file
+      }
+    });
+  };
+
   const newFileClick = e => {
     const input = prompt(`새로운 문서 이름 입력 : `, "");
     if (input) {
@@ -78,19 +94,21 @@ const DashboardContentComponents = props => {
           <Checkbox size="small" />
   </span>*/}
         <span className="group1">
-          <Button.Group basic>
-            <Button onClick={newFileClick}>
+          <Button.Group>
+            <Button color="grey" basic onClick={newFileClick}>
               <Icon name="edit outline" />새 과목
             </Button>
-            <Button basic onClick={newFolderClick}>
+            <Button color="grey" basic onClick={newFolderClick}>
               <Icon name="folder open outline" />새 폴더
             </Button>
           </Button.Group>
         </span>
-        <Button color="red" basic onClick={newFolderClick}>
-          <Icon name="trash alternate outline" />
-          삭제
-        </Button>
+        <Button.Group>
+          <Button color="black" basic onClick={gotoMockTest}>
+            <Icon name="pencil alternate" />
+            현재 폴더 내 문제 풀어보기
+          </Button>
+        </Button.Group>
       </div>
 
       <div className="workingArea">

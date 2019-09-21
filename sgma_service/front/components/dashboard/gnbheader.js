@@ -17,6 +17,9 @@ export default props => {
         }
       };
   // console.warn(subjects.toJS().subjects)
+  const loginClick = e => {
+    router.push("/login");
+  }
   const logoutClick = e => {
     dispatch({
       type: LOG_OUT

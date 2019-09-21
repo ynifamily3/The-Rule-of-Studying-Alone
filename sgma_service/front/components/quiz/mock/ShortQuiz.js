@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "semantic-ui-react";
 
 const ShortQuiz = props => {
-  const { statement, index, handleFn, title, solveState } = props;
+  const { statement, index, handleFn, title, solveState, answer } = props;
   const handleChange = e => {
     handleFn(index, e.target.value);
   };
@@ -19,7 +19,10 @@ const ShortQuiz = props => {
             backgroundSize: "128px 128px",
             width: "128px",
             height: "128px",
-            transform: solveState === 1 ? "translate(-50%, -50%)" : "translate(-40%, -40%)",
+            transform:
+              solveState === 1
+                ? "translate(-50%, -50%)"
+                : "translate(-40%, -40%)",
             zIndex: "300"
           }}
         />
@@ -54,7 +57,16 @@ const ShortQuiz = props => {
             readOnly={solveState !== 0}
           />
         </span>
-        <br />
+        <span
+          style={{
+            color: "red",
+            textAlign: "right",
+            padding: ".5em 0",
+            width: "100%"
+          }}
+        >
+          {solveState !== 0 ? `정답 : ${answer}` : `ㅤ`}
+        </span>
       </span>
     </div>
   );

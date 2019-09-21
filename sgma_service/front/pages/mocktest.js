@@ -32,20 +32,26 @@ const MocktestPage = () => {
     setUserSelected(userSelected.set(index, value));
   };
 
-  const markProblem = useCallback(e => {
-    const userSelectedJS = userSelected.toJS();
-    const result = answers.map((x, i) => {
-      console.log(x);
-      if (x === userSelectedJS[i]) return 1;
-      // correct
-      else return 2; // incorrect
-    });
-    setSolveState(result);
-  }, [answers, userSelected, setSolveState]);
+  const markProblem = useCallback(
+    e => {
+      const userSelectedJS = userSelected.toJS();
+      const result = answers.map((x, i) => {
+        console.log(x);
+        if (x === userSelectedJS[i]) return 1;
+        // correct
+        else return 2; // incorrect
+      });
+      setSolveState(result);
+    },
+    [answers, userSelected, setSolveState]
+  );
 
-  const resetProblem = useCallback(e => {
-    window.location.reload(); // it hacks!! (redux state를 잃어버림)
-  }, [setSolveState, setUserSelected, router]);
+  const resetProblem = useCallback(
+    e => {
+      window.location.reload(); // it hacks!! (redux state를 잃어버림)
+    },
+    [setSolveState, setUserSelected, router]
+  );
 
   useEffect(() => {
     if (!subject) {
@@ -300,7 +306,7 @@ const MocktestPage = () => {
             <div id="subtitle">
               <span style={{ fontSize: "1em" }}>제1회 {subject} 모의고사</span>
             </div>
-            <div id="title" style={{marginBottom: '2em'}}>
+            <div id="title" style={{ marginBottom: "2em" }}>
               <span style={{ fontSize: "3em" }}>
                 {file ? file : path ? path : "전체"} 영역
               </span>
@@ -341,6 +347,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             solveState={solveState[idx]}
+                            answer={answers[idx]}
                           />
                         );
                       case "selection":
@@ -354,6 +361,7 @@ const MocktestPage = () => {
                             statement={quest.statement}
                             choices={quest.choices}
                             solveState={solveState[idx]}
+                            answer={answers[idx]}
                           />
                         );
                       case "short":
@@ -365,6 +373,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             solveState={solveState[idx]}
+                            answer={answers[idx]}
                           />
                         );
                       default:
@@ -393,6 +402,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             solveState={solveState[newIdx]}
+                            answer={answers[newIdx]}
                           />
                         );
                       case "selection":
@@ -406,6 +416,7 @@ const MocktestPage = () => {
                             statement={quest.statement}
                             choices={quest.choices}
                             solveState={solveState[newIdx]}
+                            answer={answers[newIdx]}
                           />
                         );
                       case "short":
@@ -417,6 +428,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             solveState={solveState[newIdx]}
+                            answer={answers[newIdx]}
                           />
                         );
                       default:

@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { Radio, Image } from "semantic-ui-react";
 
 const SelQuiz = props => {
-  const { statement, index, handleFn, choices, title, solveState } = props;
+  const {
+    statement,
+    index,
+    handleFn,
+    choices,
+    title,
+    solveState,
+    answer
+  } = props;
   const [checkedValue, setCheckedValue] = useState("");
   // const [solveState, setSolveState] = useState(0); // 0 : 채점 안 함, 1 : 맞음, 2 : 틀림
   const handleChange = (e, { value }) => {
@@ -22,7 +30,10 @@ const SelQuiz = props => {
             backgroundSize: "128px 128px",
             width: "128px",
             height: "128px",
-            transform: solveState === 1 ? "translate(-50%, -50%)" : "translate(-40%, -40%)",
+            transform:
+              solveState === 1
+                ? "translate(-50%, -50%)"
+                : "translate(-40%, -40%)",
             zIndex: "300"
           }}
         />
@@ -64,6 +75,16 @@ const SelQuiz = props => {
             </span>
           );
         })}
+        <span
+          style={{
+            color: "red",
+            textAlign: "right",
+            padding: ".5em 0",
+            width: "100%"
+          }}
+        >
+          {solveState !== 0  ? `정답 : ${answer * 1 + 1}` : `ㅤ`}
+        </span>
       </span>
     </div>
   );
