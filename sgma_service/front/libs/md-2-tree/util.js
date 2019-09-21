@@ -45,7 +45,7 @@ Util.shuffle = function(arr, outplace) {
 	if(outplace)
 		arr = arr.slice();
 	let temp, idx1, idx2;
-	for(let i = 0; i < arr.length; ++i) {
+	for(let i = 0; i < 4 * arr.length; ++i) {
 		idx1 = Util.random_int(0, arr.length - 1);
 		idx2 = Util.random_int(0, arr.length - 1);
 		temp = arr[idx1];

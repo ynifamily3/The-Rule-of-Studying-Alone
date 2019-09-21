@@ -162,6 +162,92 @@ Soup.select_negative_attrs = function(root, material, n) {
 	console.assert(typeof(n) == 'number');
 
 	// 클로저
+	// let check = new Map();
+	// let refs = new Map();
+
+	// // 내부 함수 원리는 select_negative_attr.md 참고 바람
+	// // Info root
+	// function discard_subinfos(root) {
+	// 	check.set(root.jsid, Soup.TYPE_I);
+	// 	root.childs.forEach(child => {
+	// 		let ctype = check.get(child.jsid);
+	// 		if(ctype === undefined || ctype == Soup.TYPE_O)
+	// 			discard_subinfos(child);
+	// 	});
+	// }
+
+	// // Info root 		출제범위 상한선
+	// // Info material 	출제주제
+	// // 반환값은 root가 material로 가는 경로를 가진 경우 TYPE_M
+	// // 그렇지 않은 경우 TYPE_O
+	// function traverse_down(root, material) {
+	// 	if(root == material) {
+	// 		discard_subinfos(material);
+	// 		check.set(root.jsid, Soup.TYPE_M);
+	// 		return Soup.TYPE_M;
+	// 	}
+	// 	else {
+	// 		let rtype = Soup.TYPE_O;
+	// 		root.childs.forEach(child => {
+	// 			let ctype = check.get(child.jsid);
+	// 			if(ctype === undefined)
+	// 				ctype = traverse_down(child, material);
+	// 			if(ctype == Soup.TYPE_M)
+	// 				rtype = Soup.TYPE_M;
+	// 		});
+	// 		check.set(root.jsid, rtype);
+
+	// 		// 알고리즘 특성상 jsid를 키로 갖는 map을 순환
+	// 		// 해야하는데, 어차피 반환하지도 않을 TYPE_M이나
+	// 		// TYPE_I는 굳이 저장할 필요가 없으므로 재낀다
+	// 		if(rtype == Soup.TYPE_O)
+	// 			refs.set(root.jsid, root);
+	// 		return rtype;
+	// 	}
+	// }
+
+	// // 정말로 사용할 수 있는 애들만 추림
+	// // refs에는 과거에 TYPE_O였지만 나중에 TYPE_M으로 바뀐
+	// // 것들이 존재할 수 있기 때문에 마지막 체크를 한 번 더 해
+	// // 줘야함
+	// let out = [];
+	// traverse_down(root, material);
+	// refs.forEach((val, key) => {
+	// 	if(check.get(key) == Soup.TYPE_O)
+	// 		out.push(val);
+	// });
+	let out = Soup.select_negative_infos(root, material, n);
+
+	// 1개짜리와 n개짜리를 처리하는데 복잡도가 달라지기 때문에
+	// 특별히 구분해준다.
+	// Util.get_randomly의 반환형은 배열이 아니기 때문에
+	// 호환성을 위해 배열로 만들어준다.
+	if(n == 1) {
+		return [Util.get_randomly(out.reduce((accm, info) => {
+			// if(is_subject_to(info, material))
+			// 	return accm.concat(info.attrs);
+			// else
+			// 	return accm;
+			return accm.concat(info.attrs);
+		}, []))];
+	}
+	else {
+		return Util.get_randomly_multi(out.reduce((accm, info) => {
+			// if(is_subject_to(info, material))
+			// 	return accm.concat(info.attrs);
+			// else
+			// 	return accm;
+			return accm.concat(info.attrs);
+		}, []), n);
+	}
+};
+
+Soup.select_negative_infos = function(root, material, n) {
+	console.assert(root instanceof Info);
+	console.assert(material instanceof Info);
+	console.assert(typeof(n) == 'number');
+
+	// 클로저
 	let check = new Map();
 	let refs = new Map();
 
@@ -217,29 +303,37 @@ Soup.select_negative_attrs = function(root, material, n) {
 			out.push(val);
 	});
 
-	// 1개짜리와 n개짜리를 처리하는데 복잡도가 달라지기 때문에
-	// 특별히 구분해준다.
-	// Util.get_randomly의 반환형은 배열이 아니기 때문에
-	// 호환성을 위해 배열로 만들어준다.
-	if(n == 1) {
-		return [Util.get_randomly(out.reduce((accm, info) => {
-			// if(is_subject_to(info, material))
-			// 	return accm.concat(info.attrs);
-			// else
-			// 	return accm;
-			return accm.concat(info.attrs);
-		}, []))];
-	}
-	else {
-		return Util.get_randomly_multi(out.reduce((accm, info) => {
-			// if(is_subject_to(info, material))
-			// 	return accm.concat(info.attrs);
-			// else
-			// 	return accm;
-			return accm.concat(info.attrs);
-		}, []), n);
-	}
+	return out;
 };
+
+/**
+	전위탐색으로 roots의 자식들을 탐색한다.
+	같은 root는 root.childs에 적재된 순서대로 탐색한다.
+
+	consummer는 해당 root와 공통인 comm이 있다.
+	comm.visited[jsid]로 방문 여부를 확인할 수 있다.
+
+	visited = 1이면 방문을 한 상태
+	visited = 2이면 탐색이 끝난 상태
+*/
+Soup.for_each_childs_pre = function(roots, consummer) {
+	let comm = {
+		visited: {}
+	};
+	function _for_each_childs(root, comm) {
+		if(comm.visited[root.jsid])
+			return;
+		comm.visited[root.jsid] = 1;
+		consummer(root, comm);
+		root.childs.forEach(child => {
+			_for_each_childs(child, comm);
+		});
+		comm.visited[root.jsid] = 2;
+	}
+	roots.forEach(root => {
+		_for_each_childs(root, comm);
+	});
+}
 
 Soup.TYPE_I = 1;
 Soup.TYPE_M = 2;
