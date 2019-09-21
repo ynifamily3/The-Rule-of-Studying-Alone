@@ -26,10 +26,26 @@ const MocktestPage = () => {
   const [userName, setuserName] = useState(null);
   const [userSelected, setUserSelected] = useState(Immutable.List([]));
   const [answers, setAnswers] = useState([]);
+  const [solveState, setSolveState] = useState([]);
 
   const handleFn = (index, value) => {
     setUserSelected(userSelected.set(index, value));
   };
+
+  const markProblem = useCallback(e => {
+    const userSelectedJS = userSelected.toJS();
+    const result = answers.map((x, i) => {
+      console.log(x);
+      if (x === userSelectedJS[i]) return 1;
+      // correct
+      else return 2; // incorrect
+    });
+    setSolveState(result);
+  }, [answers, userSelected, setSolveState]);
+
+  const resetProblem = useCallback(e => {
+    window.location.reload(); // it hacks!! (redux state를 잃어버림)
+  }, [setSolveState, setUserSelected, router]);
 
   useEffect(() => {
     if (!subject) {
@@ -284,19 +300,10 @@ const MocktestPage = () => {
             <div id="subtitle">
               <span style={{ fontSize: "1em" }}>제1회 {subject} 모의고사</span>
             </div>
-            <div id="title">
+            <div id="title" style={{marginBottom: '2em'}}>
               <span style={{ fontSize: "3em" }}>
                 {file ? file : path ? path : "전체"} 영역
               </span>
-            </div>
-            <div>
-              {userSelected.size
-                ? `User Inputed\u00A0\u00A0: [ ${userSelected
-                    .toJS()
-                    .join(", ")} ]`
-                : `User Inputed\u00A0\u00A0: [ ]`}
-              <br />
-              {answers && `Actual Answers: [ ${answers.join(", ")} ]`}
             </div>
             {/* 제목 밑에 밑줄 */}
             <div
@@ -333,6 +340,7 @@ const MocktestPage = () => {
                             index={idx}
                             handleFn={handleFn}
                             statement={quest.statement}
+                            solveState={solveState[idx]}
                           />
                         );
                       case "selection":
@@ -345,6 +353,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             choices={quest.choices}
+                            solveState={solveState[idx]}
                           />
                         );
                       case "short":
@@ -355,6 +364,7 @@ const MocktestPage = () => {
                             index={idx}
                             handleFn={handleFn}
                             statement={quest.statement}
+                            solveState={solveState[idx]}
                           />
                         );
                       default:
@@ -382,6 +392,7 @@ const MocktestPage = () => {
                             index={newIdx}
                             handleFn={handleFn}
                             statement={quest.statement}
+                            solveState={solveState[newIdx]}
                           />
                         );
                       case "selection":
@@ -394,6 +405,7 @@ const MocktestPage = () => {
                             handleFn={handleFn}
                             statement={quest.statement}
                             choices={quest.choices}
+                            solveState={solveState[newIdx]}
                           />
                         );
                       case "short":
@@ -404,6 +416,7 @@ const MocktestPage = () => {
                             index={newIdx}
                             handleFn={handleFn}
                             statement={quest.statement}
+                            solveState={solveState[newIdx]}
                           />
                         );
                       default:
@@ -414,21 +427,30 @@ const MocktestPage = () => {
             </div>{" "}
           </div>
           {/* (채점)리모콘 */}
-          <div className="remote" style={{position:"fixed", top:"87%", right:"10em", textAlign:'center', width: '150px'}}>
-          <Button.Group vertical>
-            <Button fluid color="blue">
-              <Icon name="check" />
-              채점하기
-            </Button>
-            <Button fluid color="grey">
-              <Icon name="undo" />
-              초기화
-            </Button>
+          <div
+            className="remote"
+            style={{
+              position: "fixed",
+              top: "87%",
+              right: "10em",
+              textAlign: "center",
+              width: "150px"
+            }}
+          >
+            <Button.Group vertical>
+              <Button fluid color="blue" onClick={markProblem}>
+                <Icon name="check" />
+                채점하기
+              </Button>
+              <Button fluid color="grey" onClick={resetProblem}>
+                <Icon name="undo" />
+                다시풀기
+              </Button>
             </Button.Group>
           </div>
         </div>
       ) : (
-        <div style={{ height: "100vh" }}>
+        <div style={{ height: "auto" }}>
           <Dimmer active inverted>
             <Loader inverted>
               <span style={{ fontWeight: "bold" }}>문제 생성 중 ...</span>

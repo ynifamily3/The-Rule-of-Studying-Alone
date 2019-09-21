@@ -4,16 +4,29 @@ import { Radio, Image } from "semantic-ui-react";
 const SelQuiz = props => {
   const { statement, index, handleFn, choices, title, solveState } = props;
   const [checkedValue, setCheckedValue] = useState("");
-  // const [solveState, setSolveState] = useState(0); // 0 : 안품, 1 : 맞음, 2 : 틀림
+  // const [solveState, setSolveState] = useState(0); // 0 : 채점 안 함, 1 : 맞음, 2 : 틀림
   const handleChange = (e, { value }) => {
     setCheckedValue(value);
     handleFn(index, value);
   };
   return (
     <div className="mocktest-quest" style={{ width: "100%" }}>
-      <div style={{ position: "absolute", backgroundImage: "url(/static/img/wrong.png)", backGroundSize: "12px 12px", width:'30px', height:'40px'}}>
-        {" "}
-      </div>
+      {solveState !== 0 && (
+        <div
+          style={{
+            position: "absolute",
+            background:
+              solveState === 1
+                ? "transparent url(/static/img/correct.png) no-repeat"
+                : "transparent url(/static/img/wrong.png) no-repeat",
+            backgroundSize: "128px 128px",
+            width: "128px",
+            height: "128px",
+            transform: solveState === 1 ? "translate(-50%, -50%)" : "translate(-40%, -40%)",
+            zIndex: "300"
+          }}
+        />
+      )}
       <b>
         <span style={{ fontSize: "2em" }}>{index + 1}. </span>
       </b>
@@ -46,6 +59,7 @@ const SelQuiz = props => {
                 checked={i.toString() === checkedValue}
                 onChange={handleChange}
                 label={x}
+                readOnly={solveState !== 0}
               />
             </span>
           );
@@ -53,6 +67,10 @@ const SelQuiz = props => {
       </span>
     </div>
   );
+};
+
+SelQuiz.defaultProps = {
+  solveState: 0
 };
 
 export default SelQuiz;
