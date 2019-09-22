@@ -4,12 +4,33 @@ import { useCallback, useState } from "react";
 import { encodeSGMAStr } from "../../libs/path-encryptor";
 import { md5 } from "../../libs/md5";
 import Router from "next/router";
+import { useDispatch } from "react-redux";
+import { DELETE_ELEMENT } from "../../reducers/docs";
 
 const FileIcon = ({ fileName, type, path, subject }) => {
+  const dispatch = useDispatch();
   const [clickState, setClickState] = useState(0);
   const noHandler = useCallback(e=>{
     setClickState(0);
   }, [setClickState]);
+  const deleteClickHandler = useCallback(e => {
+    // 
+    if (confirm('정말로 삭제하시겠습니까?')) {
+      // subject_name, path, elem_name
+      let pathCut = path.split("/");
+      pathCut.pop();
+      pathCut = pathCut.join("/");
+      if (pathCut.length) pathCut = "/".concat(pathCut);
+      dispatch({
+        type: DELETE_ELEMENT,
+        data: {
+          subject_name: subject,
+          path: pathCut,
+          elem_name: fileName
+        }
+      });
+    }
+  }, [dispatch, subject, fileName, path]);
   const enterClickHandler = useCallback(
     e => {
       //e.stopPropagation();
@@ -116,7 +137,7 @@ const FileIcon = ({ fileName, type, path, subject }) => {
           <Icon name="star outline" />
         </span>
       </div>
-      <div onMouseEnter={clickHandler} onMouseLeave={noHandler}>
+      <div onMouseEnter={clickHandler} onMouseOver={clickHandler} onMouseLeave={noHandler}>
         <Item>
           {clickState === 0 ? (
             type === "folder" ? (
@@ -127,6 +148,10 @@ const FileIcon = ({ fileName, type, path, subject }) => {
           ) : (
             <div>
               <Button.Group vertical>
+              <Button color="blue" basic onClick={gotoMockClickhandler}>
+                  <Icon color="blue" name="pencil alternate"/>
+                  문제풀기
+                </Button>
                 {type === "folder" && (
                   <Button basic onClick={enterClickHandler}>
                     <Icon name="play"/>
@@ -136,12 +161,12 @@ const FileIcon = ({ fileName, type, path, subject }) => {
                 {type === "file" && (
                   <Button basic onClick={editClickhandler}>
                     <Icon name="edit"/>
-                    문서 편집
+                    문서편집
                   </Button>
                 )}
-                <Button basic onClick={gotoMockClickhandler}>
-                  <Icon name="pencil alternate"/>
-                  문제 풀기
+                <Button basic color='red' onClick={deleteClickHandler}>
+                  <Icon name="x"/>
+                  삭제하기
                 </Button>
               </Button.Group>
             </div>

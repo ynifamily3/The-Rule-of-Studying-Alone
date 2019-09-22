@@ -17,7 +17,7 @@ const SelectionComponent = props => {
           return (
             <List.Item key={"subject_name-".concat(i)}>
               <Link
-                href={{
+                as={{
                   pathname: "dashboard",
                   query: { subject: x["subject_name"] }
                 }}
@@ -30,7 +30,7 @@ const SelectionComponent = props => {
           );
         })
       ) : (
-        <div>과목을 불러오고 있습니다 ...</div>
+        <div>새로운 과목을 추가해보세요!</div>
       )}
     </List>
   );
