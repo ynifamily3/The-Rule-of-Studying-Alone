@@ -63,10 +63,8 @@ const reducer = (state = initialState.toJS(), action) => {
         }
       } else {
         // drill find2
-        // drill find
-        /*
         const d = data.path.split("/").splice(1); // ['path','data','paths']
-        let pointer = addFileState; // { docs : [] }
+        let pointer = deleteState; // { docs : [] }
         for (let i = 0; i < d.length; i++) {
           pointer =
             pointer.docs[
@@ -81,7 +79,7 @@ const reducer = (state = initialState.toJS(), action) => {
             pointer.docs.splice(i, 1); // 해당인덱스삭제
             break;
           }
-        }*/
+        }
         /*
         pointer.docs.push({
           type: "file",

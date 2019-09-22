@@ -164,10 +164,6 @@ const FileIcon = ({ fileName, type, path, subject }) => {
                     문서편집
                   </Button>
                 )}
-                <Button basic color='red' onClick={deleteClickHandler}>
-                  <Icon name="x"/>
-                  삭제하기
-                </Button>
               </Button.Group>
             </div>
           )}
