@@ -11,7 +11,8 @@
         "dev": "next ./front",
         "build": "next build ./front",
         "start": "node server.js",
-        "front": "next start ./front"
+        "front": "next start ./front",
+		"test" : "next --version"
     },
     "keywords": [],
     "author": {
