@@ -91,8 +91,8 @@ const MocktestPage = () => {
         const nP = numOfProblem
           ? numOfProblem * 1 <= 20 && numOfProblem * 1 > 0
             ? numOfProblem * 1
-            : 5
-          : 5;
+            : 20
+          : 20;
         const quest = Mocktest.create_mocktest(soup.roots, nP).quests.reduce(
           (a, b) => {
             b && a.push(b); // null 대응
