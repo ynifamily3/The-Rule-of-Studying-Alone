@@ -58,6 +58,7 @@ class EditorLayout extends Component {
   }
 
   createPDF() {
+    /*
     const html2canvas = require("html2canvas");
     const jsPDF = require("jspdf");
 
@@ -69,6 +70,7 @@ class EditorLayout extends Component {
       // pdf.output('dataurlnewwindow');
       pdf.save("문제.pdf");
     });
+    */
   }
 
   saveDocument() {
@@ -129,8 +131,10 @@ class EditorLayout extends Component {
     );
     const finalSoup = Parser.parse_doc(markDown);
     let numOfProb =
-      prompt("(최대)만들 문제 개수를 입력해주세요 ( 1 ~ 5 ) : ", "5") * 1;
-    numOfProb = numOfProb ? (numOfProb > 5 ? 5 : numOfProb) : 1;
+      prompt("(최대)만들 문제 개수를 입력해주세요 ( 1 ~ 5 ) : ", "5");
+    numOfProb = numOfProb ? (numOfProb*1 > 5 ? 5 : numOfProb*1) : numOfProb || numOfProb === null ? 0 : 1;
+    console.log(numOfProb);
+    if (numOfProb === 0) return;
     let test = Mocktest.create_mocktest(
       finalSoup.roots,
       numOfProb
@@ -138,7 +142,7 @@ class EditorLayout extends Component {
       if (b) a.push(b); // null 없애기
       return a;
     }, []);
-    console.warn(test);
+    //console.warn(test);
     this.setState({
       modalIsOpen: true,
       recyclingData: finalSoup.roots,
@@ -171,20 +175,17 @@ class EditorLayout extends Component {
             size="small"
             open={this.state.modalIsOpen}
             closeOnEscape={true}
-            closeOnDimmerClick={false}
+            closeOnDimmerClick={true}
             onClose={this.closeModal}
           >
             <Modal.Header>문제 풀어보기</Modal.Header>
             <Modal.Actions>
               <div style={{ textAlign: "center" }}>
-                <Button color="orange" onClick={this.refreshProblems}>
+                <Button color="black" onClick={this.refreshProblems}>
                   <Icon name="refresh" />
                   새로운 문제 가져오기
                 </Button>
-                <Button secondary onClick={this.createPDF}>
-                  PDF로 내보내기
-                </Button>
-                <Button primary onClick={this.closeModal}>
+                <Button warn onClick={this.closeModal}>
                   종료하기
                 </Button>
               </div>
@@ -205,9 +206,6 @@ class EditorLayout extends Component {
                 <Button color="orange" onClick={this.refreshProblems}>
                   <Icon name="refresh" />
                   새로운 문제 가져오기
-                </Button>
-                <Button secondary onClick={this.createPDF}>
-                  PDF로 내보내기
                 </Button>
                 <Button primary onClick={this.closeModal}>
                   종료하기

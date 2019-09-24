@@ -19,9 +19,30 @@ import {
   ADD_FOLDER_FAILURE,
   ADD_FILE,
   ADD_FILE_SUCCESS,
-  ADD_FILE_FAILURE
+  ADD_FILE_FAILURE,
+  DELETE_ELEMENT,
+  DELETE_ELEMENT_SUCCESS,
+  DELETE_ELEMENT_FAILURE
 } from "../reducers/docs";
 import Immutable, { Map, List, isImmutable } from "immutable";
+
+async function deleteElementAPI({ subject_name, path, elem_name }) {
+  const result = await axios
+    .delete(
+      `${process.env.BACKEND_SERVICE_DOMAIN}/api/${process.env.BACKEND_SERVICE_API_VERSION}/doc/${subject_name}/${elem_name}?path=${path}`,
+      { withCredentials: true }
+    )
+    .then(({ data }) => {
+      if (data.result) {
+        return { status: "success" };
+      } else if (data.isLogin && data.isLogin === false) {
+        return { status: "failure-loginRequired" };
+      } else {
+        return { status: "failure" };
+      }
+    });
+  return result;
+}
 
 async function fetchDocsAPI({ subject_name }) {
   const result = await axios(
@@ -88,6 +109,20 @@ async function addFileAPI({ subject_name, path, file_name }) {
   return result;
 }
 
+function* delElem(action) {
+  const result = yield call(deleteElementAPI, action.data);
+  if (result.status === "success") {
+    yield put({
+      type: DELETE_ELEMENT_SUCCESS,
+      data: action.data
+    });
+  } else {
+    yield put({
+      type: DELETE_ELEMENT_FAILURE
+    });
+  }
+}
+
 function* fetchDocs(action) {
   const result = yield call(fetchDocsAPI, action.data); // action.data가 맞나?
   if (result === 0) {
@@ -99,7 +134,7 @@ function* fetchDocs(action) {
     // console.log(result);
     yield put({
       type: FETCH_DOCS_SUCCESS,
-      data: Map({...result, subject: action.data['subject_name']}) // subject를 추적할 필요가 있다고 보고 수정함.
+      data: Map({ ...result, subject: action.data["subject_name"] }) // subject를 추적할 필요가 있다고 보고 수정함.
     });
   }
 }
@@ -144,6 +179,10 @@ function* watchaddFile() {
   yield takeLatest(ADD_FILE, addFile);
 }
 
+function* watchDelElem() {
+  yield takeLatest(DELETE_ELEMENT, delElem);
+}
+
 export default function* docsSaga() {
-  yield all([fork(watchfetchDocs), fork(watchaddFolder), fork(watchaddFile)]);
+  yield all([fork(watchfetchDocs), fork(watchaddFolder), fork(watchaddFile), fork(watchDelElem)]);
 }

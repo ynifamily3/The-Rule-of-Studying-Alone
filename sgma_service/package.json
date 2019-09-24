@@ -11,7 +11,10 @@
         "dev": "next ./front",
         "build": "next build ./front",
         "start": "node server.js",
-        "front": "next start ./front"
+        "front": "next start ./front",
+        "test" : "next --version",
+        "export": "next export ./front",
+        "deploy": "aws s3 sync ./front/out s3://miel-sample-deploy --profile=sample-deploy-s3"
     },
     "keywords": [],
     "author": {

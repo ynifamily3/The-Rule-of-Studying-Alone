@@ -5,7 +5,7 @@ import ShortQuiz from "./shortquiz";
 import { Segment, Form } from "semantic-ui-react";
 
 const QuizBox = props => {
-  const { statement, answers, choices, type } = props.quest;
+  const { statement, answers, choices, type, title } = props.quest;
   let willRender;
   switch (type) {
     case "binary":
@@ -23,9 +23,8 @@ const QuizBox = props => {
   return (
     <Segment raised>
       <div className="problem-title">
-        {statement.split("\n").map((line, i) => {
-          return <p key={i + Math.random()}>{line}</p>;
-        })}
+        <p>{title}</p>
+        <p>{statement}</p>
       </div>
       <Form.Field>{willRender}</Form.Field>
     </Segment>

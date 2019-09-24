@@ -57,7 +57,7 @@ const SubjectsPage = () => {
       const copy = subject;
       setSubject("");
       if (!subject.trim() || subject.length > 30) {
-        alert("제대로 입력해 주세요!! >0 && <=30");
+        alert("1자 이상 30자 미만으로 입력해 주세요..");
         return false;
       }
       dispatch({
@@ -176,7 +176,7 @@ const SubjectsPage = () => {
       </style>
       <div className="header hongong_solid">
         <span className="left">
-          <Link href="/">
+          <Link href="/subjects" as="/">
             <a>
               <img
                 src="/static/img/logo-small.png"
@@ -254,9 +254,9 @@ const SubjectsPage = () => {
               >
                 확인
               </button>
-              <Link href="/">
+              <Link href="/subjects" as='/'>
                 <a>
-                  <button className="hongong-button" id="cancle">
+                  <button className="hongong-button" id="cancel">
                     취소
                   </button>
                 </a>

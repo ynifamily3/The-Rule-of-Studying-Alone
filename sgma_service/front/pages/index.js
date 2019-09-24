@@ -16,8 +16,15 @@ const IndexPage = ctx => {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState({ isLogin: false });
+  const [cnt, setCnt] = useState({});
 
   useEffect(() => {
+    axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/${process.env.BACKEND_SERVICE_API_VERSION}/count`, {
+      withCredentials: true
+    }).then(resp => {
+      //const { fileCnt, subjectCnt, userCnt }= resp.data;
+      setCnt(resp.data);
+    });
     // alert('useEffect')
     axios(`${process.env.BACKEND_SERVICE_DOMAIN}/api/userinfo`, {
       withCredentials: true
@@ -259,21 +266,21 @@ const IndexPage = ctx => {
           <div className="counters hongong_solid">
             <span className="counter-elem">
               <span id="counter-subjects" style={{ fontSize: "2em" }}>
-                1024
+                {cnt?cnt.subjectCnt:'--'}
               </span>{" "}
               과목
             </span>
             <span className="counter-elem">
               <span id="counter-attrs" style={{ fontSize: "2em" }}>
-                2147483647
+                {cnt?cnt.fileCnt:'--'}
               </span>{" "}
-              지식
+              필기
             </span>
             <span className="counter-elem">
               <span id="counter-groups" style={{ fontSize: "2em" }}>
-                644
+                {cnt?cnt.userCnt:'--'}
               </span>{" "}
-              그룹
+              사용자
             </span>
           </div>
         </div>
