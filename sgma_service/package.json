@@ -52,7 +52,7 @@
         "isomorphic-unfetch": "^3.0.0",
         "jspdf": "^1.5.3",
         "markdown-draft-js": "^1.7.0",
-        "mongoose": "^5.6.11",
+        "mongoose": "^5.7.5",
         "next": "^9.0.5",
         "next-compose-plugins": "^2.2.0",
         "next-progressbar": "^1.0.0",
