@@ -50,7 +50,7 @@
         "html2canvas": "^1.0.0-rc.3",
         "immutable": "^4.0.0-rc.12",
         "isomorphic-unfetch": "^3.0.0",
-        "jspdf": "^1.5.3",
+        "jspdf": "^2.3.1",
         "markdown-draft-js": "^1.7.0",
         "mongoose": "^5.7.5",
         "next": "^9.0.5",
