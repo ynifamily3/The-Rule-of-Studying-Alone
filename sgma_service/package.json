@@ -38,7 +38,7 @@
     "dependencies": {
         "@zeit/next-css": "^1.0.1",
         "axios": "^0.21.1",
-        "body-parser": "^1.19.0",
+        "body-parser": "^1.20.1",
         "cookie-parser": "^1.4.4",
         "cors": "^2.8.5",
         "dotenv": "^8.0.0",
@@ -46,7 +46,7 @@
         "draft-js": "^0.11.0",
         "draft-js-plugins-editor": "^2.1.1",
         "draft-js-single-line-plugin": "^2.0.5",
-        "express": "^4.17.1",
+        "express": "^4.18.2",
         "html2canvas": "^1.0.0-rc.3",
         "immutable": "^4.0.0-rc.12",
         "isomorphic-unfetch": "^3.0.0",
