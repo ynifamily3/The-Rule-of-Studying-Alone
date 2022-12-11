@@ -46,7 +46,7 @@
         "draft-js": "^0.11.0",
         "draft-js-plugins-editor": "^2.1.1",
         "draft-js-single-line-plugin": "^2.0.5",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "html2canvas": "^1.0.0-rc.3",
         "immutable": "^4.0.0-rc.12",
         "isomorphic-unfetch": "^3.0.0",
